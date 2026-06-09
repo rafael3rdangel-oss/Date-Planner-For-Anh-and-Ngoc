@@ -93,39 +93,46 @@
 </header>
 
 <div class="tabs">
-  <button class="tab">🏠 Planner</button>
-  <button class="tab">🍜 Food</button>
-  <button class="tab">🎮 Games</button>
-  <button class="tab">📝 Notes</button>
+
+  <button class="tab" onclick="showTab('planner')">🏠 Planner</button>
+  <button class="tab" onclick="showTab('food')">🍜 Food</button>
+  <button class="tab" onclick="showTab('games')">🎮 Games</button>
+  <button class="tab" onclick="showTab('notes')">📝 Notes</button>
+
 </div>
 
 <div class="section">
 
-  <div class="card">
-    <div class="title">🌅 Morning</div>
+  <!-- PLANNER TAB -->
+  <div id="planner" class="tabPage">
 
-    <input id="text" placeholder="Add activity..." />
+    <div class="card">
+      <div class="title">🌅 Morning</div>
 
-    <button class="add" onclick="add()">
-      Add Activity
-    </button>
+      <input id="text" placeholder="Add activity..." />
 
-    <div id="list"></div>
+      <button class="add" onclick="add()">
+        Add Activity
+      </button>
+
+      <div id="list"></div>
+    </div>
+
   </div>
 
-  <div class="card">
-    <div class="title">☀️ Noon</div>
-    Empty for now
+  <!-- FOOD TAB -->
+  <div id="food" class="tabPage" style="display:none;">
+    <div class="card">🍜 Food list coming soon</div>
   </div>
 
-  <div class="card">
-    <div class="title">🌤 Afternoon</div>
-    Empty for now
+  <!-- GAMES TAB -->
+  <div id="games" class="tabPage" style="display:none;">
+    <div class="card">🎮 Games list coming soon</div>
   </div>
 
-  <div class="card">
-    <div class="title">🌙 Evening</div>
-    Empty for now
+  <!-- NOTES TAB -->
+  <div id="notes" class="tabPage" style="display:none;">
+    <div class="card">📝 Notes coming soon</div>
   </div>
 
 </div>
