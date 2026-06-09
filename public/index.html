@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Date Planner for Us</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #fff0f5;
+      text-align: center;
+    }
+
+    h1 {
+      color: hotpink;
+    }
+
+    input {
+      padding: 10px;
+      width: 200px;
+    }
+
+    button {
+      padding: 10px;
+      background: pink;
+      border: none;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    .item {
+      background: white;
+      margin: 10px auto;
+      padding: 10px;
+      width: 300px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🌸 Date Planner for Us</h1>
+
+  <input id="text" placeholder="Add activity..." />
+  <button onclick="add()">Add</button>
+
+  <div id="list"></div>
+
+<script>
+async function load() {
+  const res = await fetch("/api/planner");
+  const data = await res.json();
+
+  document.getElementById("list").innerHTML =
+    data.map(i => `<div class="item">🌸 ${i.text}</div>`).join("");
+}
+
+async function add() {
+  const text = document.getElementById("text").value;
+
+  await fetch("/api/planner", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text })
+  });
+
+  document.getElementById("text").value = "";
+  load();
+}
+
+load();
+</script>
+
+</body>
+</html>
