@@ -5,84 +5,109 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+   * {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fff7fb;
-      color: #555;
-    }
+body {
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  background: linear-gradient(135deg, #fff7fb, #ffe4f1, #e8f3ff);
+  color: #555;
+}
 
-    header {
-      text-align: center;
-      padding: 20px;
-      font-size: 28px;
-      font-weight: bold;
-      color: #ff79b0;
-    }
+/* Header */
+header {
+  text-align: center;
+  padding: 22px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #ff69b4;
+}
 
-    .tabs {
-      display: flex;
-      justify-content: space-around;
-      padding: 10px;
-      background: white;
-      position: sticky;
-      top: 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
-    }
+/* Tabs */
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+  background: white;
+  position: sticky;
+  top: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
 
-    .tab {
-      border: none;
-      background: #ffe4f1;
-      padding: 10px 16px;
-      border-radius: 999px;
-      cursor: pointer;
-    }
+.tab {
+  border: none;
+  background: #ffd6e8;
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
 
-    .section {
-      padding: 15px;
-    }
+.tab:hover {
+  transform: scale(1.05);
+  background: #ffc2dd;
+}
 
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 3px 10px rgba(0,0,0,.08);
-    }
+/* Layout */
+.section {
+  padding: 15px;
+}
 
-    .title {
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #ff79b0;
-    }
+/* Cards */
+.card {
+  background: white;
+  border-radius: 24px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+  border: 1px solid #ffe4f1;
+}
 
-    input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #eee;
-      margin-bottom: 10px;
-    }
+/* Titles */
+.title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #ff69b4;
+}
 
-    button.add {
-      width: 100%;
-      border: none;
-      background: #ffd6e8;
-      padding: 12px;
-      border-radius: 12px;
-      cursor: pointer;
-    }
+/* Inputs */
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+  outline: none;
+}
 
-    .item {
-      background: #fff7fb;
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 8px;
-    }
+input:focus {
+  border-color: #ffb6d5;
+}
+
+/* Buttons */
+button.add {
+  width: 100%;
+  border: none;
+  background: linear-gradient(135deg, #ffd6e8, #ffe4f1);
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Items */
+.item {
+  background: #fff7fb;
+  border-radius: 14px;
+  padding: 10px;
+  margin-top: 8px;
+  border-left: 4px solid #ffb6d5;
+}
   </style>
 </head>
 
