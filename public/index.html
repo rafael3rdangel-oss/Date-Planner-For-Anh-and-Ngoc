@@ -1,208 +1,436 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+
   <title>Date Planner for Us 💖</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
 
   <style>
-   * {
-  box-sizing: border-box;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  margin: 0;
-  font-family: "Arial", sans-serif;
-  background: linear-gradient(135deg, #fff7fb, #ffe4f1, #e8f3ff);
-  color: #555;
-}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(
+        135deg,
+        #fff7fb,
+        #ffe4f1,
+        #e8f3ff
+      );
+      color: #555;
+      min-height: 100vh;
+    }
 
-/* Header */
-header {
-  text-align: center;
-  padding: 22px;
-  font-size: 28px;
-  font-weight: bold;
-  color: #ff69b4;
-}
+    header {
+      text-align: center;
+      padding: 22px 15px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #ff69b4;
+    }
 
-/* Tabs */
-.tabs {
-  display: flex;
-  justify-content: space-around;
-  padding: 12px;
-  background: white;
-  position: sticky;
-  top: 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,.06);
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-}
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      gap: 6px;
+      padding: 12px;
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
 
-.tab {
-  border: none;
-  background: #ffd6e8;
-  padding: 10px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: 0.2s;
-}
+    .tab {
+      border: none;
+      background: #ffd6e8;
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.2s;
+    }
 
-.tab:hover {
-  transform: scale(1.05);
-  background: #ffc2dd;
-}
+    .tab:hover,
+    .tab.active {
+      transform: scale(1.04);
+      background: #ffc2dd;
+    }
 
-/* Layout */
-.section {
-  padding: 15px;
-}
+    .section {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 15px;
+    }
 
-/* Cards */
-.card {
-  background: white;
-  border-radius: 24px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.08);
-  border: 1px solid #ffe4f1;
-}
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid #ffe4f1;
+    }
 
-/* Titles */
-.title {
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #ff69b4;
-}
+    .title {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #ff69b4;
+    }
 
-/* Inputs */
-input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 14px;
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  outline: none;
-}
+    .empty-message {
+      padding: 10px 4px;
+      color: #aaa;
+      font-size: 14px;
+    }
 
-input:focus {
-  border-color: #ffb6d5;
-}
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid #eee;
+      margin-bottom: 10px;
+      outline: none;
+      font-size: 16px;
+    }
 
-/* Buttons */
-button.add {
-  width: 100%;
-  border: none;
-  background: linear-gradient(135deg, #ffd6e8, #ffe4f1);
-  padding: 12px;
-  border-radius: 14px;
-  cursor: pointer;
-  font-weight: bold;
-}
+    input:focus {
+      border-color: #ffb6d5;
+    }
 
-/* Items */
-.item {
-  background: #fff7fb;
-  border-radius: 14px;
-  padding: 10px;
-  margin-top: 8px;
-  border-left: 4px solid #ffb6d5;
-}
+    button.add {
+      width: 100%;
+      border: none;
+      background: linear-gradient(
+        135deg,
+        #ffd6e8,
+        #ffe4f1
+      );
+      padding: 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #555;
+    }
+
+    button.add:active {
+      transform: scale(0.98);
+    }
+
+    .item {
+      background: #fff7fb;
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 8px;
+      border-left: 4px solid #ffb6d5;
+      overflow-wrap: anywhere;
+    }
+
+    .placeholder-card {
+      text-align: center;
+      padding: 30px 16px;
+    }
+
+    @media (max-width: 430px) {
+      header {
+        font-size: 24px;
+      }
+
+      .tab {
+        padding: 9px 8px;
+        font-size: 12px;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-<header>
-  🌸 Date Planner for Us
-</header>
+  <header>
+    🌸 Date Planner for Us
+  </header>
 
-<div class="tabs">
+  <nav class="tabs">
+    <button
+      id="plannerButton"
+      class="tab active"
+      onclick="showTab('planner', this)"
+    >
+      🏠 Planner
+    </button>
 
-  <button class="tab" onclick="showTab('planner')">🏠 Planner</button>
-  <button class="tab" onclick="showTab('food')">🍜 Food</button>
-  <button class="tab" onclick="showTab('games')">🎮 Games</button>
-  <button class="tab" onclick="showTab('notes')">📝 Notes</button>
+    <button
+      class="tab"
+      onclick="showTab('food', this)"
+    >
+      🍜 Food
+    </button>
 
-</div>
+    <button
+      class="tab"
+      onclick="showTab('games', this)"
+    >
+      🎮 Games
+    </button>
 
-<div class="section">
+    <button
+      class="tab"
+      onclick="showTab('notes', this)"
+    >
+      📝 Notes
+    </button>
+  </nav>
 
-  <!-- PLANNER TAB -->
-  <div id="planner" class="tabPage">
+  <main class="section">
 
-    <div class="card">
-      <div class="title">🌅 Morning</div>
+    <!-- PLANNER TAB -->
+    <section id="planner" class="tabPage">
 
-      <input id="text" placeholder="Add activity..." />
+      <div class="card">
+        <div class="title">🌅 Morning</div>
 
-      <button class="add" onclick="add()">
-        Add Activity
-      </button>
+        <input
+          id="morningInput"
+          placeholder="Add a morning activity..."
+        >
 
-      <div id="list"></div>
-    </div>
+        <button
+          class="add"
+          onclick="addActivity('Morning', 'morningInput')"
+        >
+          Add Morning Activity
+        </button>
 
-  </div>
-
-  <!-- FOOD TAB -->
-  <div id="food" class="tabPage" style="display:none;">
-    <div class="card">🍜 Food list coming soon</div>
-  </div>
-
-  <!-- GAMES TAB -->
-  <div id="games" class="tabPage" style="display:none;">
-    <div class="card">🎮 Games list coming soon</div>
-  </div>
-
-  <!-- NOTES TAB -->
-  <div id="notes" class="tabPage" style="display:none;">
-    <div class="card">📝 Notes coming soon</div>
-  </div>
-
-</div>
-
-<script>
-async function load() {
-  const res = await fetch("/api/planner");
-  const data = await res.json();
-
-  document.getElementById("list").innerHTML =
-    data.map(i => `
-      <div class="item">
-        🌸 ${i.text}
+        <div id="morningList"></div>
       </div>
-    `).join("");
-}
 
-async function add() {
-  const text = document.getElementById("text").value;
+      <div class="card">
+        <div class="title">☀️ Noon</div>
 
-  if (!text) return;
+        <input
+          id="noonInput"
+          placeholder="Add a noon activity..."
+        >
 
-  await fetch("/api/planner", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ text })
-  });
+        <button
+          class="add"
+          onclick="addActivity('Noon', 'noonInput')"
+        >
+          Add Noon Activity
+        </button>
 
-  document.getElementById("text").value = "";
+        <div id="noonList"></div>
+      </div>
 
-  load();
-}
+      <div class="card">
+        <div class="title">🌤️ Afternoon</div>
 
-load();
+        <input
+          id="afternoonInput"
+          placeholder="Add an afternoon activity..."
+        >
 
-  function showTab(tab) {
-  document.querySelectorAll(".tabPage").forEach(t => {
-    t.style.display = "none";
-  });
+        <button
+          class="add"
+          onclick="addActivity('Afternoon', 'afternoonInput')"
+        >
+          Add Afternoon Activity
+        </button>
 
-  document.getElementById(tab).style.display = "block";
-}
-</script>
+        <div id="afternoonList"></div>
+      </div>
+
+      <div class="card">
+        <div class="title">🌙 Evening</div>
+
+        <input
+          id="eveningInput"
+          placeholder="Add an evening activity..."
+        >
+
+        <button
+          class="add"
+          onclick="addActivity('Evening', 'eveningInput')"
+        >
+          Add Evening Activity
+        </button>
+
+        <div id="eveningList"></div>
+      </div>
+
+    </section>
+
+    <!-- FOOD TAB -->
+    <section
+      id="food"
+      class="tabPage"
+      style="display: none;"
+    >
+      <div class="card placeholder-card">
+        <div class="title">🍜 Food & Places</div>
+        We will build this section next.
+      </div>
+    </section>
+
+    <!-- GAMES TAB -->
+    <section
+      id="games"
+      class="tabPage"
+      style="display: none;"
+    >
+      <div class="card placeholder-card">
+        <div class="title">🎮 Games</div>
+        We will build this section after Food.
+      </div>
+    </section>
+
+    <!-- NOTES TAB -->
+    <section
+      id="notes"
+      class="tabPage"
+      style="display: none;"
+    >
+      <div class="card placeholder-card">
+        <div class="title">📝 Notes</div>
+        We will build this section after Games.
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const periods = {
+      Morning: "morningList",
+      Noon: "noonList",
+      Afternoon: "afternoonList",
+      Evening: "eveningList"
+    };
+
+    function escapeHTML(value) {
+      const div = document.createElement("div");
+      div.textContent = value;
+      return div.innerHTML;
+    }
+
+    async function loadPlanner() {
+      try {
+        const response = await fetch("/api/planner");
+
+        if (!response.ok) {
+          throw new Error("Could not load planner.");
+        }
+
+        const data = await response.json();
+
+        Object.values(periods).forEach(listId => {
+          document.getElementById(listId).innerHTML = "";
+        });
+
+        Object.entries(periods).forEach(([period, listId]) => {
+          const periodItems = data.filter(item => {
+            return item.time === period;
+          });
+
+          const list = document.getElementById(listId);
+
+          if (periodItems.length === 0) {
+            list.innerHTML = `
+              <div class="empty-message">
+                Nothing planned yet ✨
+              </div>
+            `;
+            return;
+          }
+
+          list.innerHTML = periodItems.map(item => `
+            <div class="item">
+              💕 ${escapeHTML(item.text)}
+            </div>
+          `).join("");
+        });
+      } catch (error) {
+        console.error(error);
+
+        document.getElementById("morningList").innerHTML = `
+          <div class="empty-message">
+            Could not load the planner.
+          </div>
+        `;
+      }
+    }
+
+    async function addActivity(time, inputId) {
+      const input = document.getElementById(inputId);
+      const text = input.value.trim();
+
+      if (!text) {
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/planner", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            text: text,
+            time: time
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Could not add activity.");
+        }
+
+        input.value = "";
+        await loadPlanner();
+      } catch (error) {
+        console.error(error);
+        alert("The activity could not be added.");
+      }
+    }
+
+    function showTab(tabId, clickedButton) {
+      document.querySelectorAll(".tabPage").forEach(page => {
+        page.style.display = "none";
+      });
+
+      document.querySelectorAll(".tab").forEach(button => {
+        button.classList.remove("active");
+      });
+
+      document.getElementById(tabId).style.display = "block";
+      clickedButton.classList.add("active");
+    }
+
+    document.querySelectorAll("input").forEach(input => {
+      input.addEventListener("keydown", event => {
+        if (event.key !== "Enter") {
+          return;
+        }
+
+        const button = input.nextElementSibling;
+
+        if (button) {
+          button.click();
+        }
+      });
+    });
+
+    loadPlanner();
+  </script>
 
 </body>
 </html>
