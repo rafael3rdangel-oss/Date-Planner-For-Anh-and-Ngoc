@@ -5,7 +5,7 @@ const fs = require("fs");
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.use(express.static("public"));
 const PORT = process.env.PORT || 3000;
 
 const DB_FILE = "db.json";
@@ -23,9 +23,7 @@ function saveDB(data) {
 }
 
 // homepage
-app.get("/", (req, res) => {
-  res.send("Date Planner running 💖");
-});
+
 
 // get planner
 app.get("/api/planner", (req, res) => {
