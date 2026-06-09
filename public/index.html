@@ -1,48 +1,134 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Date Planner for Us</title>
+  <title>Date Planner for Us 💖</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
-    body {
-      font-family: Arial;
-      background: #fff0f5;
-      text-align: center;
+    * {
+      box-sizing: border-box;
     }
 
-    h1 {
-      color: hotpink;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff7fb;
+      color: #555;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #ff79b0;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      background: white;
+      position: sticky;
+      top: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    .tab {
+      border: none;
+      background: #ffe4f1;
+      padding: 10px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .section {
+      padding: 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.08);
+    }
+
+    .title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #ff79b0;
     }
 
     input {
-      padding: 10px;
-      width: 200px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #eee;
+      margin-bottom: 10px;
     }
 
-    button {
-      padding: 10px;
-      background: pink;
+    button.add {
+      width: 100%;
       border: none;
+      background: #ffd6e8;
+      padding: 12px;
+      border-radius: 12px;
       cursor: pointer;
-      margin-left: 5px;
     }
 
     .item {
-      background: white;
-      margin: 10px auto;
+      background: #fff7fb;
+      border-radius: 12px;
       padding: 10px;
-      width: 300px;
-      border-radius: 10px;
+      margin-top: 8px;
     }
   </style>
 </head>
 
 <body>
-  <h1>🌸 Date Planner for Us</h1>
 
-  <input id="text" placeholder="Add activity..." />
-  <button onclick="add()">Add</button>
+<header>
+  🌸 Date Planner for Us
+</header>
 
-  <div id="list"></div>
+<div class="tabs">
+  <button class="tab">🏠 Planner</button>
+  <button class="tab">🍜 Food</button>
+  <button class="tab">🎮 Games</button>
+  <button class="tab">📝 Notes</button>
+</div>
+
+<div class="section">
+
+  <div class="card">
+    <div class="title">🌅 Morning</div>
+
+    <input id="text" placeholder="Add activity..." />
+
+    <button class="add" onclick="add()">
+      Add Activity
+    </button>
+
+    <div id="list"></div>
+  </div>
+
+  <div class="card">
+    <div class="title">☀️ Noon</div>
+    Empty for now
+  </div>
+
+  <div class="card">
+    <div class="title">🌤 Afternoon</div>
+    Empty for now
+  </div>
+
+  <div class="card">
+    <div class="title">🌙 Evening</div>
+    Empty for now
+  </div>
+
+</div>
 
 <script>
 async function load() {
@@ -50,19 +136,28 @@ async function load() {
   const data = await res.json();
 
   document.getElementById("list").innerHTML =
-    data.map(i => `<div class="item">🌸 ${i.text}</div>`).join("");
+    data.map(i => `
+      <div class="item">
+        🌸 ${i.text}
+      </div>
+    `).join("");
 }
 
 async function add() {
   const text = document.getElementById("text").value;
 
+  if (!text) return;
+
   await fetch("/api/planner", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({ text })
   });
 
   document.getElementById("text").value = "";
+
   load();
 }
 
