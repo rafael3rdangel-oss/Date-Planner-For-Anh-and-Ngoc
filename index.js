@@ -35,11 +35,12 @@ app.get("/api/planner", (req, res) => {
 app.post("/api/planner", (req, res) => {
   const db = loadDB();
 
-  db.planner.push({
-    text: req.body.text,
-    time: "Morning",
-    created: new Date()
-  });
+db.planner.push({
+  id: Date.now(),
+  text: req.body.text,
+  time: req.body.time,
+  created: new Date().toISOString()
+});
 
   saveDB(db);
   res.json({ ok: true });
