@@ -367,6 +367,14 @@
 
     .star-button.selected { color: #f3b73f; }
 
+    .summary-rating {
+      display: inline-block;
+      margin-left: 6px;
+      color: #f3b73f;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
     .history-date {
       margin: 18px 0 8px;
       color: var(--berry-dark);
@@ -636,6 +644,7 @@
       return `
         <div class="activity-item ${item.completed ? "completed" : ""}">
           <div class="activity-text">${escapeHTML(item.text)}</div>
+          ${starButtons(item)}
           ${actionButtons(item)}
         </div>
       `;
@@ -715,7 +724,11 @@
     async function setRating(id, rating) {
       try {
         await updateActivity(id, { rating });
-        await loadHistory();
+        await Promise.all([
+          loadPlanner(),
+          loadUpcoming(),
+          loadHistory()
+        ]);
       } catch (error) {
         alert(error.message);
       }
@@ -764,7 +777,15 @@
             return `
               <div class="summary-line">
                 <span>${periodInfo[period].emoji} ${period}</span>
-                <span>${periodItems.map(item => `${item.completed ? "✓ " : ""}${escapeHTML(item.text)}`).join("<br>")}</span>
+                <span>
+                  ${periodItems.map(item => {
+                    const rating = Number(item.rating || 0);
+                    const stars = rating
+                      ? `<span class="summary-rating">${"★".repeat(rating)}${"☆".repeat(5 - rating)}</span>`
+                      : "";
+                    return `${item.completed ? "✓ " : ""}${escapeHTML(item.text)}${stars}`;
+                  }).join("<br>")}
+                </span>
               </div>
             `;
           }).join("");
