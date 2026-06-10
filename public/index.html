@@ -15,178 +15,406 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --pink: #ff83b7;
+      --pink-soft: #ffe1ef;
+      --pink-light: #fff4f9;
+      --purple-soft: #eee7ff;
+      --blue-soft: #e8f5ff;
+      --green-soft: #e8f8ef;
+      --yellow-soft: #fff7d9;
+      --text: #55515c;
+      --muted: #9b929f;
+      --white: #ffffff;
+      --shadow: 0 10px 28px rgba(121, 85, 103, 0.11);
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       font-family: Arial, sans-serif;
-      background: linear-gradient(
-        135deg,
-        #fff7fb,
-        #ffe4f1,
-        #e8f3ff
-      );
-      color: #555;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, #fff7cd 0, transparent 28%),
+        radial-gradient(circle at top right, #e8f5ff 0, transparent 32%),
+        linear-gradient(160deg, #fff8fb, #ffe8f3);
     }
 
-    header {
-      padding: 22px 15px 12px;
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding-bottom: 95px;
+    }
+
+    .hero {
+      padding: 26px 18px 18px;
       text-align: center;
-      color: #ff69b4;
-      font-size: 28px;
-      font-weight: bold;
     }
 
-    .date-area {
-      width: calc(100% - 30px);
-      max-width: 670px;
-      margin: 0 auto 15px;
+    .hero-character {
+      width: 76px;
+      height: 76px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 10px;
+      border-radius: 30px;
+      background: white;
+      box-shadow: var(--shadow);
+      font-size: 40px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      color: var(--pink);
+      font-size: 29px;
+    }
+
+    .hero p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .page {
+      display: none;
+      padding: 0 15px;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .card {
+      margin-bottom: 15px;
+      padding: 17px;
+      border: 1px solid rgba(255, 131, 183, 0.14);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      margin-bottom: 6px;
+      color: var(--pink);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .card-subtitle {
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 11px;
+    }
+
+    .summary-card {
+      min-height: 104px;
+      padding: 15px;
+      border-radius: 21px;
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .summary-card span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .morning-bg {
+      background: var(--yellow-soft);
+    }
+
+    .noon-bg {
+      background: var(--green-soft);
+    }
+
+    .afternoon-bg {
+      background: var(--blue-soft);
+    }
+
+    .evening-bg {
+      background: var(--purple-soft);
+    }
+
+    .date-card {
       padding: 14px;
       background: white;
-      border: 1px solid #ffe4f1;
-      border-radius: 20px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      margin-bottom: 15px;
     }
 
     .date-label {
-      margin-bottom: 8px;
-      color: #ff69b4;
-      font-weight: bold;
+      margin-bottom: 9px;
       text-align: center;
+      color: var(--pink);
+      font-weight: 700;
     }
 
-    .date-controls {
+    .date-row {
       display: grid;
-      grid-template-columns: auto 1fr auto;
+      grid-template-columns: 44px 1fr 44px;
       gap: 8px;
       align-items: center;
     }
 
+    .date-button,
+    .small-button {
+      border: none;
+      border-radius: 13px;
+      background: var(--pink-soft);
+      color: var(--text);
+      font-weight: 700;
+    }
+
     .date-button {
-      border: none;
-      background: #ffd6e8;
-      padding: 11px 14px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
+      height: 44px;
     }
 
-    .tabs {
-      display: flex;
-      justify-content: space-around;
-      gap: 6px;
-      padding: 12px;
-      background: white;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
-    }
-
-    .tab {
-      border: none;
-      background: #ffd6e8;
-      padding: 10px 12px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 13px;
-    }
-
-    .tab.active {
-      background: #ffc2dd;
-      transform: scale(1.04);
-    }
-
-    .section {
-      width: 100%;
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 15px;
-    }
-
-    .card {
-      padding: 16px;
-      margin-bottom: 16px;
-      background: white;
-      border: 1px solid #ffe4f1;
-      border-radius: 24px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .title {
-      margin-bottom: 12px;
-      color: #ff69b4;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    input {
+    input,
+    select {
       width: 100%;
       padding: 12px;
-      margin-bottom: 10px;
-      border: 1px solid #eee;
+      border: 1px solid #eee5eb;
       border-radius: 14px;
       outline: none;
-      font-size: 16px;
+      background: white;
+      color: var(--text);
     }
 
-    input:focus {
-      border-color: #ffb6d5;
+    input:focus,
+    select:focus {
+      border-color: #ffb3d1;
+      box-shadow: 0 0 0 3px rgba(255, 131, 183, 0.1);
     }
 
     input[type="date"] {
-      margin: 0;
       text-align: center;
     }
 
-    button.add {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 14px;
-      background: linear-gradient(
-        135deg,
-        #ffd6e8,
-        #ffe4f1
-      );
-      color: #555;
-      cursor: pointer;
-      font-weight: bold;
+    .period-card {
+      overflow: hidden;
     }
 
-    .item {
-      padding: 12px;
-      margin-top: 8px;
-      background: #fff7fb;
-      border-left: 4px solid #ffb6d5;
+    .period-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .period-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .period-count {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--pink-light);
+      color: var(--pink);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .add-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    .add-button {
+      min-width: 72px;
+      padding: 0 14px;
+      border: none;
       border-radius: 14px;
+      background: linear-gradient(135deg, #ffb3d1, #ffddeb);
+      color: #6b4d5d;
+      font-weight: 700;
+    }
+
+    .activity-list {
+      margin-top: 12px;
+    }
+
+    .activity-item {
+      margin-top: 9px;
+      padding: 12px;
+      border: 1px solid #f3e5ec;
+      border-radius: 16px;
+      background: #fffafd;
+    }
+
+    .activity-item.completed {
+      opacity: 0.66;
+    }
+
+    .activity-item.completed .activity-text {
+      text-decoration: line-through;
+    }
+
+    .activity-top {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .activity-text {
+      flex: 1;
       overflow-wrap: anywhere;
+      line-height: 1.4;
+    }
+
+    .activity-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .action-button {
+      padding: 7px 10px;
+      border: none;
+      border-radius: 11px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .complete-button {
+      background: var(--green-soft);
+    }
+
+    .edit-button {
+      background: var(--blue-soft);
+    }
+
+    .delete-button {
+      background: #ffe5e8;
     }
 
     .empty-message {
-      padding: 10px 4px;
-      color: #aaa;
-      font-size: 14px;
+      padding: 14px 3px 4px;
+      color: var(--muted);
+      font-size: 13px;
     }
 
-    .placeholder-card {
-      padding: 30px 16px;
+    .history-group {
+      margin-bottom: 14px;
+    }
+
+    .history-date {
+      margin-bottom: 8px;
+      color: var(--pink);
+      font-weight: 700;
+    }
+
+    .history-entry {
+      margin-bottom: 7px;
+      padding: 11px;
+      border-radius: 14px;
+      background: #fff8fb;
+      border-left: 4px solid #ffc0d9;
+    }
+
+    .history-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .placeholder {
+      padding: 35px 20px;
       text-align: center;
     }
 
-    @media (max-width: 430px) {
-      header {
-        font-size: 24px;
+    .placeholder-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      z-index: 100;
+      width: calc(100% - 24px);
+      max-width: 736px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 5px;
+      padding: 9px;
+      transform: translateX(-50%);
+      border: 1px solid rgba(255, 131, 183, 0.15);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 12px 35px rgba(92, 66, 80, 0.18);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-button {
+      min-width: 0;
+      padding: 8px 3px;
+      border: none;
+      border-radius: 15px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .nav-button span {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 20px;
+    }
+
+    .nav-button.active {
+      background: var(--pink-soft);
+      color: var(--pink);
+      font-weight: 700;
+    }
+
+    @media (max-width: 470px) {
+      .hero h1 {
+        font-size: 25px;
       }
 
-      .tab {
-        padding: 9px 8px;
-        font-size: 12px;
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
       }
 
-      .date-button {
-        padding: 11px;
+      .bottom-nav {
+        bottom: 7px;
+        width: calc(100% - 12px);
+        padding: 7px;
+        border-radius: 20px;
+      }
+
+      .nav-button {
+        font-size: 9px;
+      }
+
+      .nav-button span {
+        font-size: 18px;
       }
     }
   </style>
@@ -194,217 +422,418 @@
 
 <body>
 
-  <header>🌸 Date Planner for Us</header>
+  <div class="app-shell">
 
-  <div class="date-area">
-    <div class="date-label">Our plan for</div>
+    <header class="hero">
+      <div class="hero-character">🐻</div>
+      <h1>Date Planner for Us</h1>
+      <p>Our cozy little place for plans and memories 💕</p>
+    </header>
 
-    <div class="date-controls">
-      <button
-        class="date-button"
-        onclick="changeDate(-1)"
-      >
-        ←
-      </button>
+    <!-- HOME -->
+    <main id="homePage" class="page active">
+      <div class="card">
+        <div class="card-title">🏠 Today together</div>
+        <div id="homeDateText" class="card-subtitle"></div>
 
-      <input
-        id="selectedDate"
-        type="date"
-        onchange="loadPlanner()"
-      >
+        <div class="summary-grid">
+          <div class="summary-card morning-bg">
+            <strong>🌅 Morning</strong>
+            <span id="homeMorning">Nothing planned</span>
+          </div>
 
-      <button
-        class="date-button"
-        onclick="changeDate(1)"
-      >
-        →
-      </button>
-    </div>
+          <div class="summary-card noon-bg">
+            <strong>☀️ Noon</strong>
+            <span id="homeNoon">Nothing planned</span>
+          </div>
+
+          <div class="summary-card afternoon-bg">
+            <strong>🌤️ Afternoon</strong>
+            <span id="homeAfternoon">Nothing planned</span>
+          </div>
+
+          <div class="summary-card evening-bg">
+            <strong>🌙 Evening</strong>
+            <span id="homeEvening">Nothing planned</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💕 Little reminder</div>
+        <div class="card-subtitle">
+          The best date does not need to be expensive. It only needs both of you.
+        </div>
+
+        <button
+          class="add-button"
+          style="width:100%; height:45px;"
+          onclick="openPage('planningPage', 'planningNav')"
+        >
+          Plan a date
+        </button>
+      </div>
+    </main>
+
+    <!-- PLANNING -->
+    <main id="planningPage" class="page">
+      <div class="date-card">
+        <div class="date-label">📅 Planning for</div>
+
+        <div class="date-row">
+          <button class="date-button" onclick="changeDate(-1)">
+            ←
+          </button>
+
+          <input
+            id="selectedDate"
+            type="date"
+            onchange="loadPlanner()"
+          >
+
+          <button class="date-button" onclick="changeDate(1)">
+            →
+          </button>
+        </div>
+      </div>
+
+      <div class="card period-card">
+        <div class="period-heading">
+          <div class="period-title">🌅 Morning</div>
+          <div id="morningCount" class="period-count">0</div>
+        </div>
+
+        <div class="add-row">
+          <input
+            id="morningInput"
+            placeholder="Add a morning activity..."
+          >
+
+          <button
+            class="add-button"
+            onclick="addActivity('Morning', 'morningInput')"
+          >
+            Add
+          </button>
+        </div>
+
+        <div id="morningList" class="activity-list"></div>
+      </div>
+
+      <div class="card period-card">
+        <div class="period-heading">
+          <div class="period-title">☀️ Noon</div>
+          <div id="noonCount" class="period-count">0</div>
+        </div>
+
+        <div class="add-row">
+          <input
+            id="noonInput"
+            placeholder="Add a noon activity..."
+          >
+
+          <button
+            class="add-button"
+            onclick="addActivity('Noon', 'noonInput')"
+          >
+            Add
+          </button>
+        </div>
+
+        <div id="noonList" class="activity-list"></div>
+      </div>
+
+      <div class="card period-card">
+        <div class="period-heading">
+          <div class="period-title">🌤️ Afternoon</div>
+          <div id="afternoonCount" class="period-count">0</div>
+        </div>
+
+        <div class="add-row">
+          <input
+            id="afternoonInput"
+            placeholder="Add an afternoon activity..."
+          >
+
+          <button
+            class="add-button"
+            onclick="addActivity('Afternoon', 'afternoonInput')"
+          >
+            Add
+          </button>
+        </div>
+
+        <div id="afternoonList" class="activity-list"></div>
+      </div>
+
+      <div class="card period-card">
+        <div class="period-heading">
+          <div class="period-title">🌙 Evening</div>
+          <div id="eveningCount" class="period-count">0</div>
+        </div>
+
+        <div class="add-row">
+          <input
+            id="eveningInput"
+            placeholder="Add an evening activity..."
+          >
+
+          <button
+            class="add-button"
+            onclick="addActivity('Evening', 'eveningInput')"
+          >
+            Add
+          </button>
+        </div>
+
+        <div id="eveningList" class="activity-list"></div>
+      </div>
+    </main>
+
+    <!-- HISTORY -->
+    <main id="historyPage" class="page">
+      <div class="card">
+        <div class="card-title">🕰️ Activity history</div>
+        <div class="card-subtitle">
+          Your past, current and future plans appear here.
+        </div>
+
+        <div id="historyList"></div>
+      </div>
+    </main>
+
+    <!-- FOOD -->
+    <main id="foodPage" class="page">
+      <div class="card placeholder">
+        <div class="placeholder-icon">🍜</div>
+        <div class="card-title">Food & Places</div>
+        <div class="card-subtitle">
+          Restaurants, home cooking, ratings and wishlists will go here.
+        </div>
+      </div>
+    </main>
+
+    <!-- GAMES -->
+    <main id="gamesPage" class="page">
+      <div class="card placeholder">
+        <div class="placeholder-icon">🎮</div>
+        <div class="card-title">Games</div>
+        <div class="card-subtitle">
+          Your couple game library will go here.
+        </div>
+      </div>
+    </main>
+
+    <!-- NOTES -->
+    <main id="notesPage" class="page">
+      <div class="card placeholder">
+        <div class="placeholder-icon">📝</div>
+        <div class="card-title">Notes & Memories</div>
+        <div class="card-subtitle">
+          Couple notes, memories, shopping lists and ideas will go here.
+        </div>
+      </div>
+    </main>
+
   </div>
 
-  <nav class="tabs">
+  <nav class="bottom-nav">
     <button
-      class="tab active"
-      onclick="showTab('planner', this)"
+      id="homeNav"
+      class="nav-button active"
+      onclick="openPage('homePage', 'homeNav')"
     >
-      🏠 Planner
+      <span>🏠</span>
+      Home
     </button>
 
     <button
-      class="tab"
-      onclick="showTab('food', this)"
+      id="planningNav"
+      class="nav-button"
+      onclick="openPage('planningPage', 'planningNav')"
     >
-      🍜 Food
+      <span>📅</span>
+      Planning
     </button>
 
     <button
-      class="tab"
-      onclick="showTab('games', this)"
+      id="historyNav"
+      class="nav-button"
+      onclick="openPage('historyPage', 'historyNav')"
     >
-      🎮 Games
+      <span>🕰️</span>
+      History
     </button>
 
     <button
-      class="tab"
-      onclick="showTab('notes', this)"
+      id="foodNav"
+      class="nav-button"
+      onclick="openPage('foodPage', 'foodNav')"
     >
-      📝 Notes
+      <span>🍜</span>
+      Food
+    </button>
+
+    <button
+      id="gamesNav"
+      class="nav-button"
+      onclick="openPage('gamesPage', 'gamesNav')"
+    >
+      <span>🎮</span>
+      Games
+    </button>
+
+    <button
+      id="notesNav"
+      class="nav-button"
+      onclick="openPage('notesPage', 'notesNav')"
+    >
+      <span>📝</span>
+      Notes
     </button>
   </nav>
 
-  <main class="section">
-
-    <section id="planner" class="tabPage">
-
-      <div class="card">
-        <div class="title">🌅 Morning</div>
-
-        <input
-          id="morningInput"
-          placeholder="Add a morning activity..."
-        >
-
-        <button
-          class="add"
-          onclick="addActivity('Morning', 'morningInput')"
-        >
-          Add Morning Activity
-        </button>
-
-        <div id="morningList"></div>
-      </div>
-
-      <div class="card">
-        <div class="title">☀️ Noon</div>
-
-        <input
-          id="noonInput"
-          placeholder="Add a noon activity..."
-        >
-
-        <button
-          class="add"
-          onclick="addActivity('Noon', 'noonInput')"
-        >
-          Add Noon Activity
-        </button>
-
-        <div id="noonList"></div>
-      </div>
-
-      <div class="card">
-        <div class="title">🌤️ Afternoon</div>
-
-        <input
-          id="afternoonInput"
-          placeholder="Add an afternoon activity..."
-        >
-
-        <button
-          class="add"
-          onclick="addActivity('Afternoon', 'afternoonInput')"
-        >
-          Add Afternoon Activity
-        </button>
-
-        <div id="afternoonList"></div>
-      </div>
-
-      <div class="card">
-        <div class="title">🌙 Evening</div>
-
-        <input
-          id="eveningInput"
-          placeholder="Add an evening activity..."
-        >
-
-        <button
-          class="add"
-          onclick="addActivity('Evening', 'eveningInput')"
-        >
-          Add Evening Activity
-        </button>
-
-        <div id="eveningList"></div>
-      </div>
-
-    </section>
-
-    <section
-      id="food"
-      class="tabPage"
-      style="display: none;"
-    >
-      <div class="card placeholder-card">
-        <div class="title">🍜 Food & Places</div>
-        We will build this section next.
-      </div>
-    </section>
-
-    <section
-      id="games"
-      class="tabPage"
-      style="display: none;"
-    >
-      <div class="card placeholder-card">
-        <div class="title">🎮 Games</div>
-        We will build this section later.
-      </div>
-    </section>
-
-    <section
-      id="notes"
-      class="tabPage"
-      style="display: none;"
-    >
-      <div class="card placeholder-card">
-        <div class="title">📝 Notes</div>
-        We will build this section later.
-      </div>
-    </section>
-
-  </main>
-
   <script>
     const periods = {
-      Morning: "morningList",
-      Noon: "noonList",
-      Afternoon: "afternoonList",
-      Evening: "eveningList"
+      Morning: {
+        listId: "morningList",
+        countId: "morningCount"
+      },
+      Noon: {
+        listId: "noonList",
+        countId: "noonCount"
+      },
+      Afternoon: {
+        listId: "afternoonList",
+        countId: "afternoonCount"
+      },
+      Evening: {
+        listId: "eveningList",
+        countId: "eveningCount"
+      }
     };
 
     function getToday() {
-      const today = new Date();
-      const offset = today.getTimezoneOffset();
-      const localDate = new Date(
-        today.getTime() - offset * 60 * 1000
-      );
+      const now = new Date();
+      const offset = now.getTimezoneOffset();
 
-      return localDate.toISOString().split("T")[0];
+      return new Date(
+        now.getTime() - offset * 60000
+      ).toISOString().split("T")[0];
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString + "T12:00:00");
+
+      return date.toLocaleDateString(undefined, {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
     }
 
     function escapeHTML(value) {
       const div = document.createElement("div");
-      div.textContent = value;
+      div.textContent = value ?? "";
       return div.innerHTML;
     }
 
-    function changeDate(numberOfDays) {
-      const dateInput =
-        document.getElementById("selectedDate");
+    function openPage(pageId, navId) {
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
 
-      const currentDate = new Date(
-        dateInput.value + "T12:00:00"
-      );
+      document.querySelectorAll(".nav-button").forEach(button => {
+        button.classList.remove("active");
+      });
 
-      currentDate.setDate(
-        currentDate.getDate() + numberOfDays
-      );
+      document.getElementById(pageId).classList.add("active");
+      document.getElementById(navId).classList.add("active");
 
-      dateInput.value =
-        currentDate.toISOString().split("T")[0];
+      if (pageId === "homePage") {
+        loadHome();
+      }
 
+      if (pageId === "planningPage") {
+        loadPlanner();
+      }
+
+      if (pageId === "historyPage") {
+        loadHistory();
+      }
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function changeDate(days) {
+      const input = document.getElementById("selectedDate");
+      const current = new Date(input.value + "T12:00:00");
+
+      current.setDate(current.getDate() + days);
+
+      input.value = current.toISOString().split("T")[0];
       loadPlanner();
+    }
+
+    async function fetchPlanner(date = "") {
+      const url = date
+        ? `/api/planner?date=${encodeURIComponent(date)}`
+        : "/api/planner";
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error("Could not load planner.");
+      }
+
+      return response.json();
+    }
+
+    function activityHTML(item) {
+      const completedClass = item.completed
+        ? "completed"
+        : "";
+
+      const completeText = item.completed
+        ? "↩ Undo"
+        : "✓ Complete";
+
+      return `
+        <div class="activity-item ${completedClass}">
+          <div class="activity-top">
+            <div class="activity-text">
+              ${escapeHTML(item.text)}
+            </div>
+          </div>
+
+          <div class="activity-actions">
+            <button
+              class="action-button complete-button"
+              onclick="toggleComplete('${item.id}', ${Boolean(item.completed)})"
+            >
+              ${completeText}
+            </button>
+
+            <button
+              class="action-button edit-button"
+              onclick="editActivity('${item.id}', '${encodeURIComponent(item.text)}')"
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              class="action-button delete-button"
+              onclick="deleteActivity('${item.id}')"
+            >
+              🗑️ Delete
+            </button>
+          </div>
+        </div>
+      `;
     }
 
     async function loadPlanner() {
@@ -412,59 +841,41 @@
         document.getElementById("selectedDate").value;
 
       try {
-        const response = await fetch(
-          `/api/planner?date=${encodeURIComponent(selectedDate)}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Could not load planner.");
-        }
-
-        const data = await response.json();
+        const data = await fetchPlanner(selectedDate);
 
         Object.entries(periods).forEach(
-          ([period, listId]) => {
-            const list = document.getElementById(listId);
-
-            const periodItems = data.filter(item => {
+          ([period, config]) => {
+            const items = data.filter(item => {
               return item.time === period;
             });
 
-            if (periodItems.length === 0) {
+            document.getElementById(config.countId).textContent =
+              items.length;
+
+            const list = document.getElementById(config.listId);
+
+            if (items.length === 0) {
               list.innerHTML = `
                 <div class="empty-message">
                   Nothing planned yet ✨
                 </div>
               `;
-              return;
+            } else {
+              list.innerHTML = items.map(activityHTML).join("");
             }
-
-            list.innerHTML = periodItems.map(item => `
-              <div class="item">
-                💕 ${escapeHTML(item.text)}
-              </div>
-            `).join("");
           }
         );
       } catch (error) {
         console.error(error);
-
-        Object.values(periods).forEach(listId => {
-          document.getElementById(listId).innerHTML = `
-            <div class="empty-message">
-              Could not load this day.
-            </div>
-          `;
-        });
+        alert("The planner could not be loaded.");
       }
     }
 
     async function addActivity(time, inputId) {
       const input = document.getElementById(inputId);
-      const selectedDate =
-        document.getElementById("selectedDate").value;
-
       const text = input.value.trim();
+      const date =
+        document.getElementById("selectedDate").value;
 
       if (!text) {
         return;
@@ -479,7 +890,7 @@
           body: JSON.stringify({
             text,
             time,
-            date: selectedDate
+            date
           })
         });
 
@@ -495,24 +906,220 @@
       }
     }
 
-    function showTab(tabId, clickedButton) {
-      document.querySelectorAll(".tabPage")
-        .forEach(page => {
-          page.style.display = "none";
-        });
+    async function toggleComplete(id, currentValue) {
+      try {
+        const response = await fetch(
+          `/api/planner/${encodeURIComponent(id)}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              completed: !currentValue
+            })
+          }
+        );
 
-      document.querySelectorAll(".tab")
-        .forEach(button => {
-          button.classList.remove("active");
-        });
+        if (!response.ok) {
+          throw new Error("Could not update activity.");
+        }
 
-      document.getElementById(tabId).style.display =
-        "block";
-
-      clickedButton.classList.add("active");
+        await loadPlanner();
+        await loadHome();
+      } catch (error) {
+        console.error(error);
+        alert("The activity could not be updated.");
+      }
     }
 
-    document.querySelectorAll("input:not([type='date'])")
+    async function editActivity(id, encodedText) {
+      const oldText = decodeURIComponent(encodedText);
+
+      const newText = prompt(
+        "Edit this activity:",
+        oldText
+      );
+
+      if (newText === null) {
+        return;
+      }
+
+      const cleanedText = newText.trim();
+
+      if (!cleanedText) {
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/api/planner/${encodeURIComponent(id)}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              text: cleanedText
+            })
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Could not edit activity.");
+        }
+
+        await loadPlanner();
+        await loadHome();
+      } catch (error) {
+        console.error(error);
+        alert("The activity could not be edited.");
+      }
+    }
+
+    async function deleteActivity(id) {
+      const confirmed = confirm(
+        "Delete this activity?"
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/api/planner/${encodeURIComponent(id)}`,
+          {
+            method: "DELETE"
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Could not delete activity.");
+        }
+
+        await loadPlanner();
+        await loadHome();
+      } catch (error) {
+        console.error(error);
+        alert("The activity could not be deleted.");
+      }
+    }
+
+    async function loadHome() {
+      const today = getToday();
+
+      document.getElementById("homeDateText").textContent =
+        formatDate(today);
+
+      try {
+        const data = await fetchPlanner(today);
+
+        const homeTargets = {
+          Morning: "homeMorning",
+          Noon: "homeNoon",
+          Afternoon: "homeAfternoon",
+          Evening: "homeEvening"
+        };
+
+        Object.entries(homeTargets).forEach(
+          ([period, targetId]) => {
+            const items = data.filter(item => {
+              return item.time === period;
+            });
+
+            const target = document.getElementById(targetId);
+
+            if (items.length === 0) {
+              target.textContent = "Nothing planned";
+            } else {
+              target.innerHTML = items
+                .slice(0, 3)
+                .map(item => {
+                  const mark = item.completed ? "✓ " : "";
+                  return `${mark}${escapeHTML(item.text)}`;
+                })
+                .join("<br>");
+            }
+          }
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function loadHistory() {
+      const container = document.getElementById("historyList");
+
+      container.innerHTML = `
+        <div class="empty-message">
+          Loading history...
+        </div>
+      `;
+
+      try {
+        const data = await fetchPlanner();
+
+        if (data.length === 0) {
+          container.innerHTML = `
+            <div class="empty-message">
+              No activities yet.
+            </div>
+          `;
+          return;
+        }
+
+        const sorted = [...data].sort((a, b) => {
+          return b.date.localeCompare(a.date);
+        });
+
+        const groups = {};
+
+        sorted.forEach(item => {
+          const date = item.date || "No date";
+
+          if (!groups[date]) {
+            groups[date] = [];
+          }
+
+          groups[date].push(item);
+        });
+
+        container.innerHTML = Object.entries(groups)
+          .map(([date, items]) => `
+            <div class="history-group">
+              <div class="history-date">
+                ${date === "No date" ? date : formatDate(date)}
+              </div>
+
+              ${items.map(item => `
+                <div class="history-entry">
+                  ${item.completed ? "✓" : "💕"}
+                  ${escapeHTML(item.text)}
+
+                  <div class="history-meta">
+                    ${escapeHTML(item.time || "Unsorted")}
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          `)
+          .join("");
+      } catch (error) {
+        console.error(error);
+
+        container.innerHTML = `
+          <div class="empty-message">
+            History could not be loaded.
+          </div>
+        `;
+      }
+    }
+
+    document
+      .querySelectorAll(
+        "#planningPage input:not([type='date'])"
+      )
       .forEach(input => {
         input.addEventListener("keydown", event => {
           if (event.key === "Enter") {
@@ -524,7 +1131,7 @@
     document.getElementById("selectedDate").value =
       getToday();
 
-    loadPlanner();
+    loadHome();
   </script>
 
 </body>
