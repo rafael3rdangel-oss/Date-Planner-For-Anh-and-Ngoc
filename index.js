@@ -18,7 +18,16 @@ function loadDB() {
     );
   }
 
-  return JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
+  try {
+    const content = fs.readFileSync(DB_FILE, "utf8");
+
+    return content
+      ? JSON.parse(content)
+      : { planner: [] };
+  } catch (error) {
+    console.error("Could not read database:", error);
+    return { planner: [] };
+  }
 }
 
 function saveDB(data) {
@@ -28,23 +37,27 @@ function saveDB(data) {
   );
 }
 
-/* Get activities for one date */
+/* Get activities */
 app.get("/api/planner", (req, res) => {
   const db = loadDB();
   const selectedDate = req.query.date;
 
-  if (!selectedDate) {
-    return res.json(db.planner);
+  let activities = db.planner;
+
+  if (selectedDate) {
+    activities = activities.filter(item => {
+      return item.date === selectedDate;
+    });
   }
 
-  const activities = db.planner.filter(item => {
-    return item.date === selectedDate;
+  activities.sort((a, b) => {
+    return new Date(a.date) - new Date(b.date);
   });
 
   res.json(activities);
 });
 
-/* Add an activity */
+/* Add activity */
 app.post("/api/planner", (req, res) => {
   const { text, time, date } = req.body;
 
@@ -57,17 +70,77 @@ app.post("/api/planner", (req, res) => {
   const db = loadDB();
 
   const newActivity = {
-    id: Date.now(),
-    text,
+    id: Date.now().toString(),
+    text: text.trim(),
     time,
     date,
+    completed: false,
     created: new Date().toISOString()
   };
 
   db.planner.push(newActivity);
   saveDB(db);
 
-  res.json(newActivity);
+  res.status(201).json(newActivity);
+});
+
+/* Edit activity */
+app.patch("/api/planner/:id", (req, res) => {
+  const db = loadDB();
+
+  const activity = db.planner.find(item => {
+    return item.id === req.params.id;
+  });
+
+  if (!activity) {
+    return res.status(404).json({
+      error: "Activity not found."
+    });
+  }
+
+  if (typeof req.body.text === "string") {
+    activity.text = req.body.text.trim();
+  }
+
+  if (typeof req.body.time === "string") {
+    activity.time = req.body.time;
+  }
+
+  if (typeof req.body.date === "string") {
+    activity.date = req.body.date;
+  }
+
+  if (typeof req.body.completed === "boolean") {
+    activity.completed = req.body.completed;
+  }
+
+  activity.updated = new Date().toISOString();
+
+  saveDB(db);
+  res.json(activity);
+});
+
+/* Delete activity */
+app.delete("/api/planner/:id", (req, res) => {
+  const db = loadDB();
+
+  const oldLength = db.planner.length;
+
+  db.planner = db.planner.filter(item => {
+    return item.id !== req.params.id;
+  });
+
+  if (db.planner.length === oldLength) {
+    return res.status(404).json({
+      error: "Activity not found."
+    });
+  }
+
+  saveDB(db);
+
+  res.json({
+    success: true
+  });
 });
 
 app.listen(PORT, "0.0.0.0", () => {
