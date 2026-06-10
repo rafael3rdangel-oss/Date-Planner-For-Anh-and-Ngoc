@@ -17,6 +17,7 @@
 
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: Arial, sans-serif;
       background: linear-gradient(
         135deg,
@@ -25,15 +26,48 @@
         #e8f3ff
       );
       color: #555;
-      min-height: 100vh;
     }
 
     header {
+      padding: 22px 15px 12px;
       text-align: center;
-      padding: 22px 15px;
+      color: #ff69b4;
       font-size: 28px;
       font-weight: bold;
+    }
+
+    .date-area {
+      width: calc(100% - 30px);
+      max-width: 670px;
+      margin: 0 auto 15px;
+      padding: 14px;
+      background: white;
+      border: 1px solid #ffe4f1;
+      border-radius: 20px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .date-label {
+      margin-bottom: 8px;
       color: #ff69b4;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .date-controls {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .date-button {
+      border: none;
+      background: #ffd6e8;
+      padding: 11px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     .tabs {
@@ -57,13 +91,11 @@
       border-radius: 999px;
       cursor: pointer;
       font-size: 13px;
-      transition: 0.2s;
     }
 
-    .tab:hover,
     .tab.active {
-      transform: scale(1.04);
       background: #ffc2dd;
+      transform: scale(1.04);
     }
 
     .section {
@@ -74,33 +106,27 @@
     }
 
     .card {
-      background: white;
-      border-radius: 24px;
       padding: 16px;
       margin-bottom: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      background: white;
       border: 1px solid #ffe4f1;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     }
 
     .title {
-      font-weight: bold;
-      font-size: 18px;
       margin-bottom: 12px;
       color: #ff69b4;
-    }
-
-    .empty-message {
-      padding: 10px 4px;
-      color: #aaa;
-      font-size: 14px;
+      font-size: 18px;
+      font-weight: bold;
     }
 
     input {
       width: 100%;
       padding: 12px;
-      border-radius: 14px;
-      border: 1px solid #eee;
       margin-bottom: 10px;
+      border: 1px solid #eee;
+      border-radius: 14px;
       outline: none;
       font-size: 16px;
     }
@@ -109,37 +135,44 @@
       border-color: #ffb6d5;
     }
 
+    input[type="date"] {
+      margin: 0;
+      text-align: center;
+    }
+
     button.add {
       width: 100%;
+      padding: 12px;
       border: none;
+      border-radius: 14px;
       background: linear-gradient(
         135deg,
         #ffd6e8,
         #ffe4f1
       );
-      padding: 12px;
-      border-radius: 14px;
+      color: #555;
       cursor: pointer;
       font-weight: bold;
-      color: #555;
-    }
-
-    button.add:active {
-      transform: scale(0.98);
     }
 
     .item {
-      background: #fff7fb;
-      border-radius: 14px;
       padding: 12px;
       margin-top: 8px;
+      background: #fff7fb;
       border-left: 4px solid #ffb6d5;
+      border-radius: 14px;
       overflow-wrap: anywhere;
     }
 
+    .empty-message {
+      padding: 10px 4px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
     .placeholder-card {
-      text-align: center;
       padding: 30px 16px;
+      text-align: center;
     }
 
     @media (max-width: 430px) {
@@ -151,19 +184,46 @@
         padding: 9px 8px;
         font-size: 12px;
       }
+
+      .date-button {
+        padding: 11px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <header>
-    🌸 Date Planner for Us
-  </header>
+  <header>🌸 Date Planner for Us</header>
+
+  <div class="date-area">
+    <div class="date-label">Our plan for</div>
+
+    <div class="date-controls">
+      <button
+        class="date-button"
+        onclick="changeDate(-1)"
+      >
+        ←
+      </button>
+
+      <input
+        id="selectedDate"
+        type="date"
+        onchange="loadPlanner()"
+      >
+
+      <button
+        class="date-button"
+        onclick="changeDate(1)"
+      >
+        →
+      </button>
+    </div>
+  </div>
 
   <nav class="tabs">
     <button
-      id="plannerButton"
       class="tab active"
       onclick="showTab('planner', this)"
     >
@@ -194,7 +254,6 @@
 
   <main class="section">
 
-    <!-- PLANNER TAB -->
     <section id="planner" class="tabPage">
 
       <div class="card">
@@ -271,7 +330,6 @@
 
     </section>
 
-    <!-- FOOD TAB -->
     <section
       id="food"
       class="tabPage"
@@ -283,7 +341,6 @@
       </div>
     </section>
 
-    <!-- GAMES TAB -->
     <section
       id="games"
       class="tabPage"
@@ -291,11 +348,10 @@
     >
       <div class="card placeholder-card">
         <div class="title">🎮 Games</div>
-        We will build this section after Food.
+        We will build this section later.
       </div>
     </section>
 
-    <!-- NOTES TAB -->
     <section
       id="notes"
       class="tabPage"
@@ -303,7 +359,7 @@
     >
       <div class="card placeholder-card">
         <div class="title">📝 Notes</div>
-        We will build this section after Games.
+        We will build this section later.
       </div>
     </section>
 
@@ -317,15 +373,48 @@
       Evening: "eveningList"
     };
 
+    function getToday() {
+      const today = new Date();
+      const offset = today.getTimezoneOffset();
+      const localDate = new Date(
+        today.getTime() - offset * 60 * 1000
+      );
+
+      return localDate.toISOString().split("T")[0];
+    }
+
     function escapeHTML(value) {
       const div = document.createElement("div");
       div.textContent = value;
       return div.innerHTML;
     }
 
+    function changeDate(numberOfDays) {
+      const dateInput =
+        document.getElementById("selectedDate");
+
+      const currentDate = new Date(
+        dateInput.value + "T12:00:00"
+      );
+
+      currentDate.setDate(
+        currentDate.getDate() + numberOfDays
+      );
+
+      dateInput.value =
+        currentDate.toISOString().split("T")[0];
+
+      loadPlanner();
+    }
+
     async function loadPlanner() {
+      const selectedDate =
+        document.getElementById("selectedDate").value;
+
       try {
-        const response = await fetch("/api/planner");
+        const response = await fetch(
+          `/api/planner?date=${encodeURIComponent(selectedDate)}`
+        );
 
         if (!response.ok) {
           throw new Error("Could not load planner.");
@@ -333,45 +422,48 @@
 
         const data = await response.json();
 
-        Object.values(periods).forEach(listId => {
-          document.getElementById(listId).innerHTML = "";
-        });
+        Object.entries(periods).forEach(
+          ([period, listId]) => {
+            const list = document.getElementById(listId);
 
-        Object.entries(periods).forEach(([period, listId]) => {
-          const periodItems = data.filter(item => {
-            return item.time === period;
-          });
+            const periodItems = data.filter(item => {
+              return item.time === period;
+            });
 
-          const list = document.getElementById(listId);
+            if (periodItems.length === 0) {
+              list.innerHTML = `
+                <div class="empty-message">
+                  Nothing planned yet ✨
+                </div>
+              `;
+              return;
+            }
 
-          if (periodItems.length === 0) {
-            list.innerHTML = `
-              <div class="empty-message">
-                Nothing planned yet ✨
+            list.innerHTML = periodItems.map(item => `
+              <div class="item">
+                💕 ${escapeHTML(item.text)}
               </div>
-            `;
-            return;
+            `).join("");
           }
-
-          list.innerHTML = periodItems.map(item => `
-            <div class="item">
-              💕 ${escapeHTML(item.text)}
-            </div>
-          `).join("");
-        });
+        );
       } catch (error) {
         console.error(error);
 
-        document.getElementById("morningList").innerHTML = `
-          <div class="empty-message">
-            Could not load the planner.
-          </div>
-        `;
+        Object.values(periods).forEach(listId => {
+          document.getElementById(listId).innerHTML = `
+            <div class="empty-message">
+              Could not load this day.
+            </div>
+          `;
+        });
       }
     }
 
     async function addActivity(time, inputId) {
       const input = document.getElementById(inputId);
+      const selectedDate =
+        document.getElementById("selectedDate").value;
+
       const text = input.value.trim();
 
       if (!text) {
@@ -385,8 +477,9 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            text: text,
-            time: time
+            text,
+            time,
+            date: selectedDate
           })
         });
 
@@ -403,31 +496,33 @@
     }
 
     function showTab(tabId, clickedButton) {
-      document.querySelectorAll(".tabPage").forEach(page => {
-        page.style.display = "none";
-      });
+      document.querySelectorAll(".tabPage")
+        .forEach(page => {
+          page.style.display = "none";
+        });
 
-      document.querySelectorAll(".tab").forEach(button => {
-        button.classList.remove("active");
-      });
+      document.querySelectorAll(".tab")
+        .forEach(button => {
+          button.classList.remove("active");
+        });
 
-      document.getElementById(tabId).style.display = "block";
+      document.getElementById(tabId).style.display =
+        "block";
+
       clickedButton.classList.add("active");
     }
 
-    document.querySelectorAll("input").forEach(input => {
-      input.addEventListener("keydown", event => {
-        if (event.key !== "Enter") {
-          return;
-        }
-
-        const button = input.nextElementSibling;
-
-        if (button) {
-          button.click();
-        }
+    document.querySelectorAll("input:not([type='date'])")
+      .forEach(input => {
+        input.addEventListener("keydown", event => {
+          if (event.key === "Enter") {
+            input.nextElementSibling.click();
+          }
+        });
       });
-    });
+
+    document.getElementById("selectedDate").value =
+      getToday();
 
     loadPlanner();
   </script>
