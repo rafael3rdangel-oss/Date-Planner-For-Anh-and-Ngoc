@@ -12,32 +12,28 @@ app.use(express.static("public"));
 
 function loadDB() {
   if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(
-      DB_FILE,
-      JSON.stringify({ planner: [] }, null, 2)
-    );
+    fs.writeFileSync(DB_FILE, JSON.stringify({ planner: [] }, null, 2));
   }
 
   try {
-    const content = fs.readFileSync(DB_FILE, "utf8");
+    const raw = fs.readFileSync(DB_FILE, "utf8");
+    const parsed = raw ? JSON.parse(raw) : { planner: [] };
 
-    return content
-      ? JSON.parse(content)
-      : { planner: [] };
+    if (!Array.isArray(parsed.planner)) {
+      parsed.planner = [];
+    }
+
+    return parsed;
   } catch (error) {
-    console.error("Could not read database:", error);
+    console.error("Could not read db.json:", error);
     return { planner: [] };
   }
 }
 
 function saveDB(data) {
-  fs.writeFileSync(
-    DB_FILE,
-    JSON.stringify(data, null, 2)
-  );
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
-/* Get activities */
 app.get("/api/planner", (req, res) => {
   const db = loadDB();
   const selectedDate = req.query.date;
@@ -45,19 +41,18 @@ app.get("/api/planner", (req, res) => {
   let activities = db.planner;
 
   if (selectedDate) {
-    activities = activities.filter(item => {
-      return item.date === selectedDate;
-    });
+    activities = activities.filter(item => item.date === selectedDate);
   }
 
   activities.sort((a, b) => {
-    return new Date(a.date) - new Date(b.date);
+    const dateCompare = String(a.date || "").localeCompare(String(b.date || ""));
+    if (dateCompare !== 0) return dateCompare;
+    return String(a.created || "").localeCompare(String(b.created || ""));
   });
 
   res.json(activities);
 });
 
-/* Add activity */
 app.post("/api/planner", (req, res) => {
   const { text, time, date } = req.body;
 
@@ -70,11 +65,12 @@ app.post("/api/planner", (req, res) => {
   const db = loadDB();
 
   const newActivity = {
-    id: Date.now().toString(),
-    text: text.trim(),
-    time,
-    date,
+    id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    text: String(text).trim(),
+    time: String(time),
+    date: String(date),
     completed: false,
+    rating: 0,
     created: new Date().toISOString()
   };
 
@@ -84,21 +80,15 @@ app.post("/api/planner", (req, res) => {
   res.status(201).json(newActivity);
 });
 
-/* Edit activity */
 app.patch("/api/planner/:id", (req, res) => {
   const db = loadDB();
-
-  const activity = db.planner.find(item => {
-    return item.id === req.params.id;
-  });
+  const activity = db.planner.find(item => String(item.id) === req.params.id);
 
   if (!activity) {
-    return res.status(404).json({
-      error: "Activity not found."
-    });
+    return res.status(404).json({ error: "Activity not found." });
   }
 
-  if (typeof req.body.text === "string") {
+  if (typeof req.body.text === "string" && req.body.text.trim()) {
     activity.text = req.body.text.trim();
   }
 
@@ -114,35 +104,38 @@ app.patch("/api/planner/:id", (req, res) => {
     activity.completed = req.body.completed;
   }
 
-  activity.updated = new Date().toISOString();
+  if (req.body.rating !== undefined) {
+    const rating = Number(req.body.rating);
 
+    if (!Number.isInteger(rating) || rating < 0 || rating > 5) {
+      return res.status(400).json({
+        error: "Rating must be a whole number from 0 to 5."
+      });
+    }
+
+    activity.rating = rating;
+  }
+
+  activity.updated = new Date().toISOString();
   saveDB(db);
+
   res.json(activity);
 });
 
-/* Delete activity */
 app.delete("/api/planner/:id", (req, res) => {
   const db = loadDB();
+  const previousLength = db.planner.length;
 
-  const oldLength = db.planner.length;
+  db.planner = db.planner.filter(item => String(item.id) !== req.params.id);
 
-  db.planner = db.planner.filter(item => {
-    return item.id !== req.params.id;
-  });
-
-  if (db.planner.length === oldLength) {
-    return res.status(404).json({
-      error: "Activity not found."
-    });
+  if (db.planner.length === previousLength) {
+    return res.status(404).json({ error: "Activity not found." });
   }
 
   saveDB(db);
-
-  res.json({
-    success: true
-  });
+  res.json({ success: true });
 });
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log("Date Planner is running on port", PORT);
+  console.log(`Date Planner is running on port ${PORT}`);
 });
