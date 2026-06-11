@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 v12</title>
+  <title>Date Planner for Us 🍓 Plan v13</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -86,6 +86,17 @@
       overflow-wrap: anywhere;
     }
     .copy-message {
+      margin: 8px 0 0;
+      color: var(--berry-dark);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .plan-details {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+    }
+    .plan-copy-message {
       margin: 8px 0 0;
       color: var(--berry-dark);
       font-size: 13px;
@@ -178,18 +189,6 @@
       font-weight: 700;
       margin-top: 4px;
     }
-    .journal-filter-tabs {
-      flex-wrap: wrap;
-    }
-    .journal-filter-tabs button {
-      min-width: 92px;
-    }
-    .journal-template-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin: 0 0 9px;
-    }
     .hidden { display: none !important; }
     @media (max-width: 470px) {
       .hero h1 { font-size: 24px; }
@@ -209,7 +208,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Journal filters v12</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Plan details v13</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -282,11 +281,41 @@
       <main id="planPage" class="page">
         <div class="card">
           <h2 class="title">📅 Planning</h2>
-          <p class="subtitle">Choose a day and add plans for Morning, Noon, Afternoon and Evening.</p>
+          <p class="subtitle">Choose a day, add a cute title, notes, budget and plans for Morning, Noon, Afternoon and Evening.</p>
           <div class="date-row">
             <button class="button" onclick="changeDate(-1)">←</button>
             <input id="selectedDate" type="date" onchange="loadPlan()">
             <button class="button" onclick="changeDate(1)">→</button>
+          </div>
+
+          <div class="plan-details">
+            <input id="planTitle" placeholder="Date title, e.g. Cozy Sunday Date">
+            <div class="row">
+              <select id="planMood">
+                <option value="">Mood / type</option>
+                <option value="Cozy">Cozy</option>
+                <option value="Romantic">Romantic</option>
+                <option value="Fun">Fun</option>
+                <option value="Chill">Chill</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Home date">Home date</option>
+                <option value="Food date">Food date</option>
+              </select>
+              <select id="planBudget">
+                <option value="">Budget</option>
+                <option value="Free">Free</option>
+                <option value="€">€ cheap</option>
+                <option value="€€">€€ normal</option>
+                <option value="€€€">€€€ special date</option>
+                <option value="Home">Home / already have supplies</option>
+              </select>
+            </div>
+            <textarea id="planNotes" placeholder="Plan notes, e.g. avoid too much walking, soft food, rainy day backup..."></textarea>
+            <div class="row">
+              <button class="button" onclick="savePlanDetails()">Save plan details</button>
+              <button class="button secondary" onclick="copyCurrentPlan()">Copy full plan</button>
+            </div>
+            <p id="planCopyMessage" class="plan-copy-message"></p>
           </div>
         </div>
         <div id="periodCards"></div>
@@ -505,31 +534,12 @@
                 </select>
               </div>
 
-              <div class="journal-template-row">
-                <button class="button small ghost" type="button" onclick="fillJournalTemplate('memory')">Memory template</button>
-                <button class="button small ghost" type="button" onclick="fillJournalTemplate('shopping')">Shopping template</button>
-                <button class="button small ghost" type="button" onclick="fillJournalTemplate('idea')">Date idea template</button>
-                <button class="button small ghost" type="button" onclick="fillJournalTemplate('gift')">Gift notes</button>
-              </div>
-
               <input id="journalTitle" placeholder="Title, e.g. First date memory, Gift ideas, Things em likes">
               <textarea id="journalBody" placeholder="Write the note, memory, shopping list or idea here..."></textarea>
               <input id="journalImageUrl" placeholder="Photo URL (optional)">
 
               <button class="button" onclick="addJournalEntry()">Add to Journal</button>
             </div>
-          </div>
-
-          <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
-            <h3 class="title">Find journal entries</h3>
-            <div class="tabs-mini journal-filter-tabs">
-              <button id="journalAllTab" class="active" onclick="setJournalFilter('all')">All</button>
-              <button id="journalNoteTab" onclick="setJournalFilter('note')">Notes</button>
-              <button id="journalMemoryTab" onclick="setJournalFilter('memory')">Memories</button>
-              <button id="journalShoppingTab" onclick="setJournalFilter('shopping')">Shopping</button>
-              <button id="journalIdeaTab" onclick="setJournalFilter('idea')">Ideas</button>
-            </div>
-            <input id="journalSearch" placeholder="Search journal..." oninput="loadJournal()">
           </div>
 
           <div id="journalList" class="library-grid"></div>
@@ -557,7 +567,6 @@
     let currentPlan = null;
     let homeMode = "upcoming";
     let libraryMode = "food";
-    let journalFilter = "all";
 
     const periods = {
       Morning: { emoji: "🌅", className: "morning", color: "#fff6d8" },
@@ -773,6 +782,100 @@
       loadPlan();
     }
 
+    function clearPlanDetails() {
+      if (qs("planTitle")) qs("planTitle").value = "";
+      if (qs("planMood")) qs("planMood").value = "";
+      if (qs("planBudget")) qs("planBudget").value = "";
+      if (qs("planNotes")) qs("planNotes").value = "";
+      if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "";
+    }
+
+    function fillPlanDetails(plan) {
+      if (!qs("planTitle")) return;
+      qs("planTitle").value = plan?.title || "";
+      qs("planMood").value = plan?.mood || "";
+      qs("planBudget").value = plan?.budget || "";
+      qs("planNotes").value = plan?.notes || "";
+      if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "";
+    }
+
+    function planDetailsText(plan) {
+      const parts = [];
+      if (plan?.title) parts.push(`Title: ${plan.title}`);
+      if (plan?.mood) parts.push(`Mood: ${plan.mood}`);
+      if (plan?.budget) parts.push(`Budget: ${plan.budget}`);
+      if (plan?.notes) parts.push(`Notes: ${plan.notes}`);
+      return parts;
+    }
+
+    async function savePlanDetails() {
+      const date = qs("selectedDate").value;
+      if (!date) return;
+
+      try {
+        const plan = await getPlanForDate(date, true);
+        const changes = {
+          title: qs("planTitle").value.trim() || null,
+          mood: qs("planMood").value || null,
+          budget: qs("planBudget").value || null,
+          notes: qs("planNotes").value.trim() || null
+        };
+
+        const { error } = await supabaseClient
+          .from("date_plans")
+          .update(changes)
+          .eq("id", plan.id);
+
+        if (error) throw error;
+
+        if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "Plan details saved 💖";
+        await loadPlan();
+        await loadHome();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function copyCurrentPlan() {
+      const date = qs("selectedDate").value;
+      if (!date) return;
+
+      try {
+        const plan = await getPlanForDate(date, false);
+        if (!plan) {
+          alert("Nothing planned for this date yet.");
+          return;
+        }
+
+        const entries = await getEntriesForPlan(plan.id);
+        const lines = [];
+        lines.push(plan.title ? `💖 ${plan.title}` : `💖 Date plan`);
+        lines.push(`📅 ${formatDate(plan.plan_date)}`);
+        planDetailsText(plan).forEach(line => lines.push(line));
+        lines.push("");
+
+        Object.entries(periods).forEach(([period, info]) => {
+          const periodEntries = entries.filter(entry => entry.time_period === period);
+          if (!periodEntries.length) return;
+          lines.push(`${info.emoji} ${period}`);
+          periodEntries.forEach(entry => {
+            const linkedItem = entry.library_items || {};
+            lines.push(`- ${entry.title}${entry.completed ? " ✓" : ""}`);
+            if (linkedItem.link_url) lines.push(`  ${linkedItem.link_url}`);
+          });
+          lines.push("");
+        });
+
+        const text = lines.join("\n").trim();
+        await copyTextToClipboard(text, "Full plan copied 💌");
+        if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "Full plan copied 💌";
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
     async function getPlanForDate(date, createIfMissing = false) {
       const { data, error } = await supabaseClient
         .from("date_plans")
@@ -887,13 +990,17 @@
 
       try {
         currentPlan = await getPlanForDate(date, false);
+        fillPlanDetails(currentPlan);
 
         Object.entries(periods).forEach(([period, info]) => {
           qs(`${info.className}Count`).textContent = "0";
           qs(`${info.className}List`).innerHTML = `<div class="empty">Nothing planned yet ✨</div>`;
         });
 
-        if (!currentPlan) return;
+        if (!currentPlan) {
+          clearPlanDetails();
+          return;
+        }
 
         const entries = await getEntriesForPlan(currentPlan.id);
 
@@ -1819,46 +1926,6 @@
 
 
 
-    function setJournalFilter(type) {
-      journalFilter = type;
-      if (qs("journalAllTab")) qs("journalAllTab").classList.toggle("active", type === "all");
-      if (qs("journalNoteTab")) qs("journalNoteTab").classList.toggle("active", type === "note");
-      if (qs("journalMemoryTab")) qs("journalMemoryTab").classList.toggle("active", type === "memory");
-      if (qs("journalShoppingTab")) qs("journalShoppingTab").classList.toggle("active", type === "shopping");
-      if (qs("journalIdeaTab")) qs("journalIdeaTab").classList.toggle("active", type === "idea");
-      loadJournal();
-    }
-
-    function fillJournalTemplate(type) {
-      if (qs("journalDate")) qs("journalDate").value = getToday();
-
-      if (type === "memory") {
-        qs("journalType").value = "memory";
-        qs("journalTitle").value = "Memory: ";
-        qs("journalBody").value = "What happened:\nFavorite moment:\nHow em looked / felt:\nWhy I want to remember this:";
-      }
-
-      if (type === "shopping") {
-        qs("journalType").value = "shopping";
-        qs("journalTitle").value = "Shopping list";
-        qs("journalBody").value = "- Snacks\n- Drinks\n- Cute thing / gift\n- Activity supplies";
-      }
-
-      if (type === "idea") {
-        qs("journalType").value = "idea";
-        qs("journalTitle").value = "Date idea: ";
-        qs("journalBody").value = "Idea:\nWhere:\nBudget:\nWhy it is cute:\nBest time to do it:";
-      }
-
-      if (type === "gift") {
-        qs("journalType").value = "note";
-        qs("journalTitle").value = "Gift notes for em";
-        qs("journalBody").value = "Things em likes:\n- Popmart / Babythree / cute figures\n- Soft colors / cute themes\n\nGift ideas:\n- \n\nImportant notes:";
-      }
-
-      qs("journalTitle").focus();
-    }
-
     function journalTypeLabel(type) {
       const labels = {
         note: "📝 Note",
@@ -1928,29 +1995,7 @@
           return;
         }
 
-        const searchTerm = (qs("journalSearch")?.value || "").trim().toLowerCase();
-        let visibleEntries = entries;
-
-        if (journalFilter !== "all") {
-          visibleEntries = visibleEntries.filter(entry => entry.entry_type === journalFilter);
-        }
-
-        if (searchTerm) {
-          visibleEntries = visibleEntries.filter(entry => {
-            const text = [entry.title, entry.body, entry.entry_type, entry.entry_date]
-              .filter(Boolean)
-              .join(" ")
-              .toLowerCase();
-            return text.includes(searchTerm);
-          });
-        }
-
-        if (!visibleEntries.length) {
-          list.innerHTML = `<div class="empty">No matching journal entries. Try another filter or search ✨</div>`;
-          return;
-        }
-
-        list.innerHTML = visibleEntries.map(journalEntryHTML).join("");
+        list.innerHTML = entries.map(journalEntryHTML).join("");
       } catch (error) {
         console.error(error);
         list.innerHTML = `<div class="empty">Could not load journal.</div>`;
@@ -2098,10 +2143,14 @@
           cards.push(`
             <div class="summary-card">
               <div class="summary-head">
-                <strong>${formatDate(plan.plan_date)}</strong>
+                <div>
+                  <strong>${plan.title ? `${escapeHTML(plan.title)} · ` : ""}${formatDate(plan.plan_date)}</strong>
+                  ${(plan.mood || plan.budget) ? `<div class="entry-meta">${[plan.mood, plan.budget].filter(Boolean).map(escapeHTML).join(" · ")}</div>` : ""}
+                </div>
                 <button class="button small" onclick="openPlanDate('${plan.plan_date}')">Open</button>
               </div>
               <div class="summary-body">
+                ${plan.notes ? `<div class="library-item-notes">${escapeHTML(plan.notes)}</div>` : ""}
                 ${lines || `<div class="empty">No entries yet.</div>`}
               </div>
             </div>
