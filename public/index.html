@@ -102,6 +102,14 @@
     .nav-button { padding: 8px 4px; border: none; border-radius: 15px; background: transparent; color: var(--muted); font-size: 11px; }
     .nav-button span { display: block; margin-bottom: 3px; font-size: 20px; }
     .nav-button.active { background: var(--pink); color: var(--berry-dark); font-weight: 700; }
+
+    .form-grid { display: grid; gap: 9px; }
+    .library-toolbar { display: grid; gap: 8px; margin-bottom: 12px; }
+    .library-item-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .library-item-name { font-weight: 700; color: var(--berry-dark); overflow-wrap: anywhere; }
+    .library-item-status { white-space: nowrap; padding: 4px 8px; border-radius: 999px; background: var(--pink-2); color: var(--berry-dark); font-size: 12px; font-weight: 700; }
+    .library-item-notes { margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 1.35; overflow-wrap: anywhere; }
+
     .hidden { display: none !important; }
     @media (max-width: 470px) {
       .hero h1 { font-size: 24px; }
@@ -193,12 +201,78 @@
       <main id="libraryPage" class="page">
         <div class="card">
           <h2 class="title">♡ Library</h2>
-          <p class="subtitle">Food, games and favorite activities will live here. This is the next feature after the Supabase connection is stable.</p>
-          <div class="library-grid">
-            <div class="entry"><div class="entry-title">🍜 Food & Places</div><div class="entry-meta">Restaurants, home cooking, wishlist, visited and ratings.</div><span class="badge">Coming next</span></div>
-            <div class="entry"><div class="entry-title">🎮 Games</div><div class="entry-meta">Wishlist, played games, ratings and add-to-plan.</div><span class="badge">Coming next</span></div>
-            <div class="entry"><div class="entry-title">✨ Activities</div><div class="entry-meta">Reusable date ideas like blind taste test, Lego night, book nook.</div><span class="badge">Coming next</span></div>
+          <p class="subtitle">Save places, food ideas, games, and activities so you can reuse them later in Planning.</p>
+
+          <div class="tabs-mini">
+            <button id="foodLibraryTab" class="active" onclick="setLibraryMode('food')">🍜 Food</button>
+            <button id="gamesLibraryTab" onclick="setLibraryMode('game')">🎮 Games</button>
+            <button id="activitiesLibraryTab" onclick="setLibraryMode('activity')">✨ Activities</button>
           </div>
+
+          <section id="foodLibraryPanel">
+            <div class="library-toolbar">
+              <button class="button secondary" onclick="seedStarterFoods()">Add starter food list</button>
+              <p class="subtitle" style="margin:0;">Includes Gyu-Kaku, Phở Dinh, home-date meals, Japanese, Korean, European and Vietnamese food ideas.</p>
+            </div>
+
+            <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
+              <h3 class="title">Add food or place</h3>
+
+              <div class="form-grid">
+                <input id="foodName" placeholder="Name, e.g. Gyu-Kaku, Phở Dinh, omurice">
+
+                <div class="row">
+                  <select id="foodCategory">
+                    <option value="Restaurant">Restaurant</option>
+                    <option value="Home Cooking">Home Cooking</option>
+                    <option value="Japanese">Japanese</option>
+                    <option value="Korean">Korean</option>
+                    <option value="Vietnamese">Vietnamese</option>
+                    <option value="European">European</option>
+                    <option value="Dessert">Dessert</option>
+                    <option value="Other">Other</option>
+                  </select>
+
+                  <select id="foodStatus">
+                    <option value="wishlist">Wishlist</option>
+                    <option value="visited">Visited</option>
+                    <option value="tried">Tried</option>
+                    <option value="favorite">Favorite</option>
+                  </select>
+                </div>
+
+                <select id="foodPrice">
+                  <option value="">Price range unknown</option>
+                  <option value="€">€ cheap</option>
+                  <option value="€€">€€ normal</option>
+                  <option value="€€€">€€€ special date</option>
+                  <option value="Home">Home / groceries</option>
+                </select>
+
+                <textarea id="foodNotes" placeholder="Notes, e.g. she likes this, avoid oily food, good for rainy days..."></textarea>
+
+                <button class="button" onclick="addFoodItem()">Add to Food & Places</button>
+              </div>
+            </div>
+
+            <div id="foodList" class="library-grid"></div>
+          </section>
+
+          <section id="gameLibraryPanel" class="hidden">
+            <div class="entry">
+              <div class="entry-title">🎮 Games</div>
+              <div class="entry-meta">Next after Food: wishlist, played, ratings and Add to Plan.</div>
+              <span class="badge">Coming next</span>
+            </div>
+          </section>
+
+          <section id="activityLibraryPanel" class="hidden">
+            <div class="entry">
+              <div class="entry-title">✨ Activities</div>
+              <div class="entry-meta">Next after Games: reusable ideas like blind taste test, Lego night and book nook.</div>
+              <span class="badge">Coming soon</span>
+            </div>
+          </section>
         </div>
       </main>
 
@@ -230,6 +304,7 @@
     let currentCouple = null;
     let currentPlan = null;
     let homeMode = "upcoming";
+    let libraryMode = "food";
 
     const periods = {
       Morning: { emoji: "🌅", className: "morning", color: "#fff6d8" },
@@ -405,6 +480,7 @@
 
       if (pageId === "homePage") loadHome();
       if (pageId === "planPage") loadPlan();
+      if (pageId === "libraryPage") loadLibrary();
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -672,6 +748,325 @@
         alert(error.message);
       }
     }
+
+
+    const starterFoods = [
+      { name: "Gyu-Kaku", category: "Restaurant", status: "wishlist", price_range: "€€", notes: "Japanese BBQ place idea." },
+      { name: "Phở Dinh", category: "Vietnamese", status: "wishlist", price_range: "€", notes: "Vietnamese phở place idea." },
+      { name: "Steak + fries", category: "Home Cooking", status: "wishlist", price_range: "Home", notes: "Quick home date. Note: she may not love red meat or oily food." },
+      { name: "Heo quay + rice", category: "Home Cooking", status: "wishlist", price_range: "Home", notes: "Quick home date." },
+      { name: "Honey grilled salmon", category: "Home Cooking", status: "wishlist", price_range: "Home", notes: "Good softer dinner option." },
+      { name: "Salmon + mushroom potatoes", category: "Home Cooking", status: "wishlist", price_range: "Home", notes: "Cozy home dinner." },
+      { name: "Spaghetti", category: "Home Cooking", status: "wishlist", price_range: "Home", notes: "Easy comfort food." },
+      { name: "Gyoza", category: "Japanese", status: "wishlist", price_range: "Home", notes: "Store-bought oven-baked option." },
+      { name: "Gyudon", category: "Japanese", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Katsudon", category: "Japanese", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Omurice", category: "Japanese", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Japanese curry", category: "Japanese", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Hambagu steak", category: "Japanese", status: "wishlist", price_range: "€€", notes: "" },
+      { name: "Tonkotsu ramen", category: "Japanese", status: "wishlist", price_range: "€€", notes: "" },
+      { name: "Udon", category: "Japanese", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Karaage", category: "Japanese", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Yakitori", category: "Japanese", status: "wishlist", price_range: "€€", notes: "" },
+      { name: "Tempura", category: "Japanese", status: "wishlist", price_range: "€€", notes: "" },
+      { name: "Nabe hotpot", category: "Japanese", status: "wishlist", price_range: "€€", notes: "" },
+      { name: "Mochi", category: "Dessert", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Matcha cheesecake", category: "Dessert", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Dorayaki", category: "Dessert", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Soufflé pancakes", category: "Dessert", status: "wishlist", price_range: "€€", notes: "" },
+      { name: "Bibimbap", category: "Korean", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Kimchi jjigae", category: "Korean", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Kimchi fried rice", category: "Korean", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Bulgogi", category: "Korean", status: "wishlist", price_range: "€€", notes: "" },
+      { name: "Korean fried chicken", category: "Korean", status: "wishlist", price_range: "€€", notes: "" },
+      { name: "Tteokbokki", category: "Korean", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Kimbap", category: "Korean", status: "wishlist", price_range: "€", notes: "" },
+      { name: "Carbonara", category: "European", status: "wishlist", price_range: "€", notes: "Italian." },
+      { name: "Pizza night", category: "European", status: "wishlist", price_range: "€", notes: "Italian." },
+      { name: "Lasagna", category: "European", status: "wishlist", price_range: "€", notes: "Italian." },
+      { name: "Risotto", category: "European", status: "wishlist", price_range: "€€", notes: "Italian." },
+      { name: "Stoofvlees", category: "European", status: "wishlist", price_range: "€€", notes: "Belgian." },
+      { name: "Belgian fries", category: "European", status: "wishlist", price_range: "€", notes: "Belgian." },
+      { name: "Ốc night", category: "Vietnamese", status: "wishlist", price_range: "€", notes: "HCMC date idea." },
+      { name: "Cơm tấm", category: "Vietnamese", status: "wishlist", price_range: "€", notes: "HCMC date idea." },
+      { name: "Bún thịt nướng", category: "Vietnamese", status: "wishlist", price_range: "€", notes: "HCMC date idea." },
+      { name: "Bánh xèo", category: "Vietnamese", status: "wishlist", price_range: "€", notes: "HCMC date idea." },
+      { name: "Street food night", category: "Vietnamese", status: "wishlist", price_range: "€", notes: "HCMC date idea." }
+    ];
+
+    function setLibraryMode(mode) {
+      libraryMode = mode;
+      qs("foodLibraryTab").classList.toggle("active", mode === "food");
+      qs("gamesLibraryTab").classList.toggle("active", mode === "game");
+      qs("activitiesLibraryTab").classList.toggle("active", mode === "activity");
+      qs("foodLibraryPanel").classList.toggle("hidden", mode !== "food");
+      qs("gameLibraryPanel").classList.toggle("hidden", mode !== "game");
+      qs("activityLibraryPanel").classList.toggle("hidden", mode !== "activity");
+      loadLibrary();
+    }
+
+    async function loadLibrary() {
+      if (!currentCouple || libraryMode !== "food") return;
+      const list = qs("foodList");
+      list.innerHTML = `<div class="empty">Loading Food & Places...</div>`;
+
+      try {
+        const { data: items, error } = await supabaseClient
+          .from("library_items")
+          .select("*")
+          .eq("couple_id", currentCouple.id)
+          .eq("item_type", "food")
+          .order("name", { ascending: true });
+
+        if (error) throw error;
+
+        if (!items || !items.length) {
+          list.innerHTML = `<div class="empty">No food or places yet. Add Gyu-Kaku, Phở Dinh, or use the starter list 🍓</div>`;
+          return;
+        }
+
+        const ids = items.map(item => item.id);
+        const { data: ratings, error: ratingsError } = await supabaseClient
+          .from("ratings")
+          .select("*")
+          .in("library_item_id", ids);
+
+        if (ratingsError) throw ratingsError;
+
+        list.innerHTML = items.map(item => {
+          const itemRatings = (ratings || []).filter(rating => rating.library_item_id === item.id);
+          const mine = itemRatings.find(rating => rating.user_id === currentUser.id);
+          return foodItemHTML({ ...item, my_rating: mine ? Number(mine.score) : 0 });
+        }).join("");
+      } catch (error) {
+        console.error(error);
+        list.innerHTML = `<div class="empty">Food & Places could not be loaded.</div>`;
+      }
+    }
+
+    function foodItemHTML(item) {
+      const statusText = String(item.status || "wishlist").replace("_", " ");
+      return `
+        <div class="entry">
+          <div class="library-item-head">
+            <div>
+              <div class="library-item-name">🍓 ${escapeHTML(item.name)}</div>
+              <div class="entry-meta">
+                ${escapeHTML(item.category || "Other")}
+                ${item.price_range ? ` · ${escapeHTML(item.price_range)}` : ""}
+                ${item.times_used ? ` · used ${item.times_used}x` : ""}
+              </div>
+            </div>
+            <div class="library-item-status">${escapeHTML(statusText)}</div>
+          </div>
+          ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+          <div class="entry-meta">
+            ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
+          </div>
+          ${libraryStarButtons(item)}
+          <div class="actions">
+            <button class="button small" onclick="addLibraryFoodToPlan('${item.id}', '${encodeURIComponent(item.name)}')">Add to Plan</button>
+            <button class="button small secondary" onclick="editFoodItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}')">Edit</button>
+            <button class="button small danger" onclick="deleteFoodItem('${item.id}')">Delete</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function libraryStarButtons(item) {
+      const rating = Number(item.my_rating || 0);
+      return `
+        <div class="stars">
+          ${[1, 2, 3, 4, 5].map(score => `
+            <button class="star ${score <= rating ? "on" : ""}" onclick="setLibraryRating('${item.id}', ${score})">★</button>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    async function addFoodItem() {
+      const name = qs("foodName").value.trim();
+      if (!name) { alert("Please add a name."); return; }
+
+      try {
+        const { error } = await supabaseClient.from("library_items").insert({
+          couple_id: currentCouple.id,
+          item_type: "food",
+          name,
+          category: qs("foodCategory").value,
+          status: qs("foodStatus").value,
+          price_range: qs("foodPrice").value || null,
+          notes: qs("foodNotes").value.trim() || null,
+          created_by: currentUser.id
+        });
+
+        if (error) throw error;
+        qs("foodName").value = "";
+        qs("foodNotes").value = "";
+        await loadLibrary();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function editFoodItem(id, encodedName, encodedCategory, encodedStatus, encodedPrice, encodedNotes) {
+      const name = prompt("Food/place name:", decodeURIComponent(encodedName));
+      if (name === null || !name.trim()) return;
+      const category = prompt("Category:", decodeURIComponent(encodedCategory) || "Restaurant");
+      if (category === null) return;
+      const status = prompt("Status: wishlist, visited, tried, favorite", decodeURIComponent(encodedStatus) || "wishlist");
+      if (status === null) return;
+      const price = prompt("Price range: €, €€, €€€, Home", decodeURIComponent(encodedPrice));
+      if (price === null) return;
+      const notes = prompt("Notes:", decodeURIComponent(encodedNotes));
+      if (notes === null) return;
+
+      try {
+        const { error } = await supabaseClient.from("library_items").update({
+          name: name.trim(),
+          category: category.trim() || null,
+          status: status.trim() || "wishlist",
+          price_range: price.trim() || null,
+          notes: notes.trim() || null
+        }).eq("id", id);
+
+        if (error) throw error;
+        await loadLibrary();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function deleteFoodItem(id) {
+      if (!confirm("Delete this food/place from the library?")) return;
+
+      try {
+        const { error } = await supabaseClient.from("library_items").delete().eq("id", id);
+        if (error) throw error;
+        await loadLibrary();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function setLibraryRating(libraryItemId, score) {
+      try {
+        const { data: existing, error: findError } = await supabaseClient
+          .from("ratings")
+          .select("id")
+          .eq("library_item_id", libraryItemId)
+          .eq("user_id", currentUser.id)
+          .maybeSingle();
+
+        if (findError) throw findError;
+
+        if (existing) {
+          const { error } = await supabaseClient.from("ratings").update({ score }).eq("id", existing.id);
+          if (error) throw error;
+        } else {
+          const { error } = await supabaseClient.from("ratings").insert({
+            couple_id: currentCouple.id,
+            user_id: currentUser.id,
+            score,
+            library_item_id: libraryItemId
+          });
+          if (error) throw error;
+        }
+
+        await loadLibrary();
+        await loadHome();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function addLibraryFoodToPlan(libraryItemId, encodedName) {
+      const name = decodeURIComponent(encodedName);
+      const date = prompt("Add to which date? Use YYYY-MM-DD", qs("selectedDate")?.value || getToday());
+      if (!date) return;
+      const period = prompt("Which time? Morning, Noon, Afternoon, Evening", "Evening");
+      if (!period) return;
+
+      const cleanedPeriod = period.trim();
+      if (!periods[cleanedPeriod]) {
+        alert("Please use Morning, Noon, Afternoon, or Evening.");
+        return;
+      }
+
+      try {
+        const plan = await getPlanForDate(date.trim(), true);
+        const { error } = await supabaseClient.from("plan_entries").insert({
+          plan_id: plan.id,
+          library_item_id: libraryItemId,
+          entry_type: "food",
+          time_period: cleanedPeriod,
+          title: name,
+          created_by: currentUser.id
+        });
+
+        if (error) throw error;
+
+        await supabaseClient.from("library_items")
+          .update({ last_used_date: date.trim() })
+          .eq("id", libraryItemId);
+
+        alert(`${name} added to ${cleanedPeriod} on ${date.trim()}.`);
+        if (qs("selectedDate")) qs("selectedDate").value = date.trim();
+        await loadPlan();
+        await loadHome();
+        await loadLibrary();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function seedStarterFoods() {
+      if (!confirm("Add the starter food list? It will skip items already in your library.")) return;
+
+      try {
+        const { data: existing, error: existingError } = await supabaseClient
+          .from("library_items")
+          .select("name")
+          .eq("couple_id", currentCouple.id)
+          .eq("item_type", "food");
+
+        if (existingError) throw existingError;
+        const existingNames = new Set((existing || []).map(item => item.name.toLowerCase().trim()));
+
+        const rows = starterFoods
+          .filter(item => !existingNames.has(item.name.toLowerCase().trim()))
+          .map(item => ({
+            couple_id: currentCouple.id,
+            item_type: "food",
+            name: item.name,
+            category: item.category,
+            status: item.status,
+            price_range: item.price_range || null,
+            notes: item.notes || null,
+            created_by: currentUser.id
+          }));
+
+        if (!rows.length) {
+          alert("Starter foods are already added.");
+          return;
+        }
+
+        const { error } = await supabaseClient.from("library_items").insert(rows);
+        if (error) throw error;
+
+        alert(`Added ${rows.length} food ideas.`);
+        await loadLibrary();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
 
     async function loadHome() {
       const container = qs("homeList");
