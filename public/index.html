@@ -208,7 +208,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Plan details v13</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Plan templates v14</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -316,6 +316,24 @@
               <button class="button secondary" onclick="copyCurrentPlan()">Copy full plan</button>
             </div>
             <p id="planCopyMessage" class="plan-copy-message"></p>
+          </div>
+
+          <div class="plan-details">
+            <h3 class="title">✨ Quick templates</h3>
+            <p class="subtitle">Pick a ready-made date idea and add it to the selected day. It will add entries without deleting anything already there.</p>
+            <div class="row">
+              <select id="planTemplateSelect">
+                <option value="cozy_home">Cozy Home Date</option>
+                <option value="game_night">Game Night</option>
+                <option value="blind_taste_test">Blind Taste Test</option>
+                <option value="lego_night">LEGO Night</option>
+                <option value="book_nook">Book Nook Date</option>
+                <option value="soft_walk">Soft Walking Date</option>
+                <option value="rainy_day">Rainy Day Date</option>
+              </select>
+              <button class="button secondary" onclick="addPlanTemplateToSelectedDate()">Add template</button>
+            </div>
+            <button class="button ghost" style="width:100%;" onclick="deleteCurrentPlanIfEmpty()">Delete empty day</button>
           </div>
         </div>
         <div id="periodCards"></div>
@@ -575,6 +593,87 @@
       Evening: { emoji: "🌙", className: "evening", color: "#f1ecff" }
     };
 
+    const planTemplates = {
+      cozy_home: {
+        title: "Cozy Home Date",
+        mood: "Cozy",
+        budget: "Home",
+        notes: "Soft food, low walking, cozy home activities and a relaxed evening.",
+        entries: [
+          { period: "Morning", type: "food", title: "Coffee or tea together" },
+          { period: "Noon", type: "food", title: "Cook something simple together" },
+          { period: "Afternoon", type: "activity", title: "Cozy activity at home" },
+          { period: "Evening", type: "game", title: "Game or movie night" }
+        ]
+      },
+      game_night: {
+        title: "Game Night Date",
+        mood: "Fun",
+        budget: "Home",
+        notes: "Pick one main game, prepare snacks, and rate it after playing.",
+        entries: [
+          { period: "Noon", type: "food", title: "Buy snacks and drinks" },
+          { period: "Afternoon", type: "activity", title: "Set up cozy gaming space" },
+          { period: "Evening", type: "game", title: "Play a co-op game together" }
+        ]
+      },
+      blind_taste_test: {
+        title: "Blind Taste Test Date",
+        mood: "Fun",
+        budget: "€€",
+        notes: "Buy 5 Japanese snacks and 5 Korean snacks. Try them blindfolded and guess each one.",
+        entries: [
+          { period: "Noon", type: "activity", title: "Buy Japanese and Korean snacks" },
+          { period: "Afternoon", type: "activity", title: "Prepare blind taste test" },
+          { period: "Evening", type: "food", title: "Blind taste test and rate snacks" }
+        ]
+      },
+      lego_night: {
+        title: "Couple LEGO Night",
+        mood: "Cozy",
+        budget: "€€",
+        notes: "Build LEGO flowers, bonsai, tiny plants, Japanese garden, Batman or LOTR while watching something cozy.",
+        entries: [
+          { period: "Noon", type: "activity", title: "Pick or buy a LEGO set" },
+          { period: "Afternoon", type: "activity", title: "Build together" },
+          { period: "Evening", type: "activity", title: "Finish build with snacks or movie" }
+        ]
+      },
+      book_nook: {
+        title: "Miniature Book Nook Date",
+        mood: "Cozy",
+        budget: "€€€",
+        notes: "Build a Japanese alley, fantasy tavern, or cozy bookstore book nook. Cozy fantasy vibe.",
+        entries: [
+          { period: "Noon", type: "activity", title: "Choose the book nook theme" },
+          { period: "Afternoon", type: "activity", title: "Build miniature book nook" },
+          { period: "Evening", type: "food", title: "Tea, dessert and admire the build" }
+        ]
+      },
+      soft_walk: {
+        title: "Soft Walking Date",
+        mood: "Romantic",
+        budget: "€",
+        notes: "Keep walking short. Add rest stops, café or dessert nearby.",
+        entries: [
+          { period: "Noon", type: "place", title: "Café or light lunch" },
+          { period: "Afternoon", type: "activity", title: "Short walk and cute photos" },
+          { period: "Evening", type: "food", title: "Dessert or easy dinner" }
+        ]
+      },
+      rainy_day: {
+        title: "Rainy Day Date",
+        mood: "Chill",
+        budget: "Home",
+        notes: "Stay warm inside. Blankets, cozy food, games, movie or journal memories.",
+        entries: [
+          { period: "Morning", type: "food", title: "Warm drink and simple breakfast" },
+          { period: "Afternoon", type: "activity", title: "Cozy indoor activity" },
+          { period: "Evening", type: "game", title: "Movie, anime or game night" }
+        ]
+      }
+    };
+
     function qs(id) { return document.getElementById(id); }
     function show(id) { qs(id).classList.remove("hidden"); }
     function hide(id) { qs(id).classList.add("hidden"); }
@@ -831,6 +930,90 @@
         if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "Plan details saved 💖";
         await loadPlan();
         await loadHome();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function addPlanTemplateToSelectedDate() {
+      const key = qs("planTemplateSelect")?.value || "cozy_home";
+      const template = planTemplates[key];
+      const date = qs("selectedDate").value;
+      if (!template || !date) return;
+
+      if (!confirm(`Add “${template.title}” to ${date}? It will not delete your current entries.`)) return;
+
+      try {
+        const plan = await getPlanForDate(date, true);
+
+        const { error: updateError } = await supabaseClient
+          .from("date_plans")
+          .update({
+            title: template.title,
+            mood: template.mood,
+            budget: template.budget,
+            notes: template.notes
+          })
+          .eq("id", plan.id);
+
+        if (updateError) throw updateError;
+
+        const rows = template.entries.map((entry, index) => ({
+          plan_id: plan.id,
+          entry_type: entry.type || "custom",
+          time_period: entry.period,
+          title: entry.title,
+          sort_order: index,
+          created_by: currentUser.id
+        }));
+
+        const { error: insertError } = await supabaseClient
+          .from("plan_entries")
+          .insert(rows);
+
+        if (insertError) throw insertError;
+
+        if (qs("planCopyMessage")) qs("planCopyMessage").textContent = `${template.title} added 💖`;
+        await loadPlan();
+        await loadHome();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function deleteCurrentPlanIfEmpty() {
+      const date = qs("selectedDate").value;
+      if (!date) return;
+
+      try {
+        const plan = await getPlanForDate(date, false);
+        if (!plan) {
+          alert("This day is already empty.");
+          return;
+        }
+
+        const entries = await getEntriesForPlan(plan.id);
+        if (entries.length) {
+          alert("This day still has plan entries. Delete the entries first, then use Delete empty day.");
+          return;
+        }
+
+        if (!confirm("Delete this empty day from Home?")) return;
+
+        const { error } = await supabaseClient
+          .from("date_plans")
+          .delete()
+          .eq("id", plan.id);
+
+        if (error) throw error;
+
+        currentPlan = null;
+        clearPlanDetails();
+        await loadPlan();
+        await loadHome();
+        if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "Empty day deleted 💖";
       } catch (error) {
         console.error(error);
         alert(error.message);
@@ -2120,6 +2303,10 @@
 
         for (const plan of plans) {
           const entries = await getEntriesForPlan(plan.id);
+          const hasPlanDetails = Boolean(plan.title || plan.mood || plan.budget || plan.notes);
+
+          // Hide old empty days left behind after deleting all entries.
+          if (!entries.length && !hasPlanDetails) continue;
 
           const lines = Object.entries(periods).map(([period, info]) => {
             const periodEntries = entries.filter(entry => entry.time_period === period);
@@ -2155,6 +2342,13 @@
               </div>
             </div>
           `);
+        }
+
+        if (!cards.length) {
+          container.innerHTML = homeMode === "upcoming"
+            ? `<div class="empty">No upcoming dates yet. Open Plan to add one 🍓</div>`
+            : `<div class="empty">No past memories yet.</div>`;
+          return;
         }
 
         container.innerHTML = cards.join("");
