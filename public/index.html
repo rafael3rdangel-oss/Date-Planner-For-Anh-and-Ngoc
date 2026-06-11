@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Backup v17</title>
+  <title>Date Planner for Us 🍓 Memory wall v20</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -300,6 +300,45 @@
         border-radius: 24px 24px 18px 18px;
       }
     }
+
+    .photo-wall-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .photo-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      min-width: 0;
+    }
+    .photo-card img {
+      width: 100%;
+      height: 92px;
+      object-fit: cover;
+      display: block;
+      background: var(--pink-2);
+    }
+    .photo-caption {
+      padding: 7px 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.25;
+    }
+    .photo-caption strong {
+      display: block;
+      color: var(--berry-dark);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    @media (max-width: 470px) {
+      .photo-wall-grid { grid-template-columns: repeat(2, 1fr); }
+      .photo-card img { height: 110px; }
+    }
+
     .hidden { display: none !important; }
     @media (max-width: 470px) {
       .hero h1 { font-size: 24px; }
@@ -319,7 +358,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Better edit forms v19</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Memory wall v20</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -390,6 +429,14 @@
           <p class="subtitle">Quick overview of your saved ideas, plans and memories.</p>
           <div id="dashboardStats" class="stats-grid">
             <div class="empty">Loading dashboard...</div>
+          </div>
+        </div>
+
+        <div class="card compact-card">
+          <h2 class="title">🖼️ Memory photo wall</h2>
+          <p class="subtitle">A cute preview of photos saved in Journal. Add photo URLs to journal entries and they will appear here.</p>
+          <div id="photoWallList" class="photo-wall-grid">
+            <div class="empty">Loading photos...</div>
           </div>
         </div>
 
@@ -2761,6 +2808,7 @@
         qs("journalBody").value = "";
         qs("journalImageUrl").value = "";
         await loadJournal();
+        await loadPhotoWall();
       } catch (error) {
         console.error(error);
         alert(error.message);
@@ -2801,6 +2849,7 @@
 
         if (error) throw error;
         await loadJournal();
+        await loadPhotoWall();
         await loadDashboardStats();
       });
     }
@@ -2816,6 +2865,7 @@
 
         if (error) throw error;
         await loadJournal();
+        await loadPhotoWall();
       } catch (error) {
         console.error(error);
         alert(error.message);
@@ -2878,8 +2928,54 @@
       }
     }
 
+
+    async function loadPhotoWall() {
+      if (!currentCouple) return;
+      const container = qs("photoWallList");
+      if (!container) return;
+
+      try {
+        const { data: entries, error } = await supabaseClient
+          .from("journal_entries")
+          .select("id, entry_date, entry_type, title, image_url")
+          .eq("couple_id", currentCouple.id)
+          .not("image_url", "is", null)
+          .order("entry_date", { ascending: false })
+          .order("created_at", { ascending: false })
+          .limit(12);
+
+        if (error) throw error;
+
+        const photos = (entries || []).filter(entry => String(entry.image_url || "").trim());
+
+        if (!photos.length) {
+          container.innerHTML = `<div class="empty">No journal photos yet. Add a Photo URL in Journal ✨</div>`;
+          return;
+        }
+
+        container.innerHTML = photos.map(entry => `
+          <div class="photo-card" onclick="openPage('journalPage','journalNav')" title="Open Journal">
+            <img
+              src="${escapeHTML(entry.image_url)}"
+              alt="${escapeHTML(entry.title || 'Journal photo')}"
+              loading="lazy"
+              onerror="this.closest('.photo-card').style.display='none'"
+            >
+            <div class="photo-caption">
+              <strong>${escapeHTML(entry.title || 'Journal photo')}</strong>
+              ${escapeHTML(formatDate(entry.entry_date))}
+            </div>
+          </div>
+        `).join("");
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = `<div class="empty">Could not load photo wall.</div>`;
+      }
+    }
+
     async function loadHome() {
       loadDashboardStats();
+      loadPhotoWall();
       const container = qs("homeList");
       container.innerHTML = `<div class="empty">Loading...</div>`;
 
