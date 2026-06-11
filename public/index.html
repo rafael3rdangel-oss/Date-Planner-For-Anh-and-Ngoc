@@ -228,6 +228,78 @@
       font-size: 12px;
       font-weight: 700;
     }
+
+
+    .edit-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 14px;
+      background: rgba(65, 45, 58, .34);
+      backdrop-filter: blur(6px);
+    }
+    .edit-modal {
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 16px;
+      border: 1px solid rgba(239, 111, 159, .18);
+      border-radius: 26px;
+      background: var(--white);
+      box-shadow: 0 22px 70px rgba(92, 66, 80, .26);
+    }
+    .edit-modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .edit-modal-head h2 {
+      margin: 0;
+      color: var(--berry-dark);
+      font-size: 18px;
+    }
+    .edit-close {
+      width: 38px;
+      height: 38px;
+      border: none;
+      border-radius: 14px;
+      background: var(--pink-2);
+      color: var(--berry-dark);
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .edit-label {
+      display: block;
+      margin: 0 0 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .edit-modal input,
+    .edit-modal textarea,
+    .edit-modal select {
+      margin-bottom: 10px;
+    }
+    body.modal-open {
+      overflow: hidden;
+    }
+    @media (max-width: 470px) {
+      .edit-modal-backdrop {
+        align-items: flex-end;
+        padding: 8px;
+      }
+      .edit-modal {
+        max-height: 92vh;
+        border-radius: 24px 24px 18px 18px;
+      }
+    }
     .hidden { display: none !important; }
     @media (max-width: 470px) {
       .hero h1 { font-size: 24px; }
@@ -247,7 +319,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Dashboard stats v18</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Better edit forms v19</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -680,6 +752,22 @@
     <button id="journalNav" class="nav-button" onclick="openPage('journalPage','journalNav')"><span>📝</span>Journal</button>
   </nav>
 
+
+
+  <div id="editModalBackdrop" class="edit-modal-backdrop hidden" onclick="if (event.target === this) closeEditModal();">
+    <div class="edit-modal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+      <div class="edit-modal-head">
+        <h2 id="editModalTitle">Edit</h2>
+        <button class="edit-close" onclick="closeEditModal()" aria-label="Close edit form">×</button>
+      </div>
+      <div id="editModalFields" class="form-grid"></div>
+      <div class="row">
+        <button id="editModalSaveButton" class="button" onclick="saveEditModal()">Save</button>
+        <button class="button secondary" onclick="closeEditModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -809,6 +897,126 @@
       });
     }
 
+
+
+    let activeEditModal = null;
+
+    function decodeFieldValue(value) {
+      try {
+        return decodeURIComponent(value || "");
+      } catch (error) {
+        return value || "";
+      }
+    }
+
+    function fieldInputHTML(field) {
+      const id = `editField_${field.name}`;
+      const value = escapeHTML(field.value || "");
+      const placeholder = escapeHTML(field.placeholder || "");
+      const label = escapeHTML(field.label || field.name);
+
+      if (field.type === "textarea") {
+        return `
+          <label>
+            <span class="edit-label">${label}</span>
+            <textarea id="${id}" placeholder="${placeholder}">${value}</textarea>
+          </label>
+        `;
+      }
+
+      if (field.type === "select") {
+        const options = (field.options || []).map(option => {
+          const optionValue = typeof option === "string" ? option : option.value;
+          const optionLabel = typeof option === "string" ? option : option.label;
+          const selected = String(optionValue) === String(field.value || "") ? "selected" : "";
+          return `<option value="${escapeHTML(optionValue)}" ${selected}>${escapeHTML(optionLabel)}</option>`;
+        }).join("");
+
+        return `
+          <label>
+            <span class="edit-label">${label}</span>
+            <select id="${id}">${options}</select>
+          </label>
+        `;
+      }
+
+      return `
+        <label>
+          <span class="edit-label">${label}</span>
+          <input id="${id}" type="${escapeHTML(field.type || "text")}" value="${value}" placeholder="${placeholder}">
+        </label>
+      `;
+    }
+
+    function openEditModal(title, fields, onSave) {
+      activeEditModal = { fields, onSave };
+      qs("editModalTitle").textContent = title;
+      qs("editModalFields").innerHTML = fields.map(fieldInputHTML).join("");
+      qs("editModalSaveButton").disabled = false;
+      show("editModalBackdrop");
+      document.body.classList.add("modal-open");
+      setTimeout(() => {
+        const firstInput = qs("editModalFields").querySelector("input, textarea, select");
+        if (firstInput) firstInput.focus();
+      }, 50);
+    }
+
+    function closeEditModal() {
+      hide("editModalBackdrop");
+      document.body.classList.remove("modal-open");
+      activeEditModal = null;
+    }
+
+    async function saveEditModal() {
+      if (!activeEditModal) return;
+      const values = {};
+
+      activeEditModal.fields.forEach(field => {
+        const input = qs(`editField_${field.name}`);
+        values[field.name] = input ? input.value : "";
+      });
+
+      try {
+        qs("editModalSaveButton").disabled = true;
+        await activeEditModal.onSave(values);
+        closeEditModal();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+        if (qs("editModalSaveButton")) qs("editModalSaveButton").disabled = false;
+      }
+    }
+
+    function categoryOptionsFor(typeName, currentValue) {
+      const base = {
+        food: ["Home Cooking", "Japanese", "Korean", "Vietnamese", "European", "Dessert", "Snack", "Other"],
+        place: ["Restaurant", "Café", "Dessert Place", "Mall", "Cinema", "Park / Walk", "Activity Place", "Other"],
+        game: ["Cozy / Farming", "Survival / Co-op", "Story / Horror", "Platform / Fun", "LEGO", "Other"],
+        activity: ["Home Date", "Creative / Craft", "Food Challenge", "Build Together", "Outdoor / Walk", "Shopping / Cute Finds", "Movie / Watch", "Other"]
+      };
+      const options = base[typeName] || ["Other"];
+      const cleaned = (currentValue || "").trim();
+      return cleaned && !options.includes(cleaned) ? [cleaned, ...options] : options;
+    }
+
+    function statusOptionsFor(typeName, currentValue) {
+      const base = {
+        food: ["wishlist", "visited", "tried", "favorite", "archived"],
+        place: ["wishlist", "visited", "favorite", "archived"],
+        game: ["wishlist", "played", "favorite", "archived"],
+        activity: ["wishlist", "tried", "favorite", "archived"]
+      };
+      const options = base[typeName] || ["wishlist", "favorite", "archived"];
+      const cleaned = (currentValue || "").trim();
+      return cleaned && !options.includes(cleaned) ? [cleaned, ...options] : options;
+    }
+
+    function priceOptionsFor(currentValue) {
+      const options = ["", "Free", "€", "€€", "€€€", "Home"];
+      const cleaned = (currentValue || "").trim();
+      return cleaned && !options.includes(cleaned) ? [cleaned, ...options] : options;
+    }
+
     async function copyTextToClipboard(value, successMessage) {
       if (!value) return;
       try {
@@ -906,7 +1114,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Dashboard stats v18",
+          version: "Better edit forms v19",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -1488,18 +1696,17 @@
     }
 
     async function editEntry(id, encodedTitle) {
-      const oldTitle = decodeURIComponent(encodedTitle);
-      const newTitle = prompt("Edit this activity:", oldTitle);
+      const oldTitle = decodeFieldValue(encodedTitle);
 
-      if (newTitle === null || !newTitle.trim()) return;
-
-      try {
-        await updateEntry(id, { title: newTitle.trim() });
+      openEditModal("Edit plan entry", [
+        { name: "title", label: "Title", value: oldTitle, placeholder: "Activity title" }
+      ], async values => {
+        const title = values.title.trim();
+        if (!title) throw new Error("Title is required.");
+        await updateEntry(id, { title });
         await loadPlan();
         await loadHome();
-      } catch (error) {
-        alert(error.message);
-      }
+      });
     }
 
     async function deleteEntry(id) {
@@ -1949,38 +2156,42 @@
     }
 
     async function editFoodItem(id, encodedName, encodedCategory, encodedStatus, encodedPrice, encodedNotes, encodedImageUrl, encodedLinkUrl) {
-      const name = prompt("Food/place name:", decodeURIComponent(encodedName));
-      if (name === null || !name.trim()) return;
-      const category = prompt("Category:", decodeURIComponent(encodedCategory) || "Restaurant");
-      if (category === null) return;
-      const status = prompt("Status: wishlist, visited, tried, favorite", decodeURIComponent(encodedStatus) || "wishlist");
-      if (status === null) return;
-      const price = prompt("Price range: €, €€, €€€, Home", decodeURIComponent(encodedPrice));
-      if (price === null) return;
-      const notes = prompt("Notes:", decodeURIComponent(encodedNotes));
-      if (notes === null) return;
-      const imageUrl = prompt("Image URL:", decodeURIComponent(encodedImageUrl || ""));
-      if (imageUrl === null) return;
-      const linkUrl = prompt("Link URL:", decodeURIComponent(encodedLinkUrl || ""));
-      if (linkUrl === null) return;
+      const current = {
+        name: decodeFieldValue(encodedName),
+        category: decodeFieldValue(encodedCategory),
+        status: decodeFieldValue(encodedStatus) || "wishlist",
+        price: decodeFieldValue(encodedPrice),
+        notes: decodeFieldValue(encodedNotes),
+        imageUrl: decodeFieldValue(encodedImageUrl),
+        linkUrl: decodeFieldValue(encodedLinkUrl)
+      };
 
-      try {
+      openEditModal("Edit food", [
+        { name: "name", label: "Name", value: current.name, placeholder: "Food name" },
+        { name: "category", label: "Category", type: "select", value: current.category || "Other", options: categoryOptionsFor("food", current.category) },
+        { name: "status", label: "Status", type: "select", value: current.status, options: statusOptionsFor("food", current.status) },
+        { name: "price", label: "Price range", type: "select", value: current.price, options: priceOptionsFor(current.price).map(value => ({ value, label: value || "Price range unknown" })) },
+        { name: "notes", label: "Notes", type: "textarea", value: current.notes, placeholder: "Notes" },
+        { name: "imageUrl", label: "Image URL", type: "url", value: current.imageUrl, placeholder: "https://...jpg" },
+        { name: "linkUrl", label: "Link URL", type: "url", value: current.linkUrl, placeholder: "Recipe / website URL" }
+      ], async values => {
+        const name = values.name.trim();
+        if (!name) throw new Error("Name is required.");
+
         const { error } = await supabaseClient.from("library_items").update({
-          name: name.trim(),
-          category: category.trim() || null,
-          status: status.trim() || "wishlist",
-          price_range: price.trim() || null,
-          notes: notes.trim() || null,
-          image_url: imageUrl.trim() || null,
-          link_url: linkUrl.trim() || null
+          name,
+          category: values.category.trim() || null,
+          status: values.status.trim() || "wishlist",
+          price_range: values.price.trim() || null,
+          notes: values.notes.trim() || null,
+          image_url: values.imageUrl.trim() || null,
+          link_url: values.linkUrl.trim() || null
         }).eq("id", id);
 
         if (error) throw error;
         await loadLibrary();
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-      }
+        await loadDashboardStats();
+      });
     }
 
     async function deleteFoodItem(id) {
@@ -2145,41 +2356,47 @@
     }
 
     async function editLibraryItem(id, encodedName, encodedCategory, encodedStatus, encodedPrice, encodedNotes, encodedImageUrl, encodedLinkUrl) {
-      const name = prompt("Name:", decodeURIComponent(encodedName));
-      if (name === null || !name.trim()) return;
-      const category = prompt("Category:", decodeURIComponent(encodedCategory));
-      if (category === null) return;
-      const status = prompt("Status: wishlist, visited, played, tried, favorite", decodeURIComponent(encodedStatus) || "wishlist");
-      if (status === null) return;
-      const price = prompt("Price range, if any:", decodeURIComponent(encodedPrice));
-      if (price === null) return;
-      const notes = prompt("Notes:", decodeURIComponent(encodedNotes));
-      if (notes === null) return;
-      const imageUrl = prompt("Image URL:", decodeURIComponent(encodedImageUrl || ""));
-      if (imageUrl === null) return;
-      const linkUrl = prompt("Link URL / Google Maps URL:", decodeURIComponent(encodedLinkUrl || ""));
-      if (linkUrl === null) return;
+      const typeName = libraryMode || "item";
+      const typeLabel = typeName.charAt(0).toUpperCase() + typeName.slice(1);
+      const current = {
+        name: decodeFieldValue(encodedName),
+        category: decodeFieldValue(encodedCategory),
+        status: decodeFieldValue(encodedStatus) || "wishlist",
+        price: decodeFieldValue(encodedPrice),
+        notes: decodeFieldValue(encodedNotes),
+        imageUrl: decodeFieldValue(encodedImageUrl),
+        linkUrl: decodeFieldValue(encodedLinkUrl)
+      };
 
-      try {
+      openEditModal(`Edit ${typeLabel}`, [
+        { name: "name", label: "Name", value: current.name, placeholder: `${typeLabel} name` },
+        { name: "category", label: "Category", type: "select", value: current.category || "Other", options: categoryOptionsFor(typeName, current.category) },
+        { name: "status", label: "Status", type: "select", value: current.status, options: statusOptionsFor(typeName, current.status) },
+        { name: "price", label: "Price range", type: "select", value: current.price, options: priceOptionsFor(current.price).map(value => ({ value, label: value || "Price range unknown" })) },
+        { name: "notes", label: "Notes", type: "textarea", value: current.notes, placeholder: "Notes" },
+        { name: "imageUrl", label: "Image URL", type: "url", value: current.imageUrl, placeholder: "https://...jpg" },
+        { name: "linkUrl", label: "Link / Google Maps URL", type: "url", value: current.linkUrl, placeholder: "https://..." }
+      ], async values => {
+        const name = values.name.trim();
+        if (!name) throw new Error("Name is required.");
+
         const { error } = await supabaseClient
           .from("library_items")
           .update({
-            name: name.trim(),
-            category: category.trim() || null,
-            status: status.trim() || "wishlist",
-            price_range: price.trim() || null,
-            notes: notes.trim() || null,
-            image_url: imageUrl.trim() || null,
-            link_url: linkUrl.trim() || null
+            name,
+            category: values.category.trim() || null,
+            status: values.status.trim() || "wishlist",
+            price_range: values.price.trim() || null,
+            notes: values.notes.trim() || null,
+            image_url: values.imageUrl.trim() || null,
+            link_url: values.linkUrl.trim() || null
           })
           .eq("id", id);
 
         if (error) throw error;
         await loadLibrary();
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-      }
+        await loadDashboardStats();
+      });
     }
 
     async function deleteLibraryItem(id, typeName) {
@@ -2551,35 +2768,41 @@
     }
 
     async function editJournalEntry(id, encodedDate, encodedType, encodedTitle, encodedBody, encodedImageUrl) {
-      const entryDate = prompt("Date YYYY-MM-DD:", decodeURIComponent(encodedDate) || getToday());
-      if (entryDate === null) return;
-      const entryType = prompt("Type: note, memory, shopping, idea", decodeURIComponent(encodedType) || "note");
-      if (entryType === null) return;
-      const title = prompt("Title:", decodeURIComponent(encodedTitle));
-      if (title === null) return;
-      const body = prompt("Body / notes:", decodeURIComponent(encodedBody));
-      if (body === null) return;
-      const imageUrl = prompt("Photo URL:", decodeURIComponent(encodedImageUrl || ""));
-      if (imageUrl === null) return;
+      const current = {
+        entryDate: decodeFieldValue(encodedDate) || getToday(),
+        entryType: decodeFieldValue(encodedType) || "note",
+        title: decodeFieldValue(encodedTitle),
+        body: decodeFieldValue(encodedBody),
+        imageUrl: decodeFieldValue(encodedImageUrl)
+      };
 
-      try {
+      openEditModal("Edit journal entry", [
+        { name: "entryDate", label: "Date", type: "date", value: current.entryDate },
+        { name: "entryType", label: "Type", type: "select", value: current.entryType, options: [
+          { value: "note", label: "Note" },
+          { value: "memory", label: "Memory" },
+          { value: "shopping", label: "Shopping list" },
+          { value: "idea", label: "Date idea" }
+        ] },
+        { name: "title", label: "Title", value: current.title, placeholder: "Title" },
+        { name: "body", label: "Body / notes", type: "textarea", value: current.body, placeholder: "Write your note here..." },
+        { name: "imageUrl", label: "Photo URL", type: "url", value: current.imageUrl, placeholder: "https://...jpg" }
+      ], async values => {
         const { error } = await supabaseClient
           .from("journal_entries")
           .update({
-            entry_date: entryDate.trim() || getToday(),
-            entry_type: entryType.trim() || "note",
-            title: title.trim() || null,
-            body: body.trim() || null,
-            image_url: imageUrl.trim() || null
+            entry_date: values.entryDate.trim() || getToday(),
+            entry_type: values.entryType.trim() || "note",
+            title: values.title.trim() || null,
+            body: values.body.trim() || null,
+            image_url: values.imageUrl.trim() || null
           })
           .eq("id", id);
 
         if (error) throw error;
         await loadJournal();
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-      }
+        await loadDashboardStats();
+      });
     }
 
     async function deleteJournalEntry(id) {
