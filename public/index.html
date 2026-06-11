@@ -201,6 +201,33 @@
       font-weight: 700;
       margin-top: 4px;
     }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .stat-pill {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .72);
+    }
+    .stat-number {
+      display: block;
+      color: var(--berry-dark);
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .stat-label {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
     .hidden { display: none !important; }
     @media (max-width: 470px) {
       .hero h1 { font-size: 24px; }
@@ -220,7 +247,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Backup export v17</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Dashboard stats v18</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -284,6 +311,14 @@
           <p class="subtitle">Download a JSON backup of your Supabase data. This does not change or delete anything.</p>
           <button class="button secondary" style="width:100%;" onclick="downloadDataBackup()">Download data backup</button>
           <p id="dataBackupMessage" class="subtitle" style="margin-top:10px;"></p>
+        </div>
+
+        <div class="card compact-card">
+          <h2 class="title">📊 Our dashboard</h2>
+          <p class="subtitle">Quick overview of your saved ideas, plans and memories.</p>
+          <div id="dashboardStats" class="stats-grid">
+            <div class="empty">Loading dashboard...</div>
+          </div>
         </div>
 
         <div class="card compact-card">
@@ -871,7 +906,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Backup export v17",
+          version: "Dashboard stats v18",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -2564,7 +2599,64 @@
       }
     }
 
+
+    async function loadDashboardStats() {
+      if (!currentCouple) return;
+      const container = qs("dashboardStats");
+      if (!container) return;
+
+      try {
+        const today = getToday();
+
+        const [{ data: libraryItems, error: libraryError }, { data: journals, error: journalError }, { data: plans, error: plansError }] = await Promise.all([
+          supabaseClient
+            .from("library_items")
+            .select("item_type, status")
+            .eq("couple_id", currentCouple.id),
+          supabaseClient
+            .from("journal_entries")
+            .select("id")
+            .eq("couple_id", currentCouple.id),
+          supabaseClient
+            .from("date_plans")
+            .select("id, plan_date")
+            .eq("couple_id", currentCouple.id)
+            .gte("plan_date", today)
+        ]);
+
+        if (libraryError) throw libraryError;
+        if (journalError) throw journalError;
+        if (plansError) throw plansError;
+
+        const items = libraryItems || [];
+        const countType = type => items.filter(item => item.item_type === type).length;
+        const favorites = items.filter(item => item.status === "favorite").length;
+
+        const stats = [
+          { label: "Food ideas", value: countType("food"), emoji: "🍜" },
+          { label: "Places", value: countType("place"), emoji: "📍" },
+          { label: "Games", value: countType("game"), emoji: "🎮" },
+          { label: "Activities", value: countType("activity"), emoji: "✨" },
+          { label: "Journal entries", value: (journals || []).length, emoji: "📝" },
+          { label: "Upcoming dates", value: (plans || []).length, emoji: "📅" },
+          { label: "Favorites", value: favorites, emoji: "💖" },
+          { label: "Total library", value: items.length, emoji: "♡" }
+        ];
+
+        container.innerHTML = stats.map(stat => `
+          <div class="stat-pill">
+            <span class="stat-number">${stat.emoji} ${stat.value}</span>
+            <span class="stat-label">${escapeHTML(stat.label)}</span>
+          </div>
+        `).join("");
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = `<div class="empty">Could not load dashboard.</div>`;
+      }
+    }
+
     async function loadHome() {
+      loadDashboardStats();
       const container = qs("homeList");
       container.innerHTML = `<div class="empty">Loading...</div>`;
 
