@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 URL v5</title>
+  <title>Date Planner for Us 🍓 v12</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -178,6 +178,18 @@
       font-weight: 700;
       margin-top: 4px;
     }
+    .journal-filter-tabs {
+      flex-wrap: wrap;
+    }
+    .journal-filter-tabs button {
+      min-width: 92px;
+    }
+    .journal-template-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 0 0 9px;
+    }
     .hidden { display: none !important; }
     @media (max-width: 470px) {
       .hero h1 { font-size: 24px; }
@@ -197,7 +209,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Journal fixed v11</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Journal filters v12</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -493,12 +505,31 @@
                 </select>
               </div>
 
+              <div class="journal-template-row">
+                <button class="button small ghost" type="button" onclick="fillJournalTemplate('memory')">Memory template</button>
+                <button class="button small ghost" type="button" onclick="fillJournalTemplate('shopping')">Shopping template</button>
+                <button class="button small ghost" type="button" onclick="fillJournalTemplate('idea')">Date idea template</button>
+                <button class="button small ghost" type="button" onclick="fillJournalTemplate('gift')">Gift notes</button>
+              </div>
+
               <input id="journalTitle" placeholder="Title, e.g. First date memory, Gift ideas, Things em likes">
               <textarea id="journalBody" placeholder="Write the note, memory, shopping list or idea here..."></textarea>
               <input id="journalImageUrl" placeholder="Photo URL (optional)">
 
               <button class="button" onclick="addJournalEntry()">Add to Journal</button>
             </div>
+          </div>
+
+          <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
+            <h3 class="title">Find journal entries</h3>
+            <div class="tabs-mini journal-filter-tabs">
+              <button id="journalAllTab" class="active" onclick="setJournalFilter('all')">All</button>
+              <button id="journalNoteTab" onclick="setJournalFilter('note')">Notes</button>
+              <button id="journalMemoryTab" onclick="setJournalFilter('memory')">Memories</button>
+              <button id="journalShoppingTab" onclick="setJournalFilter('shopping')">Shopping</button>
+              <button id="journalIdeaTab" onclick="setJournalFilter('idea')">Ideas</button>
+            </div>
+            <input id="journalSearch" placeholder="Search journal..." oninput="loadJournal()">
           </div>
 
           <div id="journalList" class="library-grid"></div>
@@ -526,6 +557,7 @@
     let currentPlan = null;
     let homeMode = "upcoming";
     let libraryMode = "food";
+    let journalFilter = "all";
 
     const periods = {
       Morning: { emoji: "🌅", className: "morning", color: "#fff6d8" },
@@ -1787,6 +1819,46 @@
 
 
 
+    function setJournalFilter(type) {
+      journalFilter = type;
+      if (qs("journalAllTab")) qs("journalAllTab").classList.toggle("active", type === "all");
+      if (qs("journalNoteTab")) qs("journalNoteTab").classList.toggle("active", type === "note");
+      if (qs("journalMemoryTab")) qs("journalMemoryTab").classList.toggle("active", type === "memory");
+      if (qs("journalShoppingTab")) qs("journalShoppingTab").classList.toggle("active", type === "shopping");
+      if (qs("journalIdeaTab")) qs("journalIdeaTab").classList.toggle("active", type === "idea");
+      loadJournal();
+    }
+
+    function fillJournalTemplate(type) {
+      if (qs("journalDate")) qs("journalDate").value = getToday();
+
+      if (type === "memory") {
+        qs("journalType").value = "memory";
+        qs("journalTitle").value = "Memory: ";
+        qs("journalBody").value = "What happened:\nFavorite moment:\nHow em looked / felt:\nWhy I want to remember this:";
+      }
+
+      if (type === "shopping") {
+        qs("journalType").value = "shopping";
+        qs("journalTitle").value = "Shopping list";
+        qs("journalBody").value = "- Snacks\n- Drinks\n- Cute thing / gift\n- Activity supplies";
+      }
+
+      if (type === "idea") {
+        qs("journalType").value = "idea";
+        qs("journalTitle").value = "Date idea: ";
+        qs("journalBody").value = "Idea:\nWhere:\nBudget:\nWhy it is cute:\nBest time to do it:";
+      }
+
+      if (type === "gift") {
+        qs("journalType").value = "note";
+        qs("journalTitle").value = "Gift notes for em";
+        qs("journalBody").value = "Things em likes:\n- Popmart / Babythree / cute figures\n- Soft colors / cute themes\n\nGift ideas:\n- \n\nImportant notes:";
+      }
+
+      qs("journalTitle").focus();
+    }
+
     function journalTypeLabel(type) {
       const labels = {
         note: "📝 Note",
@@ -1856,7 +1928,29 @@
           return;
         }
 
-        list.innerHTML = entries.map(journalEntryHTML).join("");
+        const searchTerm = (qs("journalSearch")?.value || "").trim().toLowerCase();
+        let visibleEntries = entries;
+
+        if (journalFilter !== "all") {
+          visibleEntries = visibleEntries.filter(entry => entry.entry_type === journalFilter);
+        }
+
+        if (searchTerm) {
+          visibleEntries = visibleEntries.filter(entry => {
+            const text = [entry.title, entry.body, entry.entry_type, entry.entry_date]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            return text.includes(searchTerm);
+          });
+        }
+
+        if (!visibleEntries.length) {
+          list.innerHTML = `<div class="empty">No matching journal entries. Try another filter or search ✨</div>`;
+          return;
+        }
+
+        list.innerHTML = visibleEntries.map(journalEntryHTML).join("");
       } catch (error) {
         console.error(error);
         list.innerHTML = `<div class="empty">Could not load journal.</div>`;
@@ -2071,6 +2165,5 @@
 
     boot();
   </script>
-  
 </body>
 </html>
