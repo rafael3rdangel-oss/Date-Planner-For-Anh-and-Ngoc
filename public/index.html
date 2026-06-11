@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 URL v4</title>
+  <title>Date Planner for Us 🍓 URL v5</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -58,6 +58,39 @@
     .title { margin: 0 0 5px; color: var(--berry-dark); font-size: 18px; font-weight: 700; }
     .subtitle { margin: 0 0 12px; color: var(--muted); font-size: 13px; line-height: 1.4; }
     .top-bar { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin: 0 15px 12px; padding: 10px 13px; border-radius: 18px; background: rgba(255, 255, 255, .78); border: 1px solid rgba(239, 111, 159, .12); }
+
+    .invite-card {
+      background: linear-gradient(135deg, #fff3f8, #edf7ff);
+    }
+    .invite-code-box {
+      margin: 12px 0;
+      padding: 14px;
+      border: 2px dashed #ffb4ce;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .75);
+      text-align: center;
+    }
+    .invite-code-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .invite-code-value {
+      margin-top: 6px;
+      color: var(--berry-dark);
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      overflow-wrap: anywhere;
+    }
+    .copy-message {
+      margin: 8px 0 0;
+      color: var(--berry-dark);
+      font-size: 13px;
+      font-weight: 700;
+    }
     .user-info { min-width: 0; font-size: 13px; color: var(--muted); }
     .user-info strong { display: block; color: var(--ink); overflow-wrap: anywhere; }
     input, textarea, select { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: white; color: var(--ink); outline: none; margin-bottom: 9px; }
@@ -149,7 +182,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>URL editing v4</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>URL editing v5</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -194,6 +227,20 @@
       </div>
 
       <main id="homePage" class="page active">
+        <div class="card invite-card">
+          <h2 class="title">💌 Invite her</h2>
+          <p class="subtitle">Give this invite code to your girlfriend after she creates her own account. She should choose “Join with invite code”, not create a new couple space.</p>
+          <div class="invite-code-box">
+            <div class="invite-code-label">Invite code</div>
+            <div id="inviteCodeBig" class="invite-code-value">--------</div>
+          </div>
+          <div class="row">
+            <button class="button" onclick="copyInviteCode()">Copy invite code</button>
+            <button class="button secondary" onclick="copyAppLink()">Copy app link</button>
+          </div>
+          <p id="inviteCopyMessage" class="copy-message"></p>
+        </div>
+
         <div class="card compact-card">
           <h2 class="title">🏠 Home</h2>
           <p class="subtitle">Upcoming plans and past memories in one clean overview.</p>
@@ -444,6 +491,25 @@
         month: "long",
         year: "numeric"
       });
+    }
+
+    async function copyTextToClipboard(value, successMessage) {
+      if (!value) return;
+      try {
+        await navigator.clipboard.writeText(value);
+        if (qs("inviteCopyMessage")) qs("inviteCopyMessage").textContent = successMessage;
+      } catch (error) {
+        prompt("Copy this:", value);
+      }
+    }
+
+    function copyInviteCode() {
+      if (!currentCouple?.invite_code) return;
+      copyTextToClipboard(currentCouple.invite_code, "Invite code copied 💌");
+    }
+
+    function copyAppLink() {
+      copyTextToClipboard(window.location.origin, "App link copied 💌");
     }
 
     async function signUp() {
@@ -1638,6 +1704,8 @@
       show("bottomNav");
 
       qs("coupleText").textContent = `${currentCouple.name} · Invite code: ${currentCouple.invite_code}`;
+      if (qs("inviteCodeBig")) qs("inviteCodeBig").textContent = currentCouple.invite_code || "--------";
+      if (qs("inviteCopyMessage")) qs("inviteCopyMessage").textContent = "";
 
       renderPeriodCards();
       qs("selectedDate").value = getToday();
