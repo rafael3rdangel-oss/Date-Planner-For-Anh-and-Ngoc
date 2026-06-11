@@ -197,7 +197,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Journal v8</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Plan media v9</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -771,7 +771,7 @@
     async function getEntriesForPlan(planId) {
       const { data: entries, error } = await supabaseClient
         .from("plan_entries")
-        .select("*")
+        .select("*, library_items(id, name, image_url, link_url)")
         .eq("plan_id", planId)
         .order("sort_order", { ascending: true })
         .order("created_at", { ascending: true });
@@ -821,6 +821,15 @@
       `;
     }
 
+    function entryMediaHTML(entry) {
+      const linkedItem = entry.library_items || {};
+      return libraryMediaHTML({
+        name: entry.title,
+        image_url: linkedItem.image_url,
+        link_url: linkedItem.link_url
+      });
+    }
+
     function entryHTML(entry) {
       return `
         <div class="entry ${entry.completed ? "completed" : ""}">
@@ -828,6 +837,7 @@
           <div class="entry-meta">
             ${entry.my_rating ? `Your rating: ${"★".repeat(entry.my_rating)}${"☆".repeat(5 - entry.my_rating)}` : "No rating yet"}
           </div>
+          ${entryMediaHTML(entry)}
           ${starButtons(entry)}
           <div class="actions">
             <button class="button small secondary" onclick="toggleComplete('${entry.id}', ${Boolean(entry.completed)})">
