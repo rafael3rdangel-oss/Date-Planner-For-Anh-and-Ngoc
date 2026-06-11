@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Quick Add v16</title>
+  <title>Date Planner for Us 🍓 Backup v17</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -220,7 +220,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Quick add v16</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Backup export v17</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -277,6 +277,13 @@
             <button class="button secondary" onclick="copyAppLink()">Copy app link</button>
           </div>
           <p id="inviteCopyMessage" class="copy-message"></p>
+        </div>
+
+        <div class="card compact-card">
+          <h2 class="title">🛟 Safe backup</h2>
+          <p class="subtitle">Download a JSON backup of your Supabase data. This does not change or delete anything.</p>
+          <button class="button secondary" style="width:100%;" onclick="downloadDataBackup()">Download data backup</button>
+          <p id="dataBackupMessage" class="subtitle" style="margin-top:10px;"></p>
         </div>
 
         <div class="card compact-card">
@@ -784,6 +791,123 @@
 
     function copyAppLink() {
       copyTextToClipboard(window.location.origin, "App link copied 💌");
+    }
+
+    function setBackupMessage(message) {
+      const messageEl = qs("dataBackupMessage");
+      if (messageEl) messageEl.textContent = message;
+    }
+
+    async function safeSelect(tableName, queryBuilder) {
+      const { data, error } = await queryBuilder;
+      if (error) throw new Error(`${tableName}: ${error.message}`);
+      return data || [];
+    }
+
+    async function downloadDataBackup() {
+      if (!currentCouple || !currentUser) {
+        alert("Please sign in first.");
+        return;
+      }
+
+      try {
+        setBackupMessage("Preparing backup...");
+
+        const libraryItems = await safeSelect(
+          "library_items",
+          supabaseClient
+            .from("library_items")
+            .select("*")
+            .eq("couple_id", currentCouple.id)
+            .order("created_at", { ascending: true })
+        );
+
+        const datePlans = await safeSelect(
+          "date_plans",
+          supabaseClient
+            .from("date_plans")
+            .select("*")
+            .eq("couple_id", currentCouple.id)
+            .order("plan_date", { ascending: true })
+        );
+
+        const planIds = datePlans.map(plan => plan.id);
+        const planEntries = planIds.length
+          ? await safeSelect(
+              "plan_entries",
+              supabaseClient
+                .from("plan_entries")
+                .select("*")
+                .in("plan_id", planIds)
+                .order("created_at", { ascending: true })
+            )
+          : [];
+
+        const ratings = await safeSelect(
+          "ratings",
+          supabaseClient
+            .from("ratings")
+            .select("*")
+            .eq("couple_id", currentCouple.id)
+            .order("created_at", { ascending: true })
+        );
+
+        const journalEntries = await safeSelect(
+          "journal_entries",
+          supabaseClient
+            .from("journal_entries")
+            .select("*")
+            .eq("couple_id", currentCouple.id)
+            .order("entry_date", { ascending: true })
+        );
+
+        const coupleMembers = await safeSelect(
+          "couple_members",
+          supabaseClient
+            .from("couple_members")
+            .select("*")
+            .eq("couple_id", currentCouple.id)
+        );
+
+        const backup = {
+          app: "Date Planner for Us",
+          version: "Backup export v17",
+          exported_at: new Date().toISOString(),
+          exported_by: currentUser.email,
+          couple: currentCouple,
+          tables: {
+            couple_members: coupleMembers,
+            library_items: libraryItems,
+            date_plans: datePlans,
+            plan_entries: planEntries,
+            ratings,
+            journal_entries: journalEntries
+          }
+        };
+
+        const json = JSON.stringify(backup, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const today = getToday();
+        const safeCoupleName = String(currentCouple.name || "date-planner")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "") || "date-planner";
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${safeCoupleName}-backup-${today}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+
+        setBackupMessage("Backup downloaded ✅ Keep it somewhere safe.");
+      } catch (error) {
+        console.error(error);
+        setBackupMessage("Could not create backup. Check console or Supabase permissions.");
+        alert(error.message);
+      }
     }
 
     async function signUp() {
