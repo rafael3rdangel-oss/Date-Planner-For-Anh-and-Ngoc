@@ -182,7 +182,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>URL editing v6</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>URL editing v7</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -407,11 +407,50 @@
           </section>
 
           <section id="activityLibraryPanel" class="hidden">
-            <div class="entry">
-              <div class="entry-title">✨ Activities</div>
-              <div class="entry-meta">Next after Games: reusable ideas like blind taste test, Lego night and book nook.</div>
-              <span class="badge">Coming soon</span>
+            <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
+              <h3 class="title">Add activity</h3>
+
+              <div class="form-grid">
+                <input id="activityName" placeholder="Name, e.g. Blind taste test, LEGO night, book nook">
+
+                <div class="row">
+                  <select id="activityCategory">
+                    <option value="Home Date">Home Date</option>
+                    <option value="Creative / Craft">Creative / Craft</option>
+                    <option value="Food Challenge">Food Challenge</option>
+                    <option value="Build Together">Build Together</option>
+                    <option value="Outdoor / Walk">Outdoor / Walk</option>
+                    <option value="Shopping / Cute Finds">Shopping / Cute Finds</option>
+                    <option value="Movie / Watch">Movie / Watch</option>
+                    <option value="Other">Other</option>
+                  </select>
+
+                  <select id="activityStatus">
+                    <option value="wishlist">Wishlist</option>
+                    <option value="tried">Tried</option>
+                    <option value="favorite">Favorite</option>
+                  </select>
+                </div>
+
+                <select id="activityPrice">
+                  <option value="">Price range unknown</option>
+                  <option value="Free">Free</option>
+                  <option value="€">€ cheap</option>
+                  <option value="€€">€€ normal</option>
+                  <option value="€€€">€€€ special date</option>
+                  <option value="Home">Home / already have supplies</option>
+                </select>
+
+                <textarea id="activityNotes" placeholder="Notes, what to buy, steps, why it is cute, rainy day idea..."></textarea>
+
+                <input id="activityImageUrl" placeholder="Image URL (optional)">
+                <input id="activityLinkUrl" placeholder="Website / idea link URL (optional)">
+
+                <button class="button" onclick="addActivityItem()">Add to Activities</button>
+              </div>
             </div>
+
+            <div id="activityList" class="library-grid"></div>
           </section>
         </div>
       </main>
@@ -978,6 +1017,10 @@
       if (libraryMode === "game") {
         await loadLibraryItems("game", "gameList", gameItemHTML, "No games yet. Add a game 🎮");
       }
+
+      if (libraryMode === "activity") {
+        await loadLibraryItems("activity", "activityList", activityItemHTML, "No activities yet. Add a cute date activity ✨");
+      }
     }
 
     async function loadLibraryItems(itemType, listId, renderer, emptyMessage) {
@@ -1132,6 +1175,36 @@
             <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'game')">Add to Plan</button>
             <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}', '${encodeURIComponent(item.image_url || "")}', '${encodeURIComponent(item.link_url || "")}')">Edit</button>
             <button class="button small danger" onclick="deleteLibraryItem('${item.id}', 'game')">Delete</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function activityItemHTML(item) {
+      const statusText = String(item.status || "wishlist").replace("_", " ");
+      return `
+        <div class="entry">
+          <div class="library-item-head">
+            <div>
+              <div class="library-item-name">✨ ${escapeHTML(item.name)}</div>
+              <div class="entry-meta">
+                ${escapeHTML(item.category || "Activity")}
+                ${item.price_range ? ` · ${escapeHTML(item.price_range)}` : ""}
+                ${item.times_used ? ` · planned ${item.times_used}x` : ""}
+              </div>
+            </div>
+            <div class="library-item-status">${escapeHTML(statusText)}</div>
+          </div>
+          ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+          ${libraryMediaHTML(item)}
+          <div class="entry-meta">
+            ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
+          </div>
+          ${libraryStarButtons(item)}
+          <div class="actions">
+            <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'activity')">Add to Plan</button>
+            <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}', '${encodeURIComponent(item.image_url || "")}', '${encodeURIComponent(item.link_url || "")}')">Edit</button>
+            <button class="button small danger" onclick="deleteLibraryItem('${item.id}', 'activity')">Delete</button>
           </div>
         </div>
       `;
@@ -1323,6 +1396,19 @@
         notesId: "gameNotes",
         imageId: "gameImageUrl",
         linkId: "gameLinkUrl"
+      });
+    }
+
+    async function addActivityItem() {
+      await addLibraryItemFromForm({
+        item_type: "activity",
+        nameId: "activityName",
+        categoryId: "activityCategory",
+        statusId: "activityStatus",
+        priceId: "activityPrice",
+        notesId: "activityNotes",
+        imageId: "activityImageUrl",
+        linkId: "activityLinkUrl"
       });
     }
 
