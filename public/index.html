@@ -163,6 +163,21 @@
       font-weight: 700;
     }
 
+
+    .journal-body {
+      margin-top: 8px;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .journal-date {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
     .hidden { display: none !important; }
     @media (max-width: 470px) {
       .hero h1 { font-size: 24px; }
@@ -182,7 +197,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>URL editing v7</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Journal v8</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -407,6 +422,11 @@
           </section>
 
           <section id="activityLibraryPanel" class="hidden">
+            <div class="library-toolbar">
+              <button class="button secondary" onclick="addExampleActivities()">Add example activities</button>
+              <p class="subtitle" style="margin:0;">Adds cute ideas like blind taste test, LEGO night, book nook, rainy day date and shopping cute things. It skips duplicates.</p>
+            </div>
+
             <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
               <h3 class="title">Add activity</h3>
 
@@ -458,8 +478,30 @@
       <main id="journalPage" class="page">
         <div class="card">
           <h2 class="title">📝 Journal</h2>
-          <p class="subtitle">Notes, memories, shopping lists and photos will live here after Library is working.</p>
-          <div class="empty">Journal is planned, not built yet.</div>
+          <p class="subtitle">Save memories, notes, shopping lists, date ideas and photo URLs.</p>
+
+          <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
+            <h3 class="title">Add journal entry</h3>
+            <div class="form-grid">
+              <div class="row">
+                <input id="journalDate" type="date">
+                <select id="journalType">
+                  <option value="note">Note</option>
+                  <option value="memory">Memory</option>
+                  <option value="shopping">Shopping list</option>
+                  <option value="idea">Date idea</option>
+                </select>
+              </div>
+
+              <input id="journalTitle" placeholder="Title, e.g. First date memory, Gift ideas, Things em likes">
+              <textarea id="journalBody" placeholder="Write the note, memory, shopping list or idea here..."></textarea>
+              <input id="journalImageUrl" placeholder="Photo URL (optional)">
+
+              <button class="button" onclick="addJournalEntry()">Add to Journal</button>
+            </div>
+          </div>
+
+          <div id="journalList" class="library-grid"></div>
         </div>
       </main>
     </section>
@@ -679,6 +721,7 @@
       if (pageId === "homePage") loadHome();
       if (pageId === "planPage") loadPlan();
       if (pageId === "libraryPage") loadLibrary();
+      if (pageId === "journalPage") loadJournal();
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -1541,6 +1584,70 @@
       }
     }
 
+
+    const exampleActivities = [
+      {
+        name: "Blind Taste Test",
+        category: "Food Challenge",
+        status: "wishlist",
+        price_range: "€€",
+        notes: "Buy 5 Japanese snacks and 5 Korean snacks. Try them blindfolded and guess what each one is. Cute, funny, and easy at home."
+      },
+      {
+        name: "Couple LEGO Night",
+        category: "Build Together",
+        status: "wishlist",
+        price_range: "€€",
+        notes: "Build LEGO flowers, bonsai, tiny plants, Japanese garden, Batman, or LOTR while watching something cozy."
+      },
+      {
+        name: "Miniature Book Nook",
+        category: "Creative / Craft",
+        status: "wishlist",
+        price_range: "€€€",
+        notes: "Build a Japanese alley, fantasy tavern, or cozy bookstore book nook. Feels very Sun Haven / cozy fantasy."
+      },
+      {
+        name: "Rainy Day Cozy Date",
+        category: "Home Date",
+        status: "wishlist",
+        price_range: "Home",
+        notes: "Blankets, snacks, tea or coffee, soft lights, and a comfort movie or anime. Good for tired days."
+      },
+      {
+        name: "Cute Shopping Mission",
+        category: "Shopping / Cute Finds",
+        status: "wishlist",
+        price_range: "€€",
+        notes: "Go look for Popmart, Babythree, plushies, stationery, matching keychains, or small couple gifts."
+      },
+      {
+        name: "Home Cooking Challenge",
+        category: "Home Date",
+        status: "wishlist",
+        price_range: "Home",
+        notes: "Pick one recipe each or cook one dish together. Good choices: omurice, Japanese curry, gyoza, pasta, or salmon."
+      },
+      {
+        name: "Photo Booth / Cute Photo Date",
+        category: "Creative / Craft",
+        status: "wishlist",
+        price_range: "€",
+        notes: "Take cute couple photos, decorate them, or make a tiny memory page for the journal."
+      },
+      {
+        name: "Board Game / Unlock Night",
+        category: "Home Date",
+        status: "wishlist",
+        price_range: "Home",
+        notes: "Play Unlock or another puzzle/escape game together. Good when you want something fun but not too tiring."
+      }
+    ];
+
+    async function addExampleActivities() {
+      await seedLibraryItems("activity", exampleActivities, "example activities");
+    }
+
     const starterPlaces = [
       { name: "Gyu-Kaku", category: "Restaurant", status: "wishlist", price_range: "€€", notes: "Japanese BBQ place idea.", link_url: "https://www.google.com/maps/search/?api=1&query=Gyu-Kaku" },
       { name: "Phở Dinh", category: "Restaurant", status: "wishlist", price_range: "€", notes: "Vietnamese phở place idea.", link_url: "https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F%20Dinh" },
@@ -1579,7 +1686,7 @@
     }
 
     async function seedLibraryItems(itemType, items, label) {
-      if (!confirm(`Add the starter ${label} list? It will skip items already in your library.`)) return;
+      if (!confirm(`Add the ${label} list? It will skip items already in your library.`)) return;
 
       try {
         const { data: existing, error: existingError } = await supabaseClient
@@ -1608,7 +1715,7 @@
           }));
 
         if (!rows.length) {
-          alert(`Starter ${label} are already added.`);
+          alert(`The ${label} list is already added.`);
           return;
         }
 
@@ -1668,6 +1775,169 @@
       }
     }
 
+
+
+    function journalTypeLabel(type) {
+      const labels = {
+        note: "📝 Note",
+        memory: "💖 Memory",
+        shopping: "🛍️ Shopping",
+        idea: "💡 Idea"
+      };
+      return labels[type] || "📝 Note";
+    }
+
+    function journalImageHTML(entry) {
+      return entry.image_url
+        ? `
+          <img
+            class="library-image"
+            src="${escapeHTML(entry.image_url)}"
+            alt="${escapeHTML(entry.title || 'Journal photo')}"
+            loading="lazy"
+            onerror="this.style.display='none'"
+          >
+        `
+        : "";
+    }
+
+    function journalEntryHTML(entry) {
+      const title = entry.title || "Untitled journal entry";
+      const body = entry.body || "";
+      return `
+        <div class="entry">
+          <div class="library-item-head">
+            <div>
+              <div class="library-item-name">${escapeHTML(title)}</div>
+              <div class="journal-date">${formatDate(entry.entry_date)}</div>
+            </div>
+            <div class="library-item-status">${journalTypeLabel(entry.entry_type)}</div>
+          </div>
+          ${body ? `<div class="journal-body">${escapeHTML(body)}</div>` : ""}
+          ${journalImageHTML(entry)}
+          <div class="actions">
+            <button class="button small secondary" onclick="editJournalEntry('${entry.id}', '${encodeURIComponent(entry.entry_date || '')}', '${encodeURIComponent(entry.entry_type || 'note')}', '${encodeURIComponent(entry.title || '')}', '${encodeURIComponent(entry.body || '')}', '${encodeURIComponent(entry.image_url || '')}')">Edit</button>
+            <button class="button small danger" onclick="deleteJournalEntry('${entry.id}')">Delete</button>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadJournal() {
+      if (!currentCouple) return;
+      if (qs("journalDate") && !qs("journalDate").value) qs("journalDate").value = getToday();
+
+      const list = qs("journalList");
+      if (!list) return;
+      list.innerHTML = `<div class="empty">Loading journal...</div>`;
+
+      try {
+        const { data: entries, error } = await supabaseClient
+          .from("journal_entries")
+          .select("*")
+          .eq("couple_id", currentCouple.id)
+          .order("entry_date", { ascending: false })
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        if (!entries || !entries.length) {
+          list.innerHTML = `<div class="empty">No journal entries yet. Add a memory, note, shopping list or date idea ✨</div>`;
+          return;
+        }
+
+        list.innerHTML = entries.map(journalEntryHTML).join("");
+      } catch (error) {
+        console.error(error);
+        list.innerHTML = `<div class="empty">Could not load journal.</div>`;
+      }
+    }
+
+    async function addJournalEntry() {
+      const title = qs("journalTitle").value.trim();
+      const body = qs("journalBody").value.trim();
+      const imageUrl = qs("journalImageUrl").value.trim();
+      const entryDate = qs("journalDate").value || getToday();
+      const entryType = qs("journalType").value || "note";
+
+      if (!title && !body && !imageUrl) {
+        alert("Add a title, note, or photo URL first.");
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from("journal_entries")
+          .insert({
+            couple_id: currentCouple.id,
+            entry_date: entryDate,
+            entry_type: entryType,
+            title: title || null,
+            body: body || null,
+            image_url: imageUrl || null,
+            created_by: currentUser.id
+          });
+
+        if (error) throw error;
+
+        qs("journalTitle").value = "";
+        qs("journalBody").value = "";
+        qs("journalImageUrl").value = "";
+        await loadJournal();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function editJournalEntry(id, encodedDate, encodedType, encodedTitle, encodedBody, encodedImageUrl) {
+      const entryDate = prompt("Date YYYY-MM-DD:", decodeURIComponent(encodedDate) || getToday());
+      if (entryDate === null) return;
+      const entryType = prompt("Type: note, memory, shopping, idea", decodeURIComponent(encodedType) || "note");
+      if (entryType === null) return;
+      const title = prompt("Title:", decodeURIComponent(encodedTitle));
+      if (title === null) return;
+      const body = prompt("Body / notes:", decodeURIComponent(encodedBody));
+      if (body === null) return;
+      const imageUrl = prompt("Photo URL:", decodeURIComponent(encodedImageUrl || ""));
+      if (imageUrl === null) return;
+
+      try {
+        const { error } = await supabaseClient
+          .from("journal_entries")
+          .update({
+            entry_date: entryDate.trim() || getToday(),
+            entry_type: entryType.trim() || "note",
+            title: title.trim() || null,
+            body: body.trim() || null,
+            image_url: imageUrl.trim() || null
+          })
+          .eq("id", id);
+
+        if (error) throw error;
+        await loadJournal();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function deleteJournalEntry(id) {
+      if (!confirm("Delete this journal entry?")) return;
+
+      try {
+        const { error } = await supabaseClient
+          .from("journal_entries")
+          .delete()
+          .eq("id", id);
+
+        if (error) throw error;
+        await loadJournal();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
 
     async function loadHome() {
       const container = qs("homeList");
@@ -1780,6 +2050,7 @@
 
       renderPeriodCards();
       qs("selectedDate").value = getToday();
+      if (qs("journalDate")) qs("journalDate").value = getToday();
 
       await loadHome();
     }
