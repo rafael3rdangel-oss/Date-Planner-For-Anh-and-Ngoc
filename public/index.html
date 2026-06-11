@@ -109,7 +109,27 @@
     .library-item-name { font-weight: 700; color: var(--berry-dark); overflow-wrap: anywhere; }
     .library-item-status { white-space: nowrap; padding: 4px 8px; border-radius: 999px; background: var(--pink-2); color: var(--berry-dark); font-size: 12px; font-weight: 700; }
     .library-item-notes { margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 1.35; overflow-wrap: anywhere; }
+    .library-image {
+      width: 100%;
+      max-height: 170px;
+      object-fit: cover;
+      border-radius: 16px;
+      margin: 10px 0 6px;
+      border: 1px solid var(--line);
+      background: var(--pink-2);
+    }
 
+    .library-link {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: var(--blue);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+    }
     .hidden { display: none !important; }
     @media (max-width: 470px) {
       .hero h1 { font-size: 24px; }
@@ -937,7 +957,34 @@
         list.innerHTML = `<div class="empty">Could not load this library.</div>`;
       }
     }
+    function libraryMediaHTML(item) {
+      const image = item.image_url
+        ? `
+          <img
+            class="library-image"
+            src="${escapeHTML(item.image_url)}"
+            alt="${escapeHTML(item.name)}"
+            loading="lazy"
+            onerror="this.style.display='none'"
+          >
+        `
+        : "";
 
+      const link = item.link_url
+        ? `
+          <a
+            class="library-link"
+            href="${escapeHTML(item.link_url)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open link ↗
+          </a>
+        `
+        : "";
+
+      return image + link;
+    }
     function foodItemHTML(item) {
       const statusText = String(item.status || "wishlist").replace("_", " ");
       return `
@@ -954,6 +1001,7 @@
             <div class="library-item-status">${escapeHTML(statusText)}</div>
           </div>
           ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+                    ${libraryMediaHTML(item)}
           <div class="entry-meta">
             ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
           </div>
@@ -984,6 +1032,7 @@
             <div class="library-item-status">${escapeHTML(statusText)}</div>
           </div>
           ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+                    ${libraryMediaHTML(item)}
           <div class="entry-meta">
             ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
           </div>
@@ -1012,6 +1061,7 @@
             <div class="library-item-status">${escapeHTML(statusText)}</div>
           </div>
           ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+                    ${libraryMediaHTML(item)}
           <div class="entry-meta">
             ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
           </div>
