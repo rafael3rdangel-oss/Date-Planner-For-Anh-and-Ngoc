@@ -182,7 +182,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>URL editing v5</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>URL editing v6</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -278,11 +278,6 @@
           </div>
 
           <section id="foodLibraryPanel">
-            <div class="library-toolbar">
-              <button class="button secondary" onclick="seedStarterFoods()">Add starter food list</button>
-              <p class="subtitle" style="margin:0;">Includes home-date meals, Japanese, Korean, European and Vietnamese food ideas.</p>
-            </div>
-
             <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
               <h3 class="title">Add food or place</h3>
 
@@ -330,11 +325,6 @@
           </section>
 
           <section id="placesLibraryPanel" class="hidden">
-            <div class="library-toolbar">
-              <button class="button secondary" onclick="seedStarterPlaces()">Add starter places</button>
-              <p class="subtitle" style="margin:0;">Includes Gyu-Kaku and Phở Dinh. Add restaurants, cafés, parks, cinemas, malls, or cute date spots.</p>
-            </div>
-
             <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
               <h3 class="title">Add place</h3>
 
@@ -381,11 +371,6 @@
           </section>
 
           <section id="gameLibraryPanel" class="hidden">
-            <div class="library-toolbar">
-              <button class="button secondary" onclick="seedStarterGames()">Add starter games list</button>
-              <p class="subtitle" style="margin:0;">Includes cozy games, survival co-op, story/horror, platformers and LEGO games.</p>
-            </div>
-
             <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
               <h3 class="title">Add game</h3>
 
@@ -983,15 +968,15 @@
       if (!currentCouple) return;
 
       if (libraryMode === "food") {
-        await loadLibraryItems("food", "foodList", foodItemHTML, "No food yet. Add a dish or use the starter list 🍓");
+        await loadLibraryItems("food", "foodList", foodItemHTML, "No food yet. Add a dish 🍓");
       }
 
       if (libraryMode === "place") {
-        await loadLibraryItems("place", "placeList", placeItemHTML, "No places yet. Add Gyu-Kaku, Phở Dinh, or use the starter places 📍");
+        await loadLibraryItems("place", "placeList", placeItemHTML, "No places yet. Add a restaurant, café, park, mall, or cute date spot 📍");
       }
 
       if (libraryMode === "game") {
-        await loadLibraryItems("game", "gameList", gameItemHTML, "No games yet. Add a game or use the starter games 🎮");
+        await loadLibraryItems("game", "gameList", gameItemHTML, "No games yet. Add a game 🎮");
       }
     }
 
