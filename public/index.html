@@ -201,10 +201,11 @@
       <main id="libraryPage" class="page">
         <div class="card">
           <h2 class="title">♡ Library</h2>
-          <p class="subtitle">Save places, food ideas, games, and activities so you can reuse them later in Planning.</p>
+          <p class="subtitle">Save food, places, games, and activities so you can reuse them later in Planning.</p>
 
           <div class="tabs-mini">
             <button id="foodLibraryTab" class="active" onclick="setLibraryMode('food')">🍜 Food</button>
+            <button id="placesLibraryTab" onclick="setLibraryMode('place')">📍 Places</button>
             <button id="gamesLibraryTab" onclick="setLibraryMode('game')">🎮 Games</button>
             <button id="activitiesLibraryTab" onclick="setLibraryMode('activity')">✨ Activities</button>
           </div>
@@ -212,7 +213,7 @@
           <section id="foodLibraryPanel">
             <div class="library-toolbar">
               <button class="button secondary" onclick="seedStarterFoods()">Add starter food list</button>
-              <p class="subtitle" style="margin:0;">Includes Gyu-Kaku, Phở Dinh, home-date meals, Japanese, Korean, European and Vietnamese food ideas.</p>
+              <p class="subtitle" style="margin:0;">Includes home-date meals, Japanese, Korean, European and Vietnamese food ideas.</p>
             </div>
 
             <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
@@ -223,13 +224,13 @@
 
                 <div class="row">
                   <select id="foodCategory">
-                    <option value="Restaurant">Restaurant</option>
                     <option value="Home Cooking">Home Cooking</option>
                     <option value="Japanese">Japanese</option>
                     <option value="Korean">Korean</option>
                     <option value="Vietnamese">Vietnamese</option>
                     <option value="European">European</option>
                     <option value="Dessert">Dessert</option>
+                    <option value="Snack">Snack</option>
                     <option value="Other">Other</option>
                   </select>
 
@@ -258,12 +259,90 @@
             <div id="foodList" class="library-grid"></div>
           </section>
 
-          <section id="gameLibraryPanel" class="hidden">
-            <div class="entry">
-              <div class="entry-title">🎮 Games</div>
-              <div class="entry-meta">Next after Food: wishlist, played, ratings and Add to Plan.</div>
-              <span class="badge">Coming next</span>
+          <section id="placesLibraryPanel" class="hidden">
+            <div class="library-toolbar">
+              <button class="button secondary" onclick="seedStarterPlaces()">Add starter places</button>
+              <p class="subtitle" style="margin:0;">Includes Gyu-Kaku and Phở Dinh. Add restaurants, cafés, parks, cinemas, malls, or cute date spots.</p>
             </div>
+
+            <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
+              <h3 class="title">Add place</h3>
+
+              <div class="form-grid">
+                <input id="placeName" placeholder="Name, e.g. Gyu-Kaku, Phở Dinh, Crescent Mall">
+
+                <div class="row">
+                  <select id="placeCategory">
+                    <option value="Restaurant">Restaurant</option>
+                    <option value="Café">Café</option>
+                    <option value="Dessert Place">Dessert Place</option>
+                    <option value="Mall">Mall</option>
+                    <option value="Cinema">Cinema</option>
+                    <option value="Park / Walk">Park / Walk</option>
+                    <option value="Activity Place">Activity Place</option>
+                    <option value="Other">Other</option>
+                  </select>
+
+                  <select id="placeStatus">
+                    <option value="wishlist">Wishlist</option>
+                    <option value="visited">Visited</option>
+                    <option value="favorite">Favorite</option>
+                  </select>
+                </div>
+
+                <select id="placePrice">
+                  <option value="">Price range unknown</option>
+                  <option value="Free">Free</option>
+                  <option value="€">€ cheap</option>
+                  <option value="€€">€€ normal</option>
+                  <option value="€€€">€€€ special date</option>
+                </select>
+
+                <textarea id="placeNotes" placeholder="Notes, address, what to order, why it is cute, walking distance..."></textarea>
+
+                <button class="button" onclick="addPlaceItem()">Add to Places</button>
+              </div>
+            </div>
+
+            <div id="placeList" class="library-grid"></div>
+          </section>
+
+          <section id="gameLibraryPanel" class="hidden">
+            <div class="library-toolbar">
+              <button class="button secondary" onclick="seedStarterGames()">Add starter games list</button>
+              <p class="subtitle" style="margin:0;">Includes cozy games, survival co-op, story/horror, platformers and LEGO games.</p>
+            </div>
+
+            <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
+              <h3 class="title">Add game</h3>
+
+              <div class="form-grid">
+                <input id="gameName" placeholder="Name, e.g. Sun Haven, Grounded, LEGO Batman">
+
+                <div class="row">
+                  <select id="gameCategory">
+                    <option value="Cozy / Farming">Cozy / Farming</option>
+                    <option value="Survival / Co-op">Survival / Co-op</option>
+                    <option value="Story / Horror">Story / Horror</option>
+                    <option value="Platform / Fun">Platform / Fun</option>
+                    <option value="LEGO">LEGO</option>
+                    <option value="Other">Other</option>
+                  </select>
+
+                  <select id="gameStatus">
+                    <option value="wishlist">Wishlist</option>
+                    <option value="played">Played</option>
+                    <option value="favorite">Favorite</option>
+                  </select>
+                </div>
+
+                <textarea id="gameNotes" placeholder="Notes, platform, why we want to play it, who liked it more..."></textarea>
+
+                <button class="button" onclick="addGameItem()">Add to Games</button>
+              </div>
+            </div>
+
+            <div id="gameList" class="library-grid"></div>
           </section>
 
           <section id="activityLibraryPanel" class="hidden">
@@ -751,8 +830,6 @@
 
 
     const starterFoods = [
-      { name: "Gyu-Kaku", category: "Restaurant", status: "wishlist", price_range: "€€", notes: "Japanese BBQ place idea." },
-      { name: "Phở Dinh", category: "Vietnamese", status: "wishlist", price_range: "€", notes: "Vietnamese phở place idea." },
       { name: "Steak + fries", category: "Home Cooking", status: "wishlist", price_range: "Home", notes: "Quick home date. Note: she may not love red meat or oily food." },
       { name: "Heo quay + rice", category: "Home Cooking", status: "wishlist", price_range: "Home", notes: "Quick home date." },
       { name: "Honey grilled salmon", category: "Home Cooking", status: "wishlist", price_range: "Home", notes: "Good softer dinner option." },
@@ -797,31 +874,48 @@
     function setLibraryMode(mode) {
       libraryMode = mode;
       qs("foodLibraryTab").classList.toggle("active", mode === "food");
+      qs("placesLibraryTab").classList.toggle("active", mode === "place");
       qs("gamesLibraryTab").classList.toggle("active", mode === "game");
       qs("activitiesLibraryTab").classList.toggle("active", mode === "activity");
       qs("foodLibraryPanel").classList.toggle("hidden", mode !== "food");
+      qs("placesLibraryPanel").classList.toggle("hidden", mode !== "place");
       qs("gameLibraryPanel").classList.toggle("hidden", mode !== "game");
       qs("activityLibraryPanel").classList.toggle("hidden", mode !== "activity");
       loadLibrary();
     }
 
     async function loadLibrary() {
-      if (!currentCouple || libraryMode !== "food") return;
-      const list = qs("foodList");
-      list.innerHTML = `<div class="empty">Loading Food & Places...</div>`;
+      if (!currentCouple) return;
+
+      if (libraryMode === "food") {
+        await loadLibraryItems("food", "foodList", foodItemHTML, "No food yet. Add a dish or use the starter list 🍓");
+      }
+
+      if (libraryMode === "place") {
+        await loadLibraryItems("place", "placeList", placeItemHTML, "No places yet. Add Gyu-Kaku, Phở Dinh, or use the starter places 📍");
+      }
+
+      if (libraryMode === "game") {
+        await loadLibraryItems("game", "gameList", gameItemHTML, "No games yet. Add a game or use the starter games 🎮");
+      }
+    }
+
+    async function loadLibraryItems(itemType, listId, renderer, emptyMessage) {
+      const list = qs(listId);
+      list.innerHTML = `<div class="empty">Loading...</div>`;
 
       try {
         const { data: items, error } = await supabaseClient
           .from("library_items")
           .select("*")
           .eq("couple_id", currentCouple.id)
-          .eq("item_type", "food")
+          .eq("item_type", itemType)
           .order("name", { ascending: true });
 
         if (error) throw error;
 
         if (!items || !items.length) {
-          list.innerHTML = `<div class="empty">No food or places yet. Add Gyu-Kaku, Phở Dinh, or use the starter list 🍓</div>`;
+          list.innerHTML = `<div class="empty">${emptyMessage}</div>`;
           return;
         }
 
@@ -836,11 +930,11 @@
         list.innerHTML = items.map(item => {
           const itemRatings = (ratings || []).filter(rating => rating.library_item_id === item.id);
           const mine = itemRatings.find(rating => rating.user_id === currentUser.id);
-          return foodItemHTML({ ...item, my_rating: mine ? Number(mine.score) : 0 });
+          return renderer({ ...item, my_rating: mine ? Number(mine.score) : 0 });
         }).join("");
       } catch (error) {
         console.error(error);
-        list.innerHTML = `<div class="empty">Food & Places could not be loaded.</div>`;
+        list.innerHTML = `<div class="empty">Could not load this library.</div>`;
       }
     }
 
@@ -865,9 +959,67 @@
           </div>
           ${libraryStarButtons(item)}
           <div class="actions">
-            <button class="button small" onclick="addLibraryFoodToPlan('${item.id}', '${encodeURIComponent(item.name)}')">Add to Plan</button>
+            <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'food')">Add to Plan</button>
             <button class="button small secondary" onclick="editFoodItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}')">Edit</button>
             <button class="button small danger" onclick="deleteFoodItem('${item.id}')">Delete</button>
+          </div>
+        </div>
+      `;
+    }
+
+
+    function placeItemHTML(item) {
+      const statusText = String(item.status || "wishlist").replace("_", " ");
+      return `
+        <div class="entry">
+          <div class="library-item-head">
+            <div>
+              <div class="library-item-name">📍 ${escapeHTML(item.name)}</div>
+              <div class="entry-meta">
+                ${escapeHTML(item.category || "Place")}
+                ${item.price_range ? ` · ${escapeHTML(item.price_range)}` : ""}
+                ${item.times_used ? ` · used ${item.times_used}x` : ""}
+              </div>
+            </div>
+            <div class="library-item-status">${escapeHTML(statusText)}</div>
+          </div>
+          ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+          <div class="entry-meta">
+            ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
+          </div>
+          ${libraryStarButtons(item)}
+          <div class="actions">
+            <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'place')">Add to Plan</button>
+            <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}')">Edit</button>
+            <button class="button small danger" onclick="deleteLibraryItem('${item.id}', 'place')">Delete</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function gameItemHTML(item) {
+      const statusText = String(item.status || "wishlist").replace("_", " ");
+      return `
+        <div class="entry">
+          <div class="library-item-head">
+            <div>
+              <div class="library-item-name">🎮 ${escapeHTML(item.name)}</div>
+              <div class="entry-meta">
+                ${escapeHTML(item.category || "Game")}
+                ${item.times_used ? ` · played/planned ${item.times_used}x` : ""}
+              </div>
+            </div>
+            <div class="library-item-status">${escapeHTML(statusText)}</div>
+          </div>
+          ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+          <div class="entry-meta">
+            ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
+          </div>
+          ${libraryStarButtons(item)}
+          <div class="actions">
+            <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'game')">Add to Plan</button>
+            <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}')">Edit</button>
+            <button class="button small danger" onclick="deleteLibraryItem('${item.id}', 'game')">Delete</button>
           </div>
         </div>
       `;
@@ -1024,6 +1176,229 @@
         alert(error.message);
       }
     }
+
+
+    async function addPlaceItem() {
+      await addLibraryItemFromForm({
+        item_type: "place",
+        nameId: "placeName",
+        categoryId: "placeCategory",
+        statusId: "placeStatus",
+        priceId: "placePrice",
+        notesId: "placeNotes"
+      });
+    }
+
+    async function addGameItem() {
+      await addLibraryItemFromForm({
+        item_type: "game",
+        nameId: "gameName",
+        categoryId: "gameCategory",
+        statusId: "gameStatus",
+        priceId: null,
+        notesId: "gameNotes"
+      });
+    }
+
+    async function addLibraryItemFromForm(config) {
+      const name = qs(config.nameId).value.trim();
+      if (!name) {
+        alert("Please add a name.");
+        return;
+      }
+
+      try {
+        const row = {
+          couple_id: currentCouple.id,
+          item_type: config.item_type,
+          name,
+          category: qs(config.categoryId).value,
+          status: qs(config.statusId).value,
+          price_range: config.priceId ? (qs(config.priceId).value || null) : null,
+          notes: qs(config.notesId).value.trim() || null,
+          created_by: currentUser.id
+        };
+
+        const { error } = await supabaseClient.from("library_items").insert(row);
+        if (error) throw error;
+
+        qs(config.nameId).value = "";
+        qs(config.notesId).value = "";
+        await loadLibrary();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function editLibraryItem(id, encodedName, encodedCategory, encodedStatus, encodedPrice, encodedNotes) {
+      const name = prompt("Name:", decodeURIComponent(encodedName));
+      if (name === null || !name.trim()) return;
+      const category = prompt("Category:", decodeURIComponent(encodedCategory));
+      if (category === null) return;
+      const status = prompt("Status: wishlist, visited, played, tried, favorite", decodeURIComponent(encodedStatus) || "wishlist");
+      if (status === null) return;
+      const price = prompt("Price range, if any:", decodeURIComponent(encodedPrice));
+      if (price === null) return;
+      const notes = prompt("Notes:", decodeURIComponent(encodedNotes));
+      if (notes === null) return;
+
+      try {
+        const { error } = await supabaseClient
+          .from("library_items")
+          .update({
+            name: name.trim(),
+            category: category.trim() || null,
+            status: status.trim() || "wishlist",
+            price_range: price.trim() || null,
+            notes: notes.trim() || null
+          })
+          .eq("id", id);
+
+        if (error) throw error;
+        await loadLibrary();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function deleteLibraryItem(id, typeName) {
+      if (!confirm(`Delete this ${typeName} from the library?`)) return;
+
+      try {
+        const { error } = await supabaseClient.from("library_items").delete().eq("id", id);
+        if (error) throw error;
+        await loadLibrary();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function addLibraryItemToPlan(libraryItemId, encodedName, entryType) {
+      const name = decodeURIComponent(encodedName);
+      const date = prompt("Add to which date? Use YYYY-MM-DD", qs("selectedDate")?.value || getToday());
+      if (!date) return;
+      const period = prompt("Which time? Morning, Noon, Afternoon, Evening", entryType === "game" ? "Evening" : "Noon");
+      if (!period) return;
+
+      const cleanedPeriod = period.trim();
+      if (!periods[cleanedPeriod]) {
+        alert("Please use Morning, Noon, Afternoon, or Evening.");
+        return;
+      }
+
+      try {
+        const plan = await getPlanForDate(date.trim(), true);
+
+        const { error } = await supabaseClient.from("plan_entries").insert({
+          plan_id: plan.id,
+          library_item_id: libraryItemId,
+          entry_type: entryType,
+          time_period: cleanedPeriod,
+          title: name,
+          created_by: currentUser.id
+        });
+
+        if (error) throw error;
+
+        await supabaseClient
+          .from("library_items")
+          .update({ last_used_date: date.trim() })
+          .eq("id", libraryItemId);
+
+        alert(`${name} added to ${cleanedPeriod} on ${date.trim()}.`);
+        if (qs("selectedDate")) qs("selectedDate").value = date.trim();
+        await loadPlan();
+        await loadHome();
+        await loadLibrary();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    const starterPlaces = [
+      { name: "Gyu-Kaku", category: "Restaurant", status: "wishlist", price_range: "€€", notes: "Japanese BBQ place idea." },
+      { name: "Phở Dinh", category: "Restaurant", status: "wishlist", price_range: "€", notes: "Vietnamese phở place idea." },
+      { name: "Crescent Mall", category: "Mall", status: "visited", price_range: "Free", notes: "First date area. Good for walking and nearby food." },
+      { name: "Starlight Bridge / Rainbow Bridge", category: "Park / Walk", status: "visited", price_range: "Free", notes: "Romantic walk and photos. Remember she may not like walking too far." }
+    ];
+
+    const starterGames = [
+      { name: "Sun Haven", category: "Cozy / Farming", status: "played", notes: "Cozy farming game." },
+      { name: "Travelers Rest", category: "Cozy / Farming", status: "wishlist", notes: "" },
+      { name: "Lightyear Frontier", category: "Cozy / Farming", status: "wishlist", notes: "" },
+      { name: "Planet Crafter", category: "Cozy / Farming", status: "wishlist", notes: "" },
+      { name: "Ale & Tale Tavern", category: "Cozy / Farming", status: "wishlist", notes: "" },
+      { name: "House Flipper Co-op", category: "Cozy / Farming", status: "wishlist", notes: "" },
+      { name: "Grounded", category: "Survival / Co-op", status: "wishlist", notes: "" },
+      { name: "Don’t Starve", category: "Survival / Co-op", status: "wishlist", notes: "" },
+      { name: "Deep Rock Galactic", category: "Survival / Co-op", status: "wishlist", notes: "" },
+      { name: "Darktide", category: "Survival / Co-op", status: "wishlist", notes: "" },
+      { name: "V Rising", category: "Survival / Co-op", status: "wishlist", notes: "" },
+      { name: "Species Unknown", category: "Survival / Co-op", status: "wishlist", notes: "" },
+      { name: "No Rest for the Wicked", category: "Survival / Co-op", status: "wishlist", notes: "" },
+      { name: "The Quarry", category: "Story / Horror", status: "wishlist", notes: "Supermassive style." },
+      { name: "Until Dawn", category: "Story / Horror", status: "wishlist", notes: "Supermassive style." },
+      { name: "Directive 8020", category: "Story / Horror", status: "wishlist", notes: "Supermassive style." },
+      { name: "LEGO Batman", category: "LEGO", status: "played", notes: "" },
+      { name: "LEGO Lord of the Rings", category: "LEGO", status: "played", notes: "" },
+      { name: "Reanimal", category: "Platform / Fun", status: "wishlist", notes: "" }
+    ];
+
+    async function seedStarterPlaces() {
+      await seedLibraryItems("place", starterPlaces, "places");
+    }
+
+    async function seedStarterGames() {
+      await seedLibraryItems("game", starterGames, "games");
+    }
+
+    async function seedLibraryItems(itemType, items, label) {
+      if (!confirm(`Add the starter ${label} list? It will skip items already in your library.`)) return;
+
+      try {
+        const { data: existing, error: existingError } = await supabaseClient
+          .from("library_items")
+          .select("name")
+          .eq("couple_id", currentCouple.id)
+          .eq("item_type", itemType);
+
+        if (existingError) throw existingError;
+
+        const existingNames = new Set((existing || []).map(item => item.name.toLowerCase().trim()));
+
+        const rows = items
+          .filter(item => !existingNames.has(item.name.toLowerCase().trim()))
+          .map(item => ({
+            couple_id: currentCouple.id,
+            item_type: itemType,
+            name: item.name,
+            category: item.category,
+            status: item.status,
+            price_range: item.price_range || null,
+            notes: item.notes || null,
+            created_by: currentUser.id
+          }));
+
+        if (!rows.length) {
+          alert(`Starter ${label} are already added.`);
+          return;
+        }
+
+        const { error } = await supabaseClient.from("library_items").insert(rows);
+        if (error) throw error;
+
+        alert(`Added ${rows.length} ${label}.`);
+        await loadLibrary();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
 
     async function seedStarterFoods() {
       if (!confirm("Add the starter food list? It will skip items already in your library.")) return;
