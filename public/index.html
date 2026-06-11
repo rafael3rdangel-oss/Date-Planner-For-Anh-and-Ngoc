@@ -118,7 +118,6 @@
       border: 1px solid var(--line);
       background: var(--pink-2);
     }
-
     .library-link {
       display: inline-block;
       margin-top: 8px;
@@ -130,6 +129,7 @@
       font-size: 12px;
       font-weight: 700;
     }
+
     .hidden { display: none !important; }
     @media (max-width: 470px) {
       .hero h1 { font-size: 24px; }
@@ -272,6 +272,9 @@
 
                 <textarea id="foodNotes" placeholder="Notes, e.g. she likes this, avoid oily food, good for rainy days..."></textarea>
 
+                <input id="foodImageUrl" placeholder="Image URL (optional)">
+                <input id="foodLinkUrl" placeholder="Recipe / website URL (optional)">
+
                 <button class="button" onclick="addFoodItem()">Add to Food & Places</button>
               </div>
             </div>
@@ -320,6 +323,9 @@
 
                 <textarea id="placeNotes" placeholder="Notes, address, what to order, why it is cute, walking distance..."></textarea>
 
+                <input id="placeImageUrl" placeholder="Image URL (optional)">
+                <input id="placeLinkUrl" placeholder="Google Maps / website URL (optional)">
+
                 <button class="button" onclick="addPlaceItem()">Add to Places</button>
               </div>
             </div>
@@ -357,6 +363,9 @@
                 </div>
 
                 <textarea id="gameNotes" placeholder="Notes, platform, why we want to play it, who liked it more..."></textarea>
+
+                <input id="gameImageUrl" placeholder="Image URL (optional)">
+                <input id="gameLinkUrl" placeholder="Steam / website URL (optional)">
 
                 <button class="button" onclick="addGameItem()">Add to Games</button>
               </div>
@@ -957,6 +966,7 @@
         list.innerHTML = `<div class="empty">Could not load this library.</div>`;
       }
     }
+
     function libraryMediaHTML(item) {
       const image = item.image_url
         ? `
@@ -985,6 +995,7 @@
 
       return image + link;
     }
+
     function foodItemHTML(item) {
       const statusText = String(item.status || "wishlist").replace("_", " ");
       return `
@@ -1001,14 +1012,14 @@
             <div class="library-item-status">${escapeHTML(statusText)}</div>
           </div>
           ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
-                    ${libraryMediaHTML(item)}
+          ${libraryMediaHTML(item)}
           <div class="entry-meta">
             ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
           </div>
           ${libraryStarButtons(item)}
           <div class="actions">
             <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'food')">Add to Plan</button>
-            <button class="button small secondary" onclick="editFoodItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}')">Edit</button>
+            <button class="button small secondary" onclick="editFoodItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}', '${encodeURIComponent(item.image_url || "")}', '${encodeURIComponent(item.link_url || "")}')">Edit</button>
             <button class="button small danger" onclick="deleteFoodItem('${item.id}')">Delete</button>
           </div>
         </div>
@@ -1032,14 +1043,14 @@
             <div class="library-item-status">${escapeHTML(statusText)}</div>
           </div>
           ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
-                    ${libraryMediaHTML(item)}
+          ${libraryMediaHTML(item)}
           <div class="entry-meta">
             ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
           </div>
           ${libraryStarButtons(item)}
           <div class="actions">
             <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'place')">Add to Plan</button>
-            <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}')">Edit</button>
+            <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}', '${encodeURIComponent(item.image_url || "")}', '${encodeURIComponent(item.link_url || "")}')">Edit</button>
             <button class="button small danger" onclick="deleteLibraryItem('${item.id}', 'place')">Delete</button>
           </div>
         </div>
@@ -1061,14 +1072,14 @@
             <div class="library-item-status">${escapeHTML(statusText)}</div>
           </div>
           ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
-                    ${libraryMediaHTML(item)}
+          ${libraryMediaHTML(item)}
           <div class="entry-meta">
             ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
           </div>
           ${libraryStarButtons(item)}
           <div class="actions">
             <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'game')">Add to Plan</button>
-            <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}')">Edit</button>
+            <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}', '${encodeURIComponent(item.image_url || "")}', '${encodeURIComponent(item.link_url || "")}')">Edit</button>
             <button class="button small danger" onclick="deleteLibraryItem('${item.id}', 'game')">Delete</button>
           </div>
         </div>
@@ -1099,12 +1110,16 @@
           status: qs("foodStatus").value,
           price_range: qs("foodPrice").value || null,
           notes: qs("foodNotes").value.trim() || null,
+          image_url: qs("foodImageUrl").value.trim() || null,
+          link_url: qs("foodLinkUrl").value.trim() || null,
           created_by: currentUser.id
         });
 
         if (error) throw error;
         qs("foodName").value = "";
         qs("foodNotes").value = "";
+        qs("foodImageUrl").value = "";
+        qs("foodLinkUrl").value = "";
         await loadLibrary();
       } catch (error) {
         console.error(error);
@@ -1112,7 +1127,7 @@
       }
     }
 
-    async function editFoodItem(id, encodedName, encodedCategory, encodedStatus, encodedPrice, encodedNotes) {
+    async function editFoodItem(id, encodedName, encodedCategory, encodedStatus, encodedPrice, encodedNotes, encodedImageUrl, encodedLinkUrl) {
       const name = prompt("Food/place name:", decodeURIComponent(encodedName));
       if (name === null || !name.trim()) return;
       const category = prompt("Category:", decodeURIComponent(encodedCategory) || "Restaurant");
@@ -1123,6 +1138,10 @@
       if (price === null) return;
       const notes = prompt("Notes:", decodeURIComponent(encodedNotes));
       if (notes === null) return;
+      const imageUrl = prompt("Image URL:", decodeURIComponent(encodedImageUrl || ""));
+      if (imageUrl === null) return;
+      const linkUrl = prompt("Link URL:", decodeURIComponent(encodedLinkUrl || ""));
+      if (linkUrl === null) return;
 
       try {
         const { error } = await supabaseClient.from("library_items").update({
@@ -1130,7 +1149,9 @@
           category: category.trim() || null,
           status: status.trim() || "wishlist",
           price_range: price.trim() || null,
-          notes: notes.trim() || null
+          notes: notes.trim() || null,
+          image_url: imageUrl.trim() || null,
+          link_url: linkUrl.trim() || null
         }).eq("id", id);
 
         if (error) throw error;
@@ -1235,7 +1256,9 @@
         categoryId: "placeCategory",
         statusId: "placeStatus",
         priceId: "placePrice",
-        notesId: "placeNotes"
+        notesId: "placeNotes",
+        imageId: "placeImageUrl",
+        linkId: "placeLinkUrl"
       });
     }
 
@@ -1246,7 +1269,9 @@
         categoryId: "gameCategory",
         statusId: "gameStatus",
         priceId: null,
-        notesId: "gameNotes"
+        notesId: "gameNotes",
+        imageId: "gameImageUrl",
+        linkId: "gameLinkUrl"
       });
     }
 
@@ -1266,6 +1291,8 @@
           status: qs(config.statusId).value,
           price_range: config.priceId ? (qs(config.priceId).value || null) : null,
           notes: qs(config.notesId).value.trim() || null,
+          image_url: config.imageId ? (qs(config.imageId).value.trim() || null) : null,
+          link_url: config.linkId ? (qs(config.linkId).value.trim() || null) : null,
           created_by: currentUser.id
         };
 
@@ -1274,6 +1301,8 @@
 
         qs(config.nameId).value = "";
         qs(config.notesId).value = "";
+        if (config.imageId) qs(config.imageId).value = "";
+        if (config.linkId) qs(config.linkId).value = "";
         await loadLibrary();
       } catch (error) {
         console.error(error);
@@ -1281,7 +1310,7 @@
       }
     }
 
-    async function editLibraryItem(id, encodedName, encodedCategory, encodedStatus, encodedPrice, encodedNotes) {
+    async function editLibraryItem(id, encodedName, encodedCategory, encodedStatus, encodedPrice, encodedNotes, encodedImageUrl, encodedLinkUrl) {
       const name = prompt("Name:", decodeURIComponent(encodedName));
       if (name === null || !name.trim()) return;
       const category = prompt("Category:", decodeURIComponent(encodedCategory));
@@ -1292,6 +1321,10 @@
       if (price === null) return;
       const notes = prompt("Notes:", decodeURIComponent(encodedNotes));
       if (notes === null) return;
+      const imageUrl = prompt("Image URL:", decodeURIComponent(encodedImageUrl || ""));
+      if (imageUrl === null) return;
+      const linkUrl = prompt("Link URL / Google Maps URL:", decodeURIComponent(encodedLinkUrl || ""));
+      if (linkUrl === null) return;
 
       try {
         const { error } = await supabaseClient
@@ -1301,7 +1334,9 @@
             category: category.trim() || null,
             status: status.trim() || "wishlist",
             price_range: price.trim() || null,
-            notes: notes.trim() || null
+            notes: notes.trim() || null,
+            image_url: imageUrl.trim() || null,
+            link_url: linkUrl.trim() || null
           })
           .eq("id", id);
 
@@ -1370,32 +1405,32 @@
     }
 
     const starterPlaces = [
-      { name: "Gyu-Kaku", category: "Restaurant", status: "wishlist", price_range: "€€", notes: "Japanese BBQ place idea." },
-      { name: "Phở Dinh", category: "Restaurant", status: "wishlist", price_range: "€", notes: "Vietnamese phở place idea." },
-      { name: "Crescent Mall", category: "Mall", status: "visited", price_range: "Free", notes: "First date area. Good for walking and nearby food." },
-      { name: "Starlight Bridge / Rainbow Bridge", category: "Park / Walk", status: "visited", price_range: "Free", notes: "Romantic walk and photos. Remember she may not like walking too far." }
+      { name: "Gyu-Kaku", category: "Restaurant", status: "wishlist", price_range: "€€", notes: "Japanese BBQ place idea.", link_url: "https://www.google.com/maps/search/?api=1&query=Gyu-Kaku" },
+      { name: "Phở Dinh", category: "Restaurant", status: "wishlist", price_range: "€", notes: "Vietnamese phở place idea.", link_url: "https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F%20Dinh" },
+      { name: "Crescent Mall", category: "Mall", status: "visited", price_range: "Free", notes: "First date area. Good for walking and nearby food.", link_url: "https://www.google.com/maps/search/?api=1&query=Crescent%20Mall%20Ho%20Chi%20Minh" },
+      { name: "Starlight Bridge / Rainbow Bridge", category: "Park / Walk", status: "visited", price_range: "Free", notes: "Romantic walk and photos. Remember she may not like walking too far.", link_url: "https://www.google.com/maps/search/?api=1&query=Starlight%20Bridge%20Ho%20Chi%20Minh" }
     ];
 
     const starterGames = [
-      { name: "Sun Haven", category: "Cozy / Farming", status: "played", notes: "Cozy farming game." },
-      { name: "Travelers Rest", category: "Cozy / Farming", status: "wishlist", notes: "" },
-      { name: "Lightyear Frontier", category: "Cozy / Farming", status: "wishlist", notes: "" },
-      { name: "Planet Crafter", category: "Cozy / Farming", status: "wishlist", notes: "" },
-      { name: "Ale & Tale Tavern", category: "Cozy / Farming", status: "wishlist", notes: "" },
-      { name: "House Flipper Co-op", category: "Cozy / Farming", status: "wishlist", notes: "" },
-      { name: "Grounded", category: "Survival / Co-op", status: "wishlist", notes: "" },
-      { name: "Don’t Starve", category: "Survival / Co-op", status: "wishlist", notes: "" },
-      { name: "Deep Rock Galactic", category: "Survival / Co-op", status: "wishlist", notes: "" },
-      { name: "Darktide", category: "Survival / Co-op", status: "wishlist", notes: "" },
-      { name: "V Rising", category: "Survival / Co-op", status: "wishlist", notes: "" },
-      { name: "Species Unknown", category: "Survival / Co-op", status: "wishlist", notes: "" },
-      { name: "No Rest for the Wicked", category: "Survival / Co-op", status: "wishlist", notes: "" },
-      { name: "The Quarry", category: "Story / Horror", status: "wishlist", notes: "Supermassive style." },
-      { name: "Until Dawn", category: "Story / Horror", status: "wishlist", notes: "Supermassive style." },
-      { name: "Directive 8020", category: "Story / Horror", status: "wishlist", notes: "Supermassive style." },
-      { name: "LEGO Batman", category: "LEGO", status: "played", notes: "" },
-      { name: "LEGO Lord of the Rings", category: "LEGO", status: "played", notes: "" },
-      { name: "Reanimal", category: "Platform / Fun", status: "wishlist", notes: "" }
+      { name: "Sun Haven", category: "Cozy / Farming", status: "played", notes: "Cozy farming game.", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1432860/header.jpg", link_url: "https://store.steampowered.com/app/1432860/Sun_Haven/" },
+      { name: "Travelers Rest", category: "Cozy / Farming", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1139980/header.jpg", link_url: "https://store.steampowered.com/app/1139980/Travellers_Rest/" },
+      { name: "Lightyear Frontier", category: "Cozy / Farming", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1677110/header.jpg", link_url: "https://store.steampowered.com/app/1677110/Lightyear_Frontier/" },
+      { name: "Planet Crafter", category: "Cozy / Farming", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1284190/header.jpg", link_url: "https://store.steampowered.com/app/1284190/The_Planet_Crafter/" },
+      { name: "Ale & Tale Tavern", category: "Cozy / Farming", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2683150/header.jpg", link_url: "https://store.steampowered.com/app/2683150/Ale__Tale_Tavern/" },
+      { name: "House Flipper Co-op", category: "Cozy / Farming", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/3363370/header.jpg", link_url: "https://store.steampowered.com/app/3363370/House_Flipper_2__Coop_DLC/" },
+      { name: "Grounded", category: "Survival / Co-op", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/962130/header.jpg", link_url: "https://store.steampowered.com/app/962130/Grounded/" },
+      { name: "Don’t Starve", category: "Survival / Co-op", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/322330/header.jpg", link_url: "https://store.steampowered.com/app/322330/Dont_Starve_Together/" },
+      { name: "Deep Rock Galactic", category: "Survival / Co-op", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/548430/header.jpg", link_url: "https://store.steampowered.com/app/548430/Deep_Rock_Galactic/" },
+      { name: "Darktide", category: "Survival / Co-op", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1361210/header.jpg", link_url: "https://store.steampowered.com/app/1361210/Warhammer_40000_Darktide/" },
+      { name: "V Rising", category: "Survival / Co-op", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1604030/header.jpg", link_url: "https://store.steampowered.com/app/1604030/V_Rising/" },
+      { name: "Species Unknown", category: "Survival / Co-op", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2747330/header.jpg", link_url: "https://store.steampowered.com/app/2747330/Species_Unknown/" },
+      { name: "No Rest for the Wicked", category: "Survival / Co-op", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1371980/header.jpg", link_url: "https://store.steampowered.com/app/1371980/No_Rest_for_the_Wicked/" },
+      { name: "The Quarry", category: "Story / Horror", status: "wishlist", notes: "Supermassive style.", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1577120/header.jpg", link_url: "https://store.steampowered.com/app/1577120/The_Quarry/" },
+      { name: "Until Dawn", category: "Story / Horror", status: "wishlist", notes: "Supermassive style.", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2172010/header.jpg", link_url: "https://store.steampowered.com/app/2172010/Until_Dawn/" },
+      { name: "Directive 8020", category: "Story / Horror", status: "wishlist", notes: "Supermassive style.", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2255370/header.jpg", link_url: "https://store.steampowered.com/app/2255370/Directive_8020/" },
+      { name: "LEGO Batman", category: "LEGO", status: "played", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/21000/header.jpg", link_url: "https://store.steampowered.com/app/21000/LEGO_Batman_The_Videogame/" },
+      { name: "LEGO Lord of the Rings", category: "LEGO", status: "played", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/214510/header.jpg", link_url: "https://store.steampowered.com/app/214510/LEGO_The_Lord_of_the_Rings/" },
+      { name: "Reanimal", category: "Platform / Fun", status: "wishlist", notes: "", image_url: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2129530/header.jpg", link_url: "https://store.steampowered.com/app/2129530/REANIMAL/" }
     ];
 
     async function seedStarterPlaces() {
@@ -1430,6 +1465,8 @@
             status: item.status,
             price_range: item.price_range || null,
             notes: item.notes || null,
+            image_url: item.image_url || null,
+            link_url: item.link_url || null,
             created_by: currentUser.id
           }));
 
@@ -1473,6 +1510,8 @@
             status: item.status,
             price_range: item.price_range || null,
             notes: item.notes || null,
+            image_url: item.image_url || null,
+            link_url: item.link_url || null,
             created_by: currentUser.id
           }));
 
