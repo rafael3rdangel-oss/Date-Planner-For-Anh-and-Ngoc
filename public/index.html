@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Plan v13</title>
+  <title>Date Planner for Us 🍓 Quick Add v16</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -220,7 +220,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Library filters v15</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Quick add v16</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -393,6 +393,27 @@
               </div>
               <button class="button ghost" onclick="clearLibraryFilters()">Clear search/filter</button>
             </div>
+          </div>
+
+          <div class="card compact-card library-filter-card">
+            <h3 class="title">📅 Quick add to plan</h3>
+            <p class="subtitle">Choose the date and time once. Then every “Add to Plan” button in this Library tab will use it. No pop-up questions.</p>
+            <div class="row">
+              <div>
+                <div class="filter-small-label">Date</div>
+                <input id="libraryPlanDate" type="date">
+              </div>
+              <div>
+                <div class="filter-small-label">Time</div>
+                <select id="libraryPlanPeriod">
+                  <option value="Morning">Morning</option>
+                  <option value="Noon">Noon</option>
+                  <option value="Afternoon">Afternoon</option>
+                  <option value="Evening" selected>Evening</option>
+                </select>
+              </div>
+            </div>
+            <p id="libraryAddMessage" class="plan-copy-message"></p>
           </div>
 
           <section id="foodLibraryPanel">
@@ -907,10 +928,20 @@
 
       if (pageId === "homePage") loadHome();
       if (pageId === "planPage") loadPlan();
-      if (pageId === "libraryPage") loadLibrary();
+      if (pageId === "libraryPage") {
+        syncLibraryQuickAddDate();
+        loadLibrary();
+      }
       if (pageId === "journalPage") loadJournal();
 
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function syncLibraryQuickAddDate() {
+      if (!qs("libraryPlanDate")) return;
+      const selected = qs("selectedDate")?.value || getToday();
+      if (!qs("libraryPlanDate").value) qs("libraryPlanDate").value = selected;
+      if (!qs("libraryPlanPeriod").value) qs("libraryPlanPeriod").value = "Evening";
     }
 
     function setHomeMode(mode) {
@@ -2007,19 +2038,23 @@
 
     async function addLibraryItemToPlan(libraryItemId, encodedName, entryType) {
       const name = decodeURIComponent(encodedName);
-      const date = prompt("Add to which date? Use YYYY-MM-DD", qs("selectedDate")?.value || getToday());
-      if (!date) return;
-      const period = prompt("Which time? Morning, Noon, Afternoon, Evening", entryType === "game" ? "Evening" : "Noon");
-      if (!period) return;
+      syncLibraryQuickAddDate();
 
-      const cleanedPeriod = period.trim();
+      const date = (qs("libraryPlanDate")?.value || qs("selectedDate")?.value || getToday()).trim();
+      const cleanedPeriod = (qs("libraryPlanPeriod")?.value || (entryType === "game" ? "Evening" : "Noon")).trim();
+
+      if (!date) {
+        alert("Choose a date first.");
+        return;
+      }
+
       if (!periods[cleanedPeriod]) {
         alert("Please use Morning, Noon, Afternoon, or Evening.");
         return;
       }
 
       try {
-        const plan = await getPlanForDate(date.trim(), true);
+        const plan = await getPlanForDate(date, true);
 
         const { error } = await supabaseClient.from("plan_entries").insert({
           plan_id: plan.id,
@@ -2034,11 +2069,13 @@
 
         await supabaseClient
           .from("library_items")
-          .update({ last_used_date: date.trim() })
+          .update({ last_used_date: date })
           .eq("id", libraryItemId);
 
-        alert(`${name} added to ${cleanedPeriod} on ${date.trim()}.`);
-        if (qs("selectedDate")) qs("selectedDate").value = date.trim();
+        if (qs("libraryAddMessage")) {
+          qs("libraryAddMessage").textContent = `${name} added to ${cleanedPeriod} on ${date} 💖`;
+        }
+        if (qs("selectedDate")) qs("selectedDate").value = date;
         await loadPlan();
         await loadHome();
         await loadLibrary();
@@ -2530,6 +2567,8 @@
       renderPeriodCards();
       qs("selectedDate").value = getToday();
       if (qs("journalDate")) qs("journalDate").value = getToday();
+      if (qs("libraryPlanDate")) qs("libraryPlanDate").value = getToday();
+      if (qs("libraryPlanPeriod")) qs("libraryPlanPeriod").value = "Evening";
 
       await loadHome();
     }
