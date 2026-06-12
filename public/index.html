@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Storybook shelf v41</title>
+  <title>Date Planner for Us 🍓 Timeline storybook v42</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1284,6 +1284,127 @@
       line-height: 1.65;
     }
 
+  
+    .cute-timeline-toolbar {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .cute-timeline-list {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .cute-timeline-list:before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      border-radius: 99px;
+      background: linear-gradient(#ffd1e2, #ef6f9f, #ffd1e2);
+      opacity: .45;
+    }
+    .cute-timeline-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+    }
+    .cute-timeline-dot {
+      position: relative;
+      z-index: 1;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(239,111,159,.20);
+      box-shadow: 0 8px 18px rgba(92, 66, 80, .12);
+      font-size: 18px;
+    }
+    .cute-timeline-card {
+      padding: 13px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(239,111,159,.15);
+      box-shadow: 0 8px 18px rgba(92,66,80,.07);
+    }
+    .cute-timeline-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .cute-timeline-title {
+      margin: 0;
+      color: var(--berry-dark);
+      font-size: 16px;
+      line-height: 1.25;
+    }
+    .cute-timeline-date {
+      width: fit-content;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(239,111,159,.11);
+      color: var(--berry-dark);
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .cute-timeline-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+    .cute-timeline-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 9px;
+    }
+    .cute-timeline-tag {
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255, 244, 249, .84);
+      border: 1px solid rgba(239,111,159,.10);
+      color: var(--berry-dark);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .storybook-howto {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.74);
+      border: 1px solid rgba(239,111,159,.15);
+    }
+    .storybook-howto h3 {
+      margin: 0;
+      color: var(--berry-dark);
+      font-size: 17px;
+    }
+    .storybook-howto ol {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+    .storybook-howto li + li {
+      margin-top: 5px;
+    }
+    .storybook-howto strong {
+      color: var(--berry-dark);
+    }
+
   </style>
 </head>
 
@@ -1296,7 +1417,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Storybook shelf v41</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Timeline storybook v42</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -1382,6 +1503,33 @@
 
 
 
+
+
+        
+        <div class="card compact-card">
+          <div class="section-sparkle">🍓 v27 personal touch</div>
+          <h2 class="title">💞 Couple profile</h2>
+          <p class="subtitle">A small shared profile for Anh Tommy & Em Ngoc. This is saved inside your existing Journal table, so no SQL is needed. You can add mini stickers in these text fields too.</p>
+          <div id="coupleProfileView" class="couple-profile-display">
+            <div class="empty">Loading couple profile...</div>
+          </div>
+          <div class="form-grid">
+            <input id="profileTogetherSince" type="date" placeholder="Together since">
+            <input id="profileFavoriteDateType" placeholder="Favorite date type, e.g. cozy home, game night, cute café">
+            <input id="profileNextGoal" placeholder="Next couple goal, e.g. build LEGO flowers, try Korean snacks">
+            <textarea id="profileLittleRules" placeholder="Little reminders, e.g. soft walking, not too oily food, remember photos..."></textarea>
+            <div class="row">
+              <button class="button" onclick="saveCoupleProfile()">Save couple profile</button>
+              <button class="button ghost" onclick="loadCoupleProfile()">Refresh</button>
+            </div>
+          </div>
+          <p id="coupleProfileMessage" class="plan-copy-message"></p>
+        </div>
+
+
+
+        
+
         
         <div class="card compact-card">
           <h2 class="title">⏳ Next date countdown</h2>
@@ -1408,7 +1556,7 @@
         <div class="card compact-card">
           <div class="section-sparkle">📊 Overview</div>
           <h2 class="title">Overview dashboard</h2>
-          <p class="subtitle">All the relationship overview things live here now, so Home stays light.</p>
+          <p class="subtitle">Timeline, storybooks, favorite picks and history live here. Couple profile is back on Home for quick access.</p>
         </div>
 
         <div class="card compact-card">
@@ -1419,30 +1567,31 @@
           </div>
         </div>
 
-        
         <div class="card compact-card">
-          <div class="section-sparkle">🍓 v27 personal touch</div>
-          <h2 class="title">💞 Couple profile</h2>
-          <p class="subtitle">A small shared profile for Anh Tommy & Em Ngoc. This is saved inside your existing Journal table, so no SQL is needed. You can add mini stickers in these text fields too.</p>
-          <div id="coupleProfileView" class="couple-profile-display">
-            <div class="empty">Loading couple profile...</div>
-          </div>
-          <div class="form-grid">
-            <input id="profileTogetherSince" type="date" placeholder="Together since">
-            <input id="profileFavoriteDateType" placeholder="Favorite date type, e.g. cozy home, game night, cute café">
-            <input id="profileNextGoal" placeholder="Next couple goal, e.g. build LEGO flowers, try Korean snacks">
-            <textarea id="profileLittleRules" placeholder="Little reminders, e.g. soft walking, not too oily food, remember photos..."></textarea>
+          <div class="section-sparkle">💞 cute timeline</div>
+          <h2 class="title">🍓 Our relationship timeline</h2>
+          <p class="subtitle">A soft timeline of memories, plans, trips and special dates from your app. Storybooks are for long chapters; this is the quick cute overview.</p>
+          <div class="cute-timeline-toolbar">
             <div class="row">
-              <button class="button" onclick="saveCoupleProfile()">Save couple profile</button>
-              <button class="button ghost" onclick="loadCoupleProfile()">Refresh</button>
+              <select id="cuteTimelineMode" onchange="loadCuteRelationshipTimeline()">
+                <option value="all">All timeline</option>
+                <option value="memories">Memories only</option>
+                <option value="plans">Plans only</option>
+                <option value="upcoming">Upcoming only</option>
+              </select>
+              <select id="cuteTimelineLimit" onchange="loadCuteRelationshipTimeline()">
+                <option value="8">8 items</option>
+                <option value="14" selected>14 items</option>
+                <option value="25">25 items</option>
+              </select>
             </div>
+            <button class="button ghost" onclick="loadCuteRelationshipTimeline()">Refresh timeline</button>
           </div>
-          <p id="coupleProfileMessage" class="plan-copy-message"></p>
+          <div id="cuteRelationshipTimeline" class="cute-timeline-list">
+            <div class="empty">Loading cute timeline...</div>
+          </div>
         </div>
 
-
-
-        
         <div class="card compact-card">
           <div class="section-sparkle">📖 v31 memory book</div>
           <h2 class="title">📖 Relationship memory book</h2>
@@ -1474,6 +1623,18 @@
                 <button class="button secondary" onclick="loadStorybookLibrary()">Refresh shelf</button>
                 <button class="button ghost" onclick="createStarterNextVietnamBook()">Add Next Vietnam book</button>
               </div>
+            </div>
+
+            <div class="storybook-howto">
+              <h3>How to use the storybook</h3>
+              <ol>
+                <li><strong>Create or select a book</strong>, like Vietnam 2025, Next Vietnam, Belgium memories, or Anniversary.</li>
+                <li><strong>Upload a PDF</strong> if you have a full document for that book.</li>
+                <li><strong>Upload cute images or page previews</strong>. Around 7–12 images is enough for a nice storybook.</li>
+                <li><strong>Add custom story pages</strong> if you want date captions, quotes, tags, and little story text.</li>
+                <li><strong>Use Storybook photo shelf</strong> to quickly open uploaded images larger.</li>
+                <li>The full PDF stays in Supabase, while the app shows a soft readable storybook version.</li>
+              </ol>
             </div>
 
             <div class="storybook-bookshelf">
@@ -1636,7 +1797,7 @@
           <div class="section-sparkle">🛠️ Technical</div>
           <h2 class="title">Help, backup & phone setup</h2>
           <p class="subtitle">Instructions and safety tools are grouped here instead of making Home too long.</p>
-          <div class="empty" style="margin-top:10px;">Current app version: <strong>Storybook shelf v41</strong></div>
+          <div class="empty" style="margin-top:10px;">Current app version: <strong>Timeline storybook v42</strong></div>
         </div>
 
         <div class="card compact-card">
@@ -2879,7 +3040,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Storybook shelf v41",
+          version: "Timeline storybook v42",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -3454,8 +3615,8 @@
 
     async function loadOverview() {
       loadDashboardStats();
-      loadCoupleProfile();
       loadRelationshipMemoryBook();
+      loadCuteRelationshipTimeline();
       await loadStorybookLibrary();
       loadPhotoWall();
       loadFavoritePicks();
@@ -4081,6 +4242,102 @@
         console.error(error);
         if (message) message.textContent = error.message || "Image upload failed.";
         alert(error.message || "Image upload failed.");
+      }
+    }
+
+
+    function cuteTimelineIcon(item) {
+      if (item.kind === "memory") return "💖";
+      if (item.kind === "journal") return "📝";
+      if (item.kind === "upcoming") return "✈️";
+      if (item.kind === "past-plan") return "📸";
+      return "🍓";
+    }
+
+    async function loadCuteRelationshipTimeline() {
+      const box = qs("cuteRelationshipTimeline");
+      if (!box || !currentCouple) return;
+      box.innerHTML = `<div class="empty">Loading cute timeline...</div>`;
+      try {
+        const mode = qs("cuteTimelineMode")?.value || "all";
+        const limit = Number(qs("cuteTimelineLimit")?.value || 14);
+        const today = getToday();
+
+        const [{ data: plans, error: planError }, { data: journals, error: journalError }] = await Promise.all([
+          supabaseClient
+            .from("date_plans")
+            .select("*")
+            .eq("couple_id", currentCouple.id)
+            .order("plan_date", { ascending: true }),
+          supabaseClient
+            .from("journal_entries")
+            .select("*")
+            .eq("couple_id", currentCouple.id)
+            .order("entry_date", { ascending: true })
+        ]);
+
+        if (planError) throw planError;
+        if (journalError) throw journalError;
+
+        const items = [];
+
+        (journals || [])
+          .filter(entry => entry.title !== PROFILE_ENTRY_TITLE && entry.title !== STORYBOOK_LIBRARY_TITLE)
+          .forEach(entry => {
+            const kind = entry.entry_type === "memory" ? "memory" : "journal";
+            if (mode === "plans" || mode === "upcoming") return;
+            items.push({
+              kind,
+              date: entry.entry_date,
+              title: entry.title || (kind === "memory" ? "Memory" : "Journal note"),
+              body: entry.body || "",
+              tags: [kind === "memory" ? "memory" : "journal", entry.entry_type || "note"]
+            });
+          });
+
+        (plans || []).forEach(plan => {
+          const isUpcoming = String(plan.plan_date || "") >= today;
+          const kind = isUpcoming ? "upcoming" : "past-plan";
+          if (mode === "memories") return;
+          if (mode === "upcoming" && !isUpcoming) return;
+          items.push({
+            kind,
+            date: plan.plan_date,
+            title: plan.title || "Date plan",
+            body: plan.notes || "",
+            tags: [isUpcoming ? "upcoming" : "past", plan.mood || "date", plan.budget || ""].filter(Boolean)
+          });
+        });
+
+        items.sort((a, b) => {
+          if (mode === "upcoming") return String(a.date || "").localeCompare(String(b.date || ""));
+          return String(b.date || "").localeCompare(String(a.date || ""));
+        });
+
+        const selected = items.slice(0, limit);
+        if (!selected.length) {
+          box.innerHTML = `<div class="empty">No timeline items yet. Add memories in Journal or plans in Plan and they will appear here 🍓</div>`;
+          return;
+        }
+
+        box.innerHTML = selected.map(item => `
+          <div class="cute-timeline-item">
+            <div class="cute-timeline-dot">${cuteTimelineIcon(item)}</div>
+            <div class="cute-timeline-card">
+              <div class="cute-timeline-head">
+                <h3 class="cute-timeline-title">${renderRichText(item.title)}</h3>
+                <div class="cute-timeline-date">${escapeHTML(dateShort(item.date))}</div>
+              </div>
+              ${item.body ? `<p>${renderRichText(item.body).slice(0, 260)}${String(item.body).length > 260 ? "..." : ""}</p>` : ""}
+              <div class="cute-timeline-tags">
+                ${item.tags.map(tag => `<span class="cute-timeline-tag">${escapeHTML(tag)}</span>`).join("")}
+              </div>
+            </div>
+          </div>
+        `).join("");
+      } catch (error) {
+        console.error(error);
+        box.innerHTML = `<div class="empty">Could not load the cute timeline yet.</div>`;
       }
     }
 
