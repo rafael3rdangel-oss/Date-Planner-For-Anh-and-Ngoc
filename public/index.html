@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Countdown v25</title>
+  <title>Date Planner for Us 🍓 Calendar export v26</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -430,7 +430,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Countdown v25</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Calendar export v26</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -630,6 +630,7 @@
               <button class="button" onclick="savePlanDetails()">Save plan details</button>
               <button class="button secondary" onclick="copyCurrentPlan()">Copy full plan</button>
               <button class="button secondary" onclick="shareCurrentPlan()">Share full plan</button>
+              <button class="button ghost" onclick="downloadCurrentPlanCalendar()">Download calendar file</button>
             </div>
             <p id="planCopyMessage" class="plan-copy-message"></p>
           </div>
@@ -1727,6 +1728,98 @@
         if (!text) return;
         await shareText(text, "Full plan copied 💌");
         if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "Plan ready to share 💌";
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    function calendarDate(dateString) {
+      return String(dateString || "").replaceAll("-", "");
+    }
+
+    function addOneDay(dateString) {
+      const date = new Date(dateString + "T12:00:00");
+      date.setDate(date.getDate() + 1);
+      return date.toISOString().split("T")[0];
+    }
+
+    function escapeICalText(value) {
+      return String(value || "")
+        .replaceAll("\\", "\\\\")
+        .replaceAll(";", "\\;")
+        .replaceAll(",", "\\,")
+        .replaceAll("\n", "\\n");
+    }
+
+    function foldICalLine(line) {
+      const chunks = [];
+      let remaining = line;
+      while (remaining.length > 72) {
+        chunks.push(remaining.slice(0, 72));
+        remaining = " " + remaining.slice(72);
+      }
+      chunks.push(remaining);
+      return chunks.join("\r\n");
+    }
+
+    async function buildCalendarFileForPlan(plan) {
+      if (!plan) return "";
+      const planText = await buildPlanTextFromPlan(plan);
+      const start = calendarDate(plan.plan_date);
+      const end = calendarDate(addOneDay(plan.plan_date));
+      const title = plan.title || "Date Planner for Us";
+      const uid = `${plan.id || plan.plan_date}@date-planner-for-us`;
+      const created = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+      const lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Date Planner for Us//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "BEGIN:VEVENT",
+        `UID:${escapeICalText(uid)}`,
+        `DTSTAMP:${created}`,
+        `DTSTART;VALUE=DATE:${start}`,
+        `DTEND;VALUE=DATE:${end}`,
+        `SUMMARY:${escapeICalText("💖 " + title)}`,
+        `DESCRIPTION:${escapeICalText(planText)}`,
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ];
+      return lines.map(foldICalLine).join("\r\n");
+    }
+
+    async function downloadCurrentPlanCalendar() {
+      const date = qs("selectedDate").value;
+      if (!date) return;
+
+      try {
+        const plan = await getPlanForDate(date, false);
+        if (!plan) {
+          alert("Nothing planned for this date yet.");
+          return;
+        }
+
+        const calendarText = await buildCalendarFileForPlan(plan);
+        if (!calendarText) return;
+
+        const safeTitle = (plan.title || "date-plan")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "") || "date-plan";
+        const filename = `${date}-${safeTitle}.ics`;
+        const blob = new Blob([calendarText], { type: "text/calendar;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+
+        if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "Calendar file downloaded 💌";
       } catch (error) {
         console.error(error);
         alert(error.message);
