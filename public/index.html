@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Editable story pages v45</title>
+  <title>Date Planner for Us 🍓 Editable plan dates v46</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1539,6 +1539,14 @@
       display: block;
     }
 
+  
+    .plan-date-move-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
   </style>
 </head>
 
@@ -1551,7 +1559,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Editable story pages v45</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Editable plan dates v46</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -1964,7 +1972,7 @@
           <div class="section-sparkle">🛠️ Technical</div>
           <h2 class="title">Help, backup & phone setup</h2>
           <p class="subtitle">Instructions and safety tools are grouped here instead of making Home too long.</p>
-          <div class="empty" style="margin-top:10px;">Current app version: <strong>Editable story pages v45</strong></div>
+          <div class="empty" style="margin-top:10px;">Current app version: <strong>Editable plan dates v46</strong></div>
         </div>
 
         <div class="card compact-card">
@@ -2044,6 +2052,9 @@
           </div>
 
           <div class="plan-details">
+            <label class="field-label" for="planEditDate">Plan date</label>
+            <input id="planEditDate" type="date">
+            <p class="plan-date-move-note">Change this date and click Save plan details to move the whole plan, including its Morning/Noon/Afternoon/Evening entries.</p>
             <input id="planTitle" placeholder="Date title, e.g. Cozy Sunday Date">
             <div class="row">
               <select id="planMood">
@@ -3208,7 +3219,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Editable story pages v45",
+          version: "Editable plan dates v46",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -5034,6 +5045,7 @@
     }
 
     function clearPlanDetails() {
+      if (qs("planEditDate")) qs("planEditDate").value = qs("selectedDate")?.value || "";
       if (qs("planTitle")) qs("planTitle").value = "";
       if (qs("planMood")) qs("planMood").value = "";
       if (qs("planBudget")) qs("planBudget").value = "";
@@ -5043,6 +5055,7 @@
 
     function fillPlanDetails(plan) {
       if (!qs("planTitle")) return;
+      if (qs("planEditDate")) qs("planEditDate").value = plan?.plan_date || qs("selectedDate")?.value || "";
       qs("planTitle").value = plan?.title || "";
       qs("planMood").value = plan?.mood || "";
       qs("planBudget").value = plan?.budget || "";
@@ -5059,13 +5072,43 @@
       return parts;
     }
 
+    async function findPlanByDate(date) {
+      if (!currentCouple || !date) return null;
+      const { data, error } = await supabaseClient
+        .from("date_plans")
+        .select("id, plan_date, title")
+        .eq("couple_id", currentCouple.id)
+        .eq("plan_date", date)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data || null;
+    }
+
     async function savePlanDetails() {
       const date = qs("selectedDate").value;
-      if (!date) return;
+      const targetDate = qs("planEditDate")?.value || date;
+      if (!date || !targetDate) return;
 
       try {
         const plan = await getPlanForDate(date, true);
+
+        if (targetDate !== date) {
+          const existingPlan = await findPlanByDate(targetDate);
+          if (existingPlan && existingPlan.id !== plan.id) {
+            const existingTitle = existingPlan.title ? `“${existingPlan.title}”` : "another plan";
+            alert(`There is already ${existingTitle} on ${targetDate}. Open that date first or choose another date.`);
+            return;
+          }
+
+          if (!confirm(`Move this whole plan from ${date} to ${targetDate}? Morning/Noon/Afternoon/Evening entries will move with it.`)) {
+            if (qs("planEditDate")) qs("planEditDate").value = date;
+            return;
+          }
+        }
+
         const changes = {
+          plan_date: targetDate,
           title: qs("planTitle").value.trim() || null,
           mood: qs("planMood").value || null,
           budget: qs("planBudget").value || null,
@@ -5079,9 +5122,11 @@
 
         if (error) throw error;
 
-        if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "Plan details saved 💖";
+        if (targetDate !== date && qs("selectedDate")) qs("selectedDate").value = targetDate;
+        if (qs("planCopyMessage")) qs("planCopyMessage").textContent = targetDate !== date ? "Plan moved to the new date 💖" : "Plan details saved 💖";
         await loadPlan();
         await loadHome();
+        if (typeof loadCuteRelationshipTimeline === "function") loadCuteRelationshipTimeline();
       } catch (error) {
         console.error(error);
         alert(error.message);
@@ -7426,6 +7471,7 @@
             ${journalCount ? `<div class="history-memory-chip">📝 ${journalCount} journal ${journalCount === 1 ? "memory" : "memories"} on this date</div>` : ""}
             <div class="actions">
               <button class="button small" onclick="openPlanDate('${plan.plan_date}')">Open plan</button>
+              <button class="button small secondary" onclick="quickMovePlanDate('${plan.id}', '${plan.plan_date}')">Edit date</button>
               <button class="button small secondary" onclick="openReviewForHistory('${plan.plan_date}')">Review</button>
               <button class="button small secondary" onclick="copyHistoryPlan('${plan.id}')">Copy</button>
               <button class="button small secondary" onclick="shareHistoryPlan('${plan.id}')">Share</button>
@@ -7434,6 +7480,40 @@
           </div>
         </div>
       `;
+    }
+
+    async function quickMovePlanDate(planId, currentDate) {
+      const targetDate = prompt("Move this plan to which date? Use YYYY-MM-DD.", currentDate || getToday());
+      if (!targetDate) return;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
+        alert("Please use YYYY-MM-DD, for example 2026-07-09.");
+        return;
+      }
+
+      try {
+        const existingPlan = await findPlanByDate(targetDate);
+        if (existingPlan && existingPlan.id !== planId) {
+          alert(`There is already another plan on ${targetDate}. Open that date first or choose another date.`);
+          return;
+        }
+
+        if (!confirm(`Move this plan from ${currentDate} to ${targetDate}?`)) return;
+
+        const { error } = await supabaseClient
+          .from("date_plans")
+          .update({ plan_date: targetDate })
+          .eq("id", planId);
+
+        if (error) throw error;
+
+        await loadPlanHistory();
+        await loadHome();
+        if (typeof loadCuteRelationshipTimeline === "function") loadCuteRelationshipTimeline();
+        alert("Plan date updated 💖");
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
     }
 
     async function loadPlanHistory() {
