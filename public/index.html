@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Layout tabs + stickers note v32</title>
+  <title>Date Planner for Us 🍓 Sticker shortcuts v34</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -667,6 +667,137 @@
       background: var(--line);
     }
 
+
+    /* v34 mini sticker system: built-in SVG stickers saved as shortcodes */
+    .inline-sticker {
+      display: inline-flex;
+      width: 24px;
+      height: 24px;
+      vertical-align: -6px;
+      margin: 0 2px;
+      align-items: center;
+      justify-content: center;
+    }
+    .inline-sticker svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: drop-shadow(0 2px 2px rgba(119, 75, 95, .14));
+    }
+    .sticker-dock {
+      position: fixed;
+      left: 50%;
+      bottom: 78px;
+      z-index: 120;
+      width: min(740px, calc(100% - 18px));
+      transform: translateX(-50%);
+      padding: 10px;
+      border: 1px solid rgba(239, 111, 159, .18);
+      border-radius: 22px;
+      background: rgba(255, 250, 253, .96);
+      box-shadow: 0 14px 42px rgba(119, 75, 95, .18);
+      backdrop-filter: blur(12px);
+    }
+    .sticker-dock-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      color: var(--berry-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .sticker-dock-close {
+      width: 30px;
+      height: 30px;
+      border: none;
+      border-radius: 12px;
+      background: var(--pink-2);
+      color: var(--berry-dark);
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .sticker-buttons {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sticker-button {
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+      box-shadow: 0 4px 10px rgba(119, 75, 95, .08);
+    }
+    .sticker-button .inline-sticker {
+      width: 28px;
+      height: 28px;
+      margin: 0;
+      vertical-align: middle;
+    }
+    .sticker-hint {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    .sticker-shortcut-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .sticker-shortcut-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.72);
+      min-width: 0;
+    }
+
+    .sticker-shortcut-row .inline-sticker {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 auto;
+    }
+
+    .sticker-shortcut-row span {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--ink);
+      min-width: 58px;
+    }
+
+    .sticker-shortcut-row code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--soft);
+      border-radius: 999px;
+      padding: 4px 7px;
+      overflow-wrap: anywhere;
+    }
+    .sticker-target:focus {
+      border-color: #ef6f9f;
+      box-shadow: 0 0 0 3px rgba(239, 111, 159, .14);
+    }
+    @media (max-width: 600px) {
+      .sticker-dock { bottom: 86px; border-radius: 20px; }
+      .sticker-button { width: 40px; height: 40px; }
+    }
+
     .hidden { display: none !important; }
     @media (max-width: 600px) {
       .app { max-width: 100%; padding-bottom: 104px; }
@@ -730,7 +861,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Layout tabs + stickers note v32</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Sticker shortcuts v34</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -857,7 +988,7 @@
         <div class="card compact-card">
           <div class="section-sparkle">🍓 v27 personal touch</div>
           <h2 class="title">💞 Couple profile</h2>
-          <p class="subtitle">A small shared profile for Anh Tommy & Em Ngoc. This is saved inside your existing Journal table, so no SQL is needed.</p>
+          <p class="subtitle">A small shared profile for Anh Tommy & Em Ngoc. This is saved inside your existing Journal table, so no SQL is needed. You can add mini stickers in these text fields too.</p>
           <div id="coupleProfileView" class="couple-profile-display">
             <div class="empty">Loading couple profile...</div>
           </div>
@@ -972,6 +1103,24 @@
           </div>
         </div>
 
+        <div class="card compact-card">
+          <div class="section-sparkle">✨ Mini stickers</div>
+          <h2 class="title">Shortcut stickers</h2>
+          <p class="subtitle">You can insert stickers with the picker, or type the sticker shortcuts manually inside supported titles and note boxes.</p>
+          <div class="comfort-steps">
+            <div class="comfort-step"><strong>Easy way:</strong> tap a title or note field, then tap a mini sticker from the floating sticker picker.</div>
+            <div class="comfort-step"><strong>Shortcut way:</strong> type a shortcut like <code>[sticker:cat]</code> or <code>[sticker:heart]</code> directly in the text.</div>
+            <div class="comfort-step"><strong>Where it works:</strong> plan titles/notes, period plans, library names/notes, journal titles/bodies, couple profile fields, and edit popups.</div>
+            <div class="comfort-step"><strong>Important:</strong> save the form after adding a sticker, then it will show as a cute small sticker in the app.</div>
+          </div>
+          <div id="stickerShortcutList" class="sticker-shortcut-list"></div>
+          <div class="actions">
+            <button class="button secondary" onclick="copyStickerShortcuts()">Copy sticker shortcut list</button>
+            <button class="button ghost" onclick="showStickerDock()">Open sticker picker</button>
+          </div>
+          <p id="stickerShortcutMessage" class="plan-copy-message"></p>
+        </div>
+
         
         <div class="card compact-card">
           <h2 class="title">🛟 Safe backup + restore helper</h2>
@@ -1005,7 +1154,7 @@
       <main id="planPage" class="page">
         <div class="card">
           <h2 class="title">📅 Planning</h2>
-          <p class="subtitle">Choose a day, add a cute title, notes, budget and plans for Morning, Noon, Afternoon and Evening.</p>
+          <p class="subtitle">Choose a day, add a cute title, notes, budget and plans for Morning, Noon, Afternoon and Evening. Tap any title/note box to open mini stickers.</p>
           <div class="date-row">
             <button class="button" onclick="changeDate(-1)">←</button>
             <input id="selectedDate" type="date" onchange="loadPlan()">
@@ -1137,7 +1286,7 @@
       <main id="libraryPage" class="page">
         <div class="card">
           <h2 class="title">♡ Library</h2>
-          <p class="subtitle">Save food, places, games, and activities so you can reuse them later in Planning.</p>
+          <p class="subtitle">Save food, places, games, and activities so you can reuse them later in Planning. Tap name/notes fields to add mini stickers.</p>
 
           <div class="tabs-mini">
             <button id="foodLibraryTab" class="active" onclick="setLibraryMode('food')">🍜 Food</button>
@@ -1385,7 +1534,7 @@
       <main id="journalPage" class="page">
         <div class="card">
           <h2 class="title">📝 Journal</h2>
-          <p class="subtitle">Save memories, notes, shopping lists, date ideas and optional memory/photo links.</p>
+          <p class="subtitle">Save memories, notes, shopping lists, date ideas and optional memory/photo links. Tap any title or note box to add mini stickers.</p>
 
           <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
             <h3 class="title">Add journal entry</h3>
@@ -1474,6 +1623,14 @@
     <button id="technicalNav" class="nav-button" onclick="openPage('technicalPage','technicalNav')"><span>🛠️</span>Tech</button>
   </nav>
 
+  <div id="stickerDock" class="sticker-dock hidden" aria-live="polite">
+    <div class="sticker-dock-head">
+      <span>Mini stickers</span>
+      <button class="sticker-dock-close" onclick="hideStickerDock()" aria-label="Hide stickers">×</button>
+    </div>
+    <div id="stickerDockButtons" class="sticker-buttons"></div>
+    <div id="stickerDockHint" class="sticker-hint">Tap a title or note box, then tap a sticker. It saves as a small shortcode and shows as a sticker later.</div>
+  </div>
 
 
   <div id="editModalBackdrop" class="edit-modal-backdrop hidden" onclick="if (event.target === this) closeEditModal();">
@@ -1512,6 +1669,28 @@
     let relationshipMemoryBookTextCache = "";
     let deferredInstallPrompt = null;
     const PROFILE_ENTRY_TITLE = "__couple_profile__";
+
+
+    const STICKERS = [
+      { id: "heart", label: "Heart", svg: `<svg viewBox="0 0 64 64" role="img"><path d="M32 54S8 39 8 22c0-8 6-14 14-14 5 0 8 2 10 6 2-4 5-6 10-6 8 0 14 6 14 14 0 17-24 32-24 32Z" fill="#ff7aa8"/><path d="M17 18c2-4 7-6 12-3" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".75"/></svg>` },
+      { id: "strawberry", label: "Strawberry", svg: `<svg viewBox="0 0 64 64" role="img"><path d="M32 60C20 51 12 39 12 27c0-10 8-18 20-18s20 8 20 18c0 12-8 24-20 33Z" fill="#ff5d7f"/><path d="M22 11 16 4l11 4 5-8 5 8 11-4-6 7" fill="#72c98b"/><g fill="#fff6c7"><circle cx="24" cy="28" r="2"/><circle cx="36" cy="28" r="2"/><circle cx="30" cy="38" r="2"/><circle cx="40" cy="42" r="2"/><circle cx="22" cy="43" r="2"/></g></svg>` },
+      { id: "cat", label: "Cat", svg: `<svg viewBox="0 0 64 64" role="img"><path d="M15 27 10 10l15 9a27 27 0 0 1 14 0l15-9-5 17c3 4 5 8 5 14 0 13-10 21-22 21S10 54 10 41c0-6 2-10 5-14Z" fill="#fff2c8"/><circle cx="24" cy="39" r="3" fill="#5a515d"/><circle cx="40" cy="39" r="3" fill="#5a515d"/><path d="M32 43v5m0 0c-4 0-6-2-7-4m7 4c4 0 6-2 7-4" stroke="#5a515d" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M18 18 15 13l6 4m25 1 3-5-6 4" stroke="#ffb4ce" stroke-width="3" stroke-linecap="round"/></svg>` },
+      { id: "bear", label: "Bear", svg: `<svg viewBox="0 0 64 64" role="img"><circle cx="17" cy="20" r="10" fill="#c99b72"/><circle cx="47" cy="20" r="10" fill="#c99b72"/><circle cx="32" cy="36" r="24" fill="#d9ad82"/><circle cx="24" cy="34" r="3" fill="#5a515d"/><circle cx="40" cy="34" r="3" fill="#5a515d"/><ellipse cx="32" cy="44" rx="10" ry="8" fill="#fff2d8"/><path d="M32 41v4m0 0c-3 0-5 1-6 3m6-3c3 0 5 1 6 3" stroke="#5a515d" stroke-width="3" stroke-linecap="round" fill="none"/></svg>` },
+      { id: "flower", label: "Flower", svg: `<svg viewBox="0 0 64 64" role="img"><g fill="#ff9ac1"><ellipse cx="32" cy="16" rx="9" ry="13"/><ellipse cx="32" cy="48" rx="9" ry="13"/><ellipse cx="16" cy="32" rx="13" ry="9"/><ellipse cx="48" cy="32" rx="13" ry="9"/></g><circle cx="32" cy="32" r="10" fill="#ffe381"/><circle cx="32" cy="32" r="4" fill="#f5b34d"/></svg>` },
+      { id: "boba", label: "Boba", svg: `<svg viewBox="0 0 64 64" role="img"><path d="M21 16h22l-3 42H24L21 16Z" fill="#f7d6b8" stroke="#8b6a58" stroke-width="3"/><path d="M18 16h28" stroke="#8b6a58" stroke-width="5" stroke-linecap="round"/><path d="M38 5 28 20" stroke="#ef6f9f" stroke-width="4" stroke-linecap="round"/><g fill="#5a3d34"><circle cx="27" cy="48" r="3"/><circle cx="36" cy="50" r="3"/><circle cx="32" cy="42" r="3"/></g></svg>` },
+      { id: "gift", label: "Gift", svg: `<svg viewBox="0 0 64 64" role="img"><rect x="10" y="25" width="44" height="31" rx="6" fill="#ffb4ce"/><path d="M32 25v31M10 36h44" stroke="#fff2a8" stroke-width="6"/><path d="M31 23c-13 0-14-14-6-14 6 0 7 8 7 14Zm2 0c13 0 14-14 6-14-6 0-7 8-7 14Z" fill="#ef6f9f"/></svg>` },
+      { id: "camera", label: "Camera", svg: `<svg viewBox="0 0 64 64" role="img"><rect x="8" y="18" width="48" height="36" rx="10" fill="#bde7ff"/><path d="M20 18l5-8h14l5 8" fill="#8fd4fa"/><circle cx="32" cy="37" r="12" fill="#fff"/><circle cx="32" cy="37" r="7" fill="#6baed6"/><circle cx="49" cy="26" r="3" fill="#fff6c7"/></svg>` },
+      { id: "star", label: "Star", svg: `<svg viewBox="0 0 64 64" role="img"><path d="m32 5 8 18 19 2-14 13 4 19-17-10-17 10 4-19L5 25l19-2 8-18Z" fill="#ffd66b"/><path d="M25 18 32 8" stroke="#fff7c7" stroke-width="4" stroke-linecap="round" opacity=".8"/></svg>` },
+      { id: "cloud", label: "Cloud", svg: `<svg viewBox="0 0 64 64" role="img"><path d="M20 48h27c7 0 12-5 12-11s-5-11-12-11h-1C44 17 37 11 28 11c-10 0-18 8-18 18v1C4 31 1 35 1 40c0 5 5 8 19 8Z" fill="#dff4ff"/><path d="M22 52c2 4 8 7 10 7s8-3 10-7" stroke="#ff9ac1" stroke-width="4" stroke-linecap="round" fill="none"/></svg>` }
+    ];
+    const STICKERS_BY_ID = Object.fromEntries(STICKERS.map(sticker => [sticker.id, sticker]));
+    const STICKER_FIELD_IDS = new Set([
+      "profileFavoriteDateType", "profileNextGoal", "profileLittleRules",
+      "planTitle", "planNotes",
+      "foodName", "foodNotes", "placeName", "placeNotes", "gameName", "gameNotes", "activityName", "activityNotes",
+      "journalTitle", "journalBody"
+    ]);
+    let lastStickerField = null;
 
 
     function setupPhoneAppSupport() {
@@ -1670,6 +1849,104 @@
       return div.innerHTML;
     }
 
+
+    function stickerIconHTML(id) {
+      const sticker = STICKERS_BY_ID[String(id || "").toLowerCase()];
+      if (!sticker) return "";
+      return `<span class="inline-sticker" title="${escapeHTML(sticker.label)}" aria-label="${escapeHTML(sticker.label)}">${sticker.svg}</span>`;
+    }
+
+    function renderRichText(value) {
+      return escapeHTML(value).replace(/\[sticker:([a-z0-9_-]+)\]/gi, (match, id) => {
+        return stickerIconHTML(id) || match;
+      });
+    }
+
+    function shouldEnableStickersForField(field) {
+      if (!field || !field.id) return false;
+      if (STICKER_FIELD_IDS.has(field.id)) return true;
+      if (/^(morning|noon|afternoon|evening)Input$/.test(field.id)) return true;
+      if (!field.id.startsWith("editField_")) return false;
+      return /(?:name|title|notes|body|favoriteDateType|nextGoal|littleRules)$/i.test(field.id);
+    }
+
+    function showStickerDock() {
+      const dock = qs("stickerDock");
+      if (dock) dock.classList.remove("hidden");
+    }
+
+    function hideStickerDock() {
+      const dock = qs("stickerDock");
+      if (dock) dock.classList.add("hidden");
+    }
+
+    function setStickerHint(message) {
+      const hint = qs("stickerDockHint");
+      if (hint) hint.textContent = message;
+    }
+
+    function renderStickerDock() {
+      const box = qs("stickerDockButtons");
+      if (!box || box.dataset.ready === "true") return;
+      box.innerHTML = STICKERS.map(sticker => `
+        <button
+          type="button"
+          class="sticker-button"
+          title="${escapeHTML(sticker.label)}"
+          onmousedown="event.preventDefault()"
+          onclick="insertSticker('${sticker.id}')"
+        >${stickerIconHTML(sticker.id)}</button>
+      `).join("");
+      box.dataset.ready = "true";
+    }
+
+    function enhanceStickerFields(scope = document) {
+      renderStickerDock();
+      scope.querySelectorAll("input, textarea").forEach(field => {
+        if (!shouldEnableStickersForField(field) || field.dataset.stickerReady === "true") return;
+        field.dataset.stickerField = "true";
+        field.classList.add("sticker-target");
+        field.addEventListener("focus", () => {
+          lastStickerField = field;
+          showStickerDock();
+          setStickerHint("Tap a sticker to insert it into this field. It will show as a mini sticker after saving.");
+        });
+        field.dataset.stickerReady = "true";
+      });
+    }
+
+    function insertSticker(stickerId) {
+      const sticker = STICKERS_BY_ID[stickerId];
+      if (!sticker) return;
+      let field = lastStickerField;
+      if (!field || !document.body.contains(field) || field.dataset.stickerField !== "true") {
+        const active = document.activeElement;
+        field = active?.dataset?.stickerField === "true" ? active : null;
+      }
+      if (!field) {
+        showStickerDock();
+        setStickerHint("First tap inside a title or note box, then choose a sticker.");
+        return;
+      }
+
+      const token = `[sticker:${stickerId}]`;
+      const start = typeof field.selectionStart === "number" ? field.selectionStart : field.value.length;
+      const end = typeof field.selectionEnd === "number" ? field.selectionEnd : field.value.length;
+      const before = field.value.slice(0, start);
+      const after = field.value.slice(end);
+      const prefix = before && !/\s$/.test(before) ? " " : "";
+      const suffix = after && !/^\s/.test(after) ? " " : "";
+      const insertText = `${prefix}${token}${suffix}`;
+      field.value = before + insertText + after;
+      const cursor = before.length + insertText.length;
+      field.focus();
+      if (typeof field.setSelectionRange === "function") field.setSelectionRange(cursor, cursor);
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+      field.dispatchEvent(new Event("change", { bubbles: true }));
+      lastStickerField = field;
+      setStickerHint(`${sticker.label} sticker added. Remember to save this form.`);
+    }
+
     function getToday() {
       const now = new Date();
       const offset = now.getTimezoneOffset();
@@ -1740,6 +2017,7 @@
       activeEditModal = { fields, onSave };
       qs("editModalTitle").textContent = title;
       qs("editModalFields").innerHTML = fields.map(fieldInputHTML).join("");
+      enhanceStickerFields(qs("editModalFields"));
       qs("editModalSaveButton").disabled = false;
       qs("editModalSaveButton").style.display = "";
       qs("editModalSaveButton").textContent = "Save";
@@ -1924,7 +2202,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Layout tabs + stickers note v32",
+          version: "Sticker shortcuts v34",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -2268,9 +2546,9 @@
       const rules = profile.littleRules || "Not set yet";
       view.innerHTML = `
         <div class="couple-profile-line"><span>💕 Together since</span><strong>${escapeHTML(together)}</strong></div>
-        <div class="couple-profile-line"><span>🍓 Favorite date</span><strong>${escapeHTML(favorite)}</strong></div>
-        <div class="couple-profile-line"><span>✨ Next goal</span><strong>${escapeHTML(goal)}</strong></div>
-        <div class="couple-profile-line"><span>🧸 Little reminders</span><strong>${escapeHTML(rules)}</strong></div>
+        <div class="couple-profile-line"><span>🍓 Favorite date</span><strong>${renderRichText(favorite)}</strong></div>
+        <div class="couple-profile-line"><span>✨ Next goal</span><strong>${renderRichText(goal)}</strong></div>
+        <div class="couple-profile-line"><span>🧸 Little reminders</span><strong>${renderRichText(rules)}</strong></div>
       `;
     }
 
@@ -2461,12 +2739,14 @@
             <div id="${info.className}Count" class="period-count">0</div>
           </div>
           <div class="add-row">
-            <input id="${info.className}Input" placeholder="Add to ${period.toLowerCase()}...">
+            <input id="${info.className}Input" data-sticker-field="true" placeholder="Add to ${period.toLowerCase()}...">
             <button class="button small" onclick="addEntry('${period}','${info.className}Input')">Add</button>
           </div>
           <div id="${info.className}List"></div>
         </div>
       `).join("");
+
+      enhanceStickerFields(qs("periodCards"));
 
       document.querySelectorAll("#planPage input:not([type='date'])").forEach(input => {
         input.addEventListener("keydown", event => {
@@ -2504,8 +2784,32 @@
       loadPlanHistory();
     }
 
+    function renderStickerShortcutList() {
+      const box = qs("stickerShortcutList");
+      if (!box) return;
+      box.innerHTML = STICKERS.map(sticker => `
+        <div class="sticker-shortcut-row">
+          ${stickerIconHTML(sticker.id)}
+          <span>${escapeHTML(sticker.label)}</span>
+          <code>[sticker:${escapeHTML(sticker.id)}]</code>
+        </div>
+      `).join("");
+    }
+
+    async function copyStickerShortcuts() {
+      const text = "Mini sticker shortcuts:\n" + STICKERS.map(sticker => `${sticker.label}: [sticker:${sticker.id}]`).join("\n");
+      try {
+        await navigator.clipboard.writeText(text);
+        if (qs("stickerShortcutMessage")) qs("stickerShortcutMessage").textContent = "Sticker shortcut list copied 💌";
+      } catch (error) {
+        prompt("Copy these sticker shortcuts:", text);
+      }
+    }
+
     function loadTechnical() {
       if (qs("dataBackupMessage")) qs("dataBackupMessage").textContent = "";
+      if (qs("stickerShortcutMessage")) qs("stickerShortcutMessage").textContent = "";
+      renderStickerShortcutList();
     }
 
     function syncLibraryQuickAddDate() {
@@ -2909,7 +3213,7 @@
     function entryHTML(entry) {
       return `
         <div class="entry ${entry.completed ? "completed" : ""}">
-          <div class="entry-title">${escapeHTML(entry.title)}</div>
+          <div class="entry-title">${renderRichText(entry.title)}</div>
           <div class="entry-meta">
             ${entry.my_rating ? `Your rating: ${"★".repeat(entry.my_rating)}${"☆".repeat(5 - entry.my_rating)}` : "No rating yet"}
           </div>
@@ -3313,7 +3617,7 @@
         <div class="entry">
           <div class="library-item-head">
             <div>
-              <div class="library-item-name">🍓 ${escapeHTML(item.name)}</div>
+              <div class="library-item-name">🍓 ${renderRichText(item.name)}</div>
               <div class="entry-meta">
                 ${escapeHTML(item.category || "Other")}
                 ${item.price_range ? ` · ${escapeHTML(item.price_range)}` : ""}
@@ -3322,7 +3626,7 @@
             </div>
             <div class="library-item-status">${escapeHTML(statusText)}</div>
           </div>
-          ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+          ${item.notes ? `<div class="library-item-notes">${renderRichText(item.notes)}</div>` : ""}
           ${libraryMediaHTML(item)}
           <div class="entry-meta">
             ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
@@ -3344,7 +3648,7 @@
         <div class="entry">
           <div class="library-item-head">
             <div>
-              <div class="library-item-name">📍 ${escapeHTML(item.name)}</div>
+              <div class="library-item-name">📍 ${renderRichText(item.name)}</div>
               <div class="entry-meta">
                 ${escapeHTML(item.category || "Place")}
                 ${item.price_range ? ` · ${escapeHTML(item.price_range)}` : ""}
@@ -3353,7 +3657,7 @@
             </div>
             <div class="library-item-status">${escapeHTML(statusText)}</div>
           </div>
-          ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+          ${item.notes ? `<div class="library-item-notes">${renderRichText(item.notes)}</div>` : ""}
           ${libraryMediaHTML(item)}
           <div class="entry-meta">
             ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
@@ -3374,7 +3678,7 @@
         <div class="entry">
           <div class="library-item-head">
             <div>
-              <div class="library-item-name">🎮 ${escapeHTML(item.name)}</div>
+              <div class="library-item-name">🎮 ${renderRichText(item.name)}</div>
               <div class="entry-meta">
                 ${escapeHTML(item.category || "Game")}
                 ${item.times_used ? ` · played/planned ${item.times_used}x` : ""}
@@ -3382,7 +3686,7 @@
             </div>
             <div class="library-item-status">${escapeHTML(statusText)}</div>
           </div>
-          ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+          ${item.notes ? `<div class="library-item-notes">${renderRichText(item.notes)}</div>` : ""}
           ${libraryMediaHTML(item)}
           <div class="entry-meta">
             ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
@@ -3403,7 +3707,7 @@
         <div class="entry">
           <div class="library-item-head">
             <div>
-              <div class="library-item-name">✨ ${escapeHTML(item.name)}</div>
+              <div class="library-item-name">✨ ${renderRichText(item.name)}</div>
               <div class="entry-meta">
                 ${escapeHTML(item.category || "Activity")}
                 ${item.price_range ? ` · ${escapeHTML(item.price_range)}` : ""}
@@ -3412,7 +3716,7 @@
             </div>
             <div class="library-item-status">${escapeHTML(statusText)}</div>
           </div>
-          ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+          ${item.notes ? `<div class="library-item-notes">${renderRichText(item.notes)}</div>` : ""}
           ${libraryMediaHTML(item)}
           <div class="entry-meta">
             ${item.my_rating ? `Your rating: ${"★".repeat(item.my_rating)}${"☆".repeat(5 - item.my_rating)}` : "No rating yet"}
@@ -4035,12 +4339,12 @@
         <div class="entry">
           <div class="library-item-head">
             <div>
-              <div class="library-item-name">${escapeHTML(title)}</div>
+              <div class="library-item-name">${renderRichText(title)}</div>
               <div class="journal-date">${formatDate(entry.entry_date)}</div>
             </div>
             <div class="library-item-status">${journalTypeLabel(entry.entry_type)}</div>
           </div>
-          ${body ? `<div class="journal-body">${escapeHTML(body)}</div>` : ""}
+          ${body ? `<div class="journal-body">${renderRichText(body)}</div>` : ""}
           ${journalImageHTML(entry)}
           <div class="actions">
             <button class="button small" onclick="readJournalEntry('${encodeURIComponent(entry.entry_date || '')}', '${encodeURIComponent(entry.entry_type || 'note')}', '${encodeURIComponent(entry.title || '')}', '${encodeURIComponent(entry.body || '')}', '${encodeURIComponent(entry.image_url || '')}')">Read</button>
@@ -4371,7 +4675,7 @@
           <div class="favorite-card">
             <div class="favorite-head">
               <div>
-                <div class="favorite-name">${itemTypeEmoji(item.item_type)} ${escapeHTML(item.name)}</div>
+                <div class="favorite-name">${itemTypeEmoji(item.item_type)} ${renderRichText(item.name)}</div>
                 <div class="entry-meta">
                   ${escapeHTML(item.category || item.item_type || "Favorite")}
                   ${item.price_range ? ` · ${escapeHTML(item.price_range)}` : ""}
@@ -4379,7 +4683,7 @@
               </div>
               <div class="favorite-type">Favorite</div>
             </div>
-            ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+            ${item.notes ? `<div class="library-item-notes">${renderRichText(item.notes)}</div>` : ""}
             ${libraryMediaHTML(item)}
             <div class="actions">
               <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', '${item.item_type}')">Add to Plan</button>
@@ -4490,7 +4794,7 @@
             <div class="photo-card ${isDirectImageURL(url) ? '' : 'photo-card-link-only'}" onclick="openPage('journalPage','journalNav')" title="Open Journal">
               ${imagePreview}
               <div class="photo-caption">
-                <strong>${escapeHTML(entry.title || 'Journal memory link')}</strong>
+                <strong>${renderRichText(entry.title || 'Journal memory link')}</strong>
                 ${escapeHTML(formatDate(entry.entry_date))}<br>
                 <span class="photo-open-note">${escapeHTML(memoryLinkHost(url))} · Open in Journal</span>
               </div>
@@ -4517,7 +4821,7 @@
         <div class="summary-line">
           <span>${label}</span>
           <span>
-            ${itemTypeEmoji(item.item_type)} ${escapeHTML(item.name)}
+            ${itemTypeEmoji(item.item_type)} ${renderRichText(item.name)}
             ${item.category ? `<br><small>${escapeHTML(item.category)}</small>` : ""}
           </span>
         </div>
@@ -4555,7 +4859,7 @@
       }
 
       container.innerHTML = `
-        <div class="entry-title">💖 ${escapeHTML(idea.title)}</div>
+        <div class="entry-title">💖 ${renderRichText(idea.title)}</div>
         <div class="entry-meta">${formatDate(idea.date)} · ${escapeHTML(idea.mood)}${idea.budget ? ` · ${escapeHTML(idea.budget)}` : ""}</div>
         <div class="library-item-notes">${escapeHTML(idea.notes)}</div>
         <div class="summary-body">
@@ -4783,13 +5087,13 @@
         container.innerHTML = `
           <div class="next-date-box">
             <div class="next-date-count">${escapeHTML(countdownLabel(days))}</div>
-            <div class="next-date-title">${escapeHTML(chosenPlan.title || "Untitled date plan")}</div>
+            <div class="next-date-title">${renderRichText(chosenPlan.title || "Untitled date plan")}</div>
             <div class="next-date-detail">${detailParts.map(escapeHTML).join(" · ")}</div>
             ${chosenPlan.notes ? `<div class="library-item-notes">${escapeHTML(chosenPlan.notes)}</div>` : ""}
             <div class="next-date-mini-list">
               ${previewEntries.length ? previewEntries.map(entry => `
                 <div class="next-date-mini-item">
-                  ${periods[entry.time_period]?.emoji || "♡"} <strong>${escapeHTML(entry.time_period)}</strong> · ${escapeHTML(entry.title)}${entry.completed ? " ✓" : ""}
+                  ${periods[entry.time_period]?.emoji || "♡"} <strong>${escapeHTML(entry.time_period)}</strong> · ${renderRichText(entry.title)}${entry.completed ? " ✓" : ""}
                 </div>
               `).join("") : `<div class="empty">No entries yet.</div>`}
             </div>
@@ -4906,17 +5210,17 @@
         <div class="history-card">
           <div class="history-head">
             <div>
-              <div class="history-title">${escapeHTML(plan.title || "Untitled date plan")}</div>
+              <div class="history-title">${renderRichText(plan.title || "Untitled date plan")}</div>
               <div class="entry-meta">${detailParts.map(escapeHTML).join(" · ") || "No mood/budget yet"}</div>
             </div>
             <div class="history-date-chip">${escapeHTML(formatDate(plan.plan_date))}</div>
           </div>
           <div class="history-body">
-            ${plan.notes ? `<div class="library-item-notes">${escapeHTML(plan.notes)}</div>` : ""}
+            ${plan.notes ? `<div class="library-item-notes">${renderRichText(plan.notes)}</div>` : ""}
             <div class="history-mini-list">
               ${previewEntries.length ? previewEntries.map(entry => `
                 <div class="history-mini-item">
-                  ${periods[entry.time_period]?.emoji || "♡"} <strong>${escapeHTML(entry.time_period || "Plan")}</strong> · ${escapeHTML(entry.title || "Untitled")}${entry.completed ? " ✓" : ""}
+                  ${periods[entry.time_period]?.emoji || "♡"} <strong>${escapeHTML(entry.time_period || "Plan")}</strong> · ${renderRichText(entry.title || "Untitled")}${entry.completed ? " ✓" : ""}
                 </div>
               `).join("") : `<div class="empty">No plan entries yet.</div>`}
             </div>
@@ -5104,9 +5408,9 @@
       qs("editModalTitle").textContent = "Read journal memory";
       qs("editModalFields").innerHTML = `
         <div class="journal-reader">
-          <div class="journal-reader-title">${escapeHTML(title)}</div>
+          <div class="journal-reader-title">${renderRichText(title)}</div>
           <div class="entry-meta">${escapeHTML(journalTypeLabel(type))} · ${escapeHTML(date ? formatDate(date) : "No date")}</div>
-          <div class="journal-reader-body">${escapeHTML(body || "No body text yet.")}</div>
+          <div class="journal-reader-body">${renderRichText(body || "No body text yet.")}</div>
           ${imageUrl ? journalImageHTML({ title, image_url: imageUrl }) : ""}
           <button class="button secondary" onclick="copyTextToClipboard(${JSON.stringify(fullText)}, 'Journal copied 💌')">Copy this memory</button>
         </div>
@@ -5279,7 +5583,7 @@
         box.innerHTML = rows.map(row => `
           <div class="memory-book-row">
             <strong>${escapeHTML(row.label)}</strong>
-            ${escapeHTML(row.value)}
+            ${renderRichText(row.value)}
           </div>
         `).join("");
       } catch (error) {
@@ -5347,7 +5651,7 @@
                     const stars = entry.my_rating
                       ? ` <strong style="color:#f2b544">${"★".repeat(entry.my_rating)}</strong>`
                       : "";
-                    return `${entry.completed ? "✓ " : ""}${escapeHTML(entry.title)}${stars}`;
+                    return `${entry.completed ? "✓ " : ""}${renderRichText(entry.title)}${stars}`;
                   }).join("<br>")}
                 </span>
               </div>
@@ -5358,13 +5662,13 @@
             <div class="summary-card">
               <div class="summary-head">
                 <div>
-                  <strong>${plan.title ? `${escapeHTML(plan.title)} · ` : ""}${formatDate(plan.plan_date)}</strong>
+                  <strong>${plan.title ? `${renderRichText(plan.title)} · ` : ""}${formatDate(plan.plan_date)}</strong>
                   ${(plan.mood || plan.budget) ? `<div class="entry-meta">${[plan.mood, plan.budget].filter(Boolean).map(escapeHTML).join(" · ")}</div>` : ""}
                 </div>
                 <button class="button small" onclick="openPlanDate('${plan.plan_date}')">Open</button>
               </div>
               <div class="summary-body">
-                ${plan.notes ? `<div class="library-item-notes">${escapeHTML(plan.notes)}</div>` : ""}
+                ${plan.notes ? `<div class="library-item-notes">${renderRichText(plan.notes)}</div>` : ""}
                 ${lines || `<div class="empty">No entries yet.</div>`}
               </div>
             </div>
@@ -5423,6 +5727,7 @@
       if (qs("inviteCopyMessage")) qs("inviteCopyMessage").textContent = "";
 
       renderPeriodCards();
+      enhanceStickerFields(document);
       qs("selectedDate").value = getToday();
       if (qs("journalDate")) qs("journalDate").value = getToday();
       if (qs("surpriseDate")) qs("surpriseDate").value = getToday();
