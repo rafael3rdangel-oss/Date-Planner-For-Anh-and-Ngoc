@@ -2,8 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 All-in-one polish v27</title>
+  <title>Date Planner for Us 🍓 Comfort history v28</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ef6f9f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Date Planner">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link id="appManifest" rel="manifest">
 
   <style>
     * { box-sizing: border-box; }
@@ -101,6 +106,124 @@
       color: var(--berry-dark);
       font-size: 13px;
       font-weight: 700;
+    }
+    .comfort-note {
+      padding: 11px 12px;
+      border: 1px dashed #ffb4ce;
+      border-radius: 16px;
+      background: #fff7fb;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 10px;
+    }
+    .filter-panel {
+      display: grid;
+      gap: 9px;
+      margin: 12px 0;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fffafd;
+    }
+    .filter-panel input,
+    .filter-panel select { margin-bottom: 0; }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .checkbox-row input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+      accent-color: var(--berry);
+    }
+    .history-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: white;
+    }
+    .history-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px 13px;
+      background: linear-gradient(135deg, #fff3f8, #f2fbff);
+    }
+    .history-title {
+      color: var(--berry-dark);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .history-date-chip {
+      flex: 0 0 auto;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: white;
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    .history-body { padding: 11px 13px; }
+    .history-mini-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 9px;
+    }
+    .history-mini-item {
+      padding: 7px 9px;
+      border-radius: 12px;
+      background: #fffafd;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .history-memory-chip {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: var(--lavender);
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .journal-filter-count {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .photo-open-note {
+      display: inline-block;
+      margin-top: 7px;
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .phone-install-steps {
+      margin: 10px 0 0;
+      display: grid;
+      gap: 7px;
+    }
+    .phone-install-steps div {
+      padding: 9px 10px;
+      border-radius: 14px;
+      background: #fffafd;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.35;
     }
     .user-info { min-width: 0; font-size: 13px; color: var(--muted); }
     .user-info strong { display: block; color: var(--ink); overflow-wrap: anywhere; }
@@ -539,7 +662,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>All-in-one polish v27</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Comfort history v28</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -647,6 +770,16 @@
         </div>
 
         <div class="card compact-card">
+          <h2 class="title">📱 Phone app shortcut</h2>
+          <p class="subtitle">You can make this feel like a phone app for free. No app store, no extra Supabase storage, no extra Render cost.</p>
+          <div class="actions">
+            <button class="button" onclick="installPhoneApp()">Install / show phone steps</button>
+            <button class="button secondary" onclick="showPhoneInstallHelp()">How it works</button>
+          </div>
+          <div id="phoneInstallMessage" class="comfort-note hidden"></div>
+        </div>
+
+        <div class="card compact-card">
           <h2 class="title">📊 Our dashboard</h2>
           <p class="subtitle">Quick overview of your saved ideas, plans and memories.</p>
           <div id="dashboardStats" class="stats-grid">
@@ -659,6 +792,42 @@
           <p class="subtitle">See the next planned date at a glance, then open, copy, or share it.</p>
           <div id="nextDateCountdown">
             <div class="empty">Loading next date...</div>
+          </div>
+        </div>
+
+        <div class="card compact-card">
+          <h2 class="title">📚 Date history</h2>
+          <p class="subtitle">Search all your dates, past memories and upcoming plans. This only reads your saved plans.</p>
+          <div class="filter-panel">
+            <input id="historySearchInput" placeholder="Search plans, notes, entries or memories..." oninput="loadPlanHistory()">
+            <div class="row">
+              <select id="historyModeFilter" onchange="loadPlanHistory()">
+                <option value="all">All dates</option>
+                <option value="upcoming">Upcoming only</option>
+                <option value="past">Past only</option>
+              </select>
+              <select id="historyMoodFilter" onchange="loadPlanHistory()">
+                <option value="all">All moods</option>
+                <option value="Cozy">Cozy</option>
+                <option value="Romantic">Romantic</option>
+                <option value="Fun">Fun</option>
+                <option value="Chill">Chill</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Home date">Home date</option>
+                <option value="Food date">Food date</option>
+              </select>
+            </div>
+            <div class="row">
+              <select id="historySortMode" onchange="loadPlanHistory()">
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="next">Next upcoming first</option>
+              </select>
+              <button class="button ghost" onclick="clearPlanHistoryFilters()">Clear filters</button>
+            </div>
+          </div>
+          <div id="planHistoryList" class="summary-list">
+            <div class="empty">Loading date history...</div>
           </div>
         </div>
 
@@ -1067,6 +1236,37 @@
             </div>
           </div>
 
+          <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
+            <h3 class="title">Search journal</h3>
+            <p class="subtitle">Filter memories, notes, shopping lists and photo/post URLs. Instagram/Facebook links can be opened even when they cannot preview as images.</p>
+            <div class="filter-panel">
+              <input id="journalSearchInput" placeholder="Search title, body or URL..." oninput="loadJournal()">
+              <div class="row">
+                <select id="journalTypeFilter" onchange="loadJournal()">
+                  <option value="all">All types</option>
+                  <option value="memory">Memories</option>
+                  <option value="note">Notes</option>
+                  <option value="shopping">Shopping</option>
+                  <option value="idea">Ideas</option>
+                </select>
+                <select id="journalSortMode" onchange="loadJournal()">
+                  <option value="newest">Newest first</option>
+                  <option value="oldest">Oldest first</option>
+                </select>
+              </div>
+              <div class="row">
+                <input id="journalFromDate" type="date" onchange="loadJournal()">
+                <input id="journalToDate" type="date" onchange="loadJournal()">
+              </div>
+              <label class="checkbox-row">
+                <input id="journalPhotoOnly" type="checkbox" onchange="loadJournal()">
+                Photo/post URL only
+              </label>
+              <button class="button ghost" onclick="clearJournalFilters()">Clear journal filters</button>
+            </div>
+            <div id="journalFilterCount" class="journal-filter-count"></div>
+          </div>
+
           <div id="journalList" class="library-grid"></div>
         </div>
       </main>
@@ -1114,7 +1314,68 @@
     let libraryStatusFilter = "all";
     let librarySortMode = "name";
     let selectedBackupData = null;
+    let planHistoryCache = [];
+    let deferredInstallPrompt = null;
     const PROFILE_ENTRY_TITLE = "__couple_profile__";
+
+
+    function setupPhoneAppSupport() {
+      try {
+        const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="120" fill="#ffe3ef"/><circle cx="256" cy="250" r="150" fill="#fffaf2"/><text x="256" y="282" font-size="150" text-anchor="middle">🍓</text><text x="256" y="390" font-size="52" font-family="Arial" text-anchor="middle" fill="#c94e7f">Date</text></svg>`;
+        const iconUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg);
+        const manifest = {
+          name: "Date Planner for Us",
+          short_name: "Date Planner",
+          start_url: window.location.pathname || "/",
+          display: "standalone",
+          background_color: "#fffaf2",
+          theme_color: "#ef6f9f",
+          icons: [{ src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }]
+        };
+        const blob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
+        const url = URL.createObjectURL(blob);
+        const link = qs("appManifest");
+        if (link) link.href = url;
+      } catch (error) {
+        console.warn("Manifest setup skipped", error);
+      }
+    }
+
+    window.addEventListener("beforeinstallprompt", event => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      const message = qs("phoneInstallMessage");
+      if (message) {
+        message.classList.remove("hidden");
+        message.innerHTML = "Your phone/browser says this can be installed. Tap the install button when ready 💖";
+      }
+    });
+
+    async function installPhoneApp() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice.catch(() => null);
+        deferredInstallPrompt = null;
+        return;
+      }
+      showPhoneInstallHelp();
+    }
+
+    function showPhoneInstallHelp() {
+      const box = qs("phoneInstallMessage");
+      if (!box) return;
+      box.classList.remove("hidden");
+      box.innerHTML = `
+        <strong>This is free.</strong> It does not use app stores and does not add storage cost.
+        <div class="phone-install-steps">
+          <div><strong>iPhone:</strong> open the website in Safari → tap Share → Add to Home Screen.</div>
+          <div><strong>Android:</strong> open the website in Chrome → tap ⋮ menu → Add to Home screen or Install app.</div>
+          <div>It will open like an app shortcut, but it still uses your same Render website and Supabase data.</div>
+        </div>
+      `;
+    }
+
+    setupPhoneAppSupport();
 
     const periods = {
       Morning: { emoji: "🌅", className: "morning", color: "#fff6d8" },
@@ -1466,7 +1727,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "All-in-one polish v27",
+          version: "Comfort history v28",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -3505,17 +3766,23 @@
     }
 
     function journalImageHTML(entry) {
-      return entry.image_url
-        ? `
-          <img
-            class="library-image"
-            src="${escapeHTML(entry.image_url)}"
-            alt="${escapeHTML(entry.title || 'Journal photo')}"
-            loading="lazy"
-            onerror="this.style.display='none'"
-          >
-        `
-        : "";
+      const url = String(entry.image_url || "").trim();
+      if (!url) return "";
+      return `
+        <img
+          class="library-image"
+          src="${escapeHTML(url)}"
+          alt="${escapeHTML(entry.title || 'Journal photo')}"
+          loading="lazy"
+          onerror="this.style.display='none'"
+        >
+        <a
+          class="library-link"
+          href="${escapeHTML(url)}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Open photo / post ↗</a>
+      `;
     }
 
     function journalEntryHTML(entry) {
@@ -3540,6 +3807,59 @@
       `;
     }
 
+
+    function readJournalFilters() {
+      return {
+        search: (qs("journalSearchInput")?.value || "").trim().toLowerCase(),
+        type: qs("journalTypeFilter")?.value || "all",
+        sort: qs("journalSortMode")?.value || "newest",
+        fromDate: qs("journalFromDate")?.value || "",
+        toDate: qs("journalToDate")?.value || "",
+        photoOnly: Boolean(qs("journalPhotoOnly")?.checked)
+      };
+    }
+
+    function journalEntryMatchesFilters(entry, filters) {
+      if (filters.type !== "all" && entry.entry_type !== filters.type) return false;
+      if (filters.fromDate && entry.entry_date < filters.fromDate) return false;
+      if (filters.toDate && entry.entry_date > filters.toDate) return false;
+      if (filters.photoOnly && !String(entry.image_url || "").trim()) return false;
+      if (!filters.search) return true;
+
+      const searchable = [
+        entry.title,
+        entry.body,
+        entry.entry_type,
+        entry.entry_date,
+        entry.image_url
+      ].filter(Boolean).join(" ").toLowerCase();
+      return searchable.includes(filters.search);
+    }
+
+    function sortJournalEntries(entries, sortMode) {
+      const sorted = [...entries];
+      sorted.sort((a, b) => {
+        const dateCompare = sortMode === "oldest"
+          ? String(a.entry_date || "").localeCompare(String(b.entry_date || ""))
+          : String(b.entry_date || "").localeCompare(String(a.entry_date || ""));
+        if (dateCompare) return dateCompare;
+        return sortMode === "oldest"
+          ? String(a.created_at || "").localeCompare(String(b.created_at || ""))
+          : String(b.created_at || "").localeCompare(String(a.created_at || ""));
+      });
+      return sorted;
+    }
+
+    function clearJournalFilters() {
+      if (qs("journalSearchInput")) qs("journalSearchInput").value = "";
+      if (qs("journalTypeFilter")) qs("journalTypeFilter").value = "all";
+      if (qs("journalSortMode")) qs("journalSortMode").value = "newest";
+      if (qs("journalFromDate")) qs("journalFromDate").value = "";
+      if (qs("journalToDate")) qs("journalToDate").value = "";
+      if (qs("journalPhotoOnly")) qs("journalPhotoOnly").checked = false;
+      loadJournal();
+    }
+
     async function loadJournal() {
       if (!currentCouple) return;
       if (qs("journalDate") && !qs("journalDate").value) qs("journalDate").value = getToday();
@@ -3559,13 +3879,29 @@
         if (error) throw error;
 
         const visibleEntries = (entries || []).filter(entry => entry.title !== PROFILE_ENTRY_TITLE);
+        const filters = readJournalFilters();
+        const filteredEntries = sortJournalEntries(
+          visibleEntries.filter(entry => journalEntryMatchesFilters(entry, filters)),
+          filters.sort
+        );
+
+        if (qs("journalFilterCount")) {
+          qs("journalFilterCount").textContent = visibleEntries.length
+            ? `Showing ${filteredEntries.length} of ${visibleEntries.length} journal entries`
+            : "";
+        }
 
         if (!visibleEntries.length) {
           list.innerHTML = `<div class="empty">No journal entries yet. Add a memory, note, shopping list or date idea ✨</div>`;
           return;
         }
 
-        list.innerHTML = visibleEntries.map(journalEntryHTML).join("");
+        if (!filteredEntries.length) {
+          list.innerHTML = `<div class="empty">No matching journal entries. Try clearing the filters ✨</div>`;
+          return;
+        }
+
+        list.innerHTML = filteredEntries.map(journalEntryHTML).join("");
       } catch (error) {
         console.error(error);
         list.innerHTML = `<div class="empty">Could not load journal.</div>`;
@@ -3888,11 +4224,12 @@
               src="${escapeHTML(entry.image_url)}"
               alt="${escapeHTML(entry.title || 'Journal photo')}"
               loading="lazy"
-              onerror="this.closest('.photo-card').style.display='none'"
+              onerror="this.style.display='none'; this.closest('.photo-card').classList.add('photo-card-no-image')"
             >
             <div class="photo-caption">
-              <strong>${escapeHTML(entry.title || 'Journal photo')}</strong>
-              ${escapeHTML(formatDate(entry.entry_date))}
+              <strong>${escapeHTML(entry.title || 'Journal photo/post')}</strong>
+              ${escapeHTML(formatDate(entry.entry_date))}<br>
+              <span class="photo-open-note">Open in Journal</span>
             </div>
           </div>
         `).join("");
@@ -4234,6 +4571,219 @@
       }
     }
 
+
+    function readPlanHistoryFilters() {
+      return {
+        search: (qs("historySearchInput")?.value || "").trim().toLowerCase(),
+        mode: qs("historyModeFilter")?.value || "all",
+        mood: qs("historyMoodFilter")?.value || "all",
+        sort: qs("historySortMode")?.value || "newest"
+      };
+    }
+
+    function clearPlanHistoryFilters() {
+      if (qs("historySearchInput")) qs("historySearchInput").value = "";
+      if (qs("historyModeFilter")) qs("historyModeFilter").value = "all";
+      if (qs("historyMoodFilter")) qs("historyMoodFilter").value = "all";
+      if (qs("historySortMode")) qs("historySortMode").value = "newest";
+      loadPlanHistory();
+    }
+
+    function planSearchText(plan, entries, journals) {
+      return [
+        plan.title,
+        plan.mood,
+        plan.budget,
+        plan.notes,
+        plan.plan_date,
+        ...(entries || []).map(entry => `${entry.time_period} ${entry.title} ${entry.entry_type || ""}`),
+        ...(journals || []).map(entry => `${entry.title || ""} ${entry.body || ""} ${entry.entry_type || ""} ${entry.image_url || ""}`)
+      ].filter(Boolean).join(" ").toLowerCase();
+    }
+
+    function planMatchesHistoryFilters(plan, entries, journals, filters, today) {
+      const hasDetails = Boolean(plan.title || plan.mood || plan.budget || plan.notes);
+      if (!entries.length && !hasDetails && !journals.length) return false;
+      if (filters.mode === "upcoming" && plan.plan_date < today) return false;
+      if (filters.mode === "past" && plan.plan_date >= today) return false;
+      if (filters.mood !== "all" && plan.mood !== filters.mood) return false;
+      if (filters.search && !planSearchText(plan, entries, journals).includes(filters.search)) return false;
+      return true;
+    }
+
+    function sortHistoryRows(rows, sortMode) {
+      const sorted = [...rows];
+      const today = getToday();
+      if (sortMode === "oldest") {
+        sorted.sort((a, b) => String(a.plan.plan_date).localeCompare(String(b.plan.plan_date)));
+      } else if (sortMode === "next") {
+        sorted.sort((a, b) => {
+          const aFuture = a.plan.plan_date >= today;
+          const bFuture = b.plan.plan_date >= today;
+          if (aFuture !== bFuture) return aFuture ? -1 : 1;
+          return aFuture
+            ? String(a.plan.plan_date).localeCompare(String(b.plan.plan_date))
+            : String(b.plan.plan_date).localeCompare(String(a.plan.plan_date));
+        });
+      } else {
+        sorted.sort((a, b) => String(b.plan.plan_date).localeCompare(String(a.plan.plan_date)));
+      }
+      return sorted;
+    }
+
+    function historyCardHTML(row) {
+      const { plan, entries, journals } = row;
+      const detailParts = [plan.mood, plan.budget].filter(Boolean);
+      const previewEntries = entries.slice(0, 5);
+      const journalCount = journals.length;
+      return `
+        <div class="history-card">
+          <div class="history-head">
+            <div>
+              <div class="history-title">${escapeHTML(plan.title || "Untitled date plan")}</div>
+              <div class="entry-meta">${detailParts.map(escapeHTML).join(" · ") || "No mood/budget yet"}</div>
+            </div>
+            <div class="history-date-chip">${escapeHTML(formatDate(plan.plan_date))}</div>
+          </div>
+          <div class="history-body">
+            ${plan.notes ? `<div class="library-item-notes">${escapeHTML(plan.notes)}</div>` : ""}
+            <div class="history-mini-list">
+              ${previewEntries.length ? previewEntries.map(entry => `
+                <div class="history-mini-item">
+                  ${periods[entry.time_period]?.emoji || "♡"} <strong>${escapeHTML(entry.time_period || "Plan")}</strong> · ${escapeHTML(entry.title || "Untitled")}${entry.completed ? " ✓" : ""}
+                </div>
+              `).join("") : `<div class="empty">No plan entries yet.</div>`}
+            </div>
+            ${journalCount ? `<div class="history-memory-chip">📝 ${journalCount} journal ${journalCount === 1 ? "memory" : "memories"} on this date</div>` : ""}
+            <div class="actions">
+              <button class="button small" onclick="openPlanDate('${plan.plan_date}')">Open plan</button>
+              <button class="button small secondary" onclick="copyHistoryPlan('${plan.id}')">Copy</button>
+              <button class="button small secondary" onclick="shareHistoryPlan('${plan.id}')">Share</button>
+              <button class="button small ghost" onclick="downloadHistoryPlanCalendar('${plan.id}')">Calendar</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadPlanHistory() {
+      if (!currentCouple) return;
+      const container = qs("planHistoryList");
+      if (!container) return;
+      container.innerHTML = `<div class="empty">Loading date history...</div>`;
+      planHistoryCache = [];
+
+      try {
+        const filters = readPlanHistoryFilters();
+        const today = getToday();
+        const [{ data: plans, error: plansError }, { data: journals, error: journalsError }] = await Promise.all([
+          supabaseClient
+            .from("date_plans")
+            .select("*")
+            .eq("couple_id", currentCouple.id)
+            .order("plan_date", { ascending: false })
+            .limit(120),
+          supabaseClient
+            .from("journal_entries")
+            .select("id, entry_date, entry_type, title, body, image_url")
+            .eq("couple_id", currentCouple.id)
+            .neq("title", PROFILE_ENTRY_TITLE)
+            .order("entry_date", { ascending: false })
+        ]);
+
+        if (plansError) throw plansError;
+        if (journalsError) throw journalsError;
+
+        const journalByDate = new Map();
+        (journals || []).forEach(entry => {
+          const key = entry.entry_date;
+          if (!journalByDate.has(key)) journalByDate.set(key, []);
+          journalByDate.get(key).push(entry);
+        });
+
+        const rows = [];
+        for (const plan of plans || []) {
+          const entries = await getEntriesForPlan(plan.id);
+          const planJournals = journalByDate.get(plan.plan_date) || [];
+          if (planMatchesHistoryFilters(plan, entries, planJournals, filters, today)) {
+            rows.push({ plan, entries, journals: planJournals });
+          }
+        }
+
+        planHistoryCache = sortHistoryRows(rows, filters.sort);
+
+        if (!planHistoryCache.length) {
+          container.innerHTML = `<div class="empty">No matching dates. Try clearing the filters ✨</div>`;
+          return;
+        }
+
+        const total = planHistoryCache.length;
+        container.innerHTML = `
+          <div class="entry-meta">Showing ${Math.min(total, 30)} of ${total} matching dates</div>
+          ${planHistoryCache.slice(0, 30).map(historyCardHTML).join("")}
+        `;
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = `<div class="empty">Could not load date history.</div>`;
+      }
+    }
+
+    function getHistoryPlanById(id) {
+      const row = planHistoryCache.find(item => item.plan.id === id);
+      return row?.plan || null;
+    }
+
+    async function copyHistoryPlan(id) {
+      try {
+        const plan = getHistoryPlanById(id);
+        if (!plan) return;
+        const text = await buildPlanTextFromPlan(plan);
+        if (!text) return;
+        await copyTextToClipboard(text, "Plan copied 💌");
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function shareHistoryPlan(id) {
+      try {
+        const plan = getHistoryPlanById(id);
+        if (!plan) return;
+        const text = await buildPlanTextFromPlan(plan);
+        if (!text) return;
+        await shareText(text, "Plan copied 💌");
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function downloadHistoryPlanCalendar(id) {
+      try {
+        const plan = getHistoryPlanById(id);
+        if (!plan) return;
+        const calendarText = await buildCalendarFileForPlan(plan);
+        const safeTitle = (plan.title || "date-plan")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "") || "date-plan";
+        const filename = `${plan.plan_date}-${safeTitle}.ics`;
+        const blob = new Blob([calendarText], { type: "text/calendar;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
     async function loadHome() {
       loadCoupleMembers();
       loadCoupleProfile();
@@ -4241,6 +4791,7 @@
       loadPhotoWall();
       loadFavoritePicks();
       loadNextDateCountdown();
+      loadPlanHistory();
       const container = qs("homeList");
       container.innerHTML = `<div class="empty">Loading...</div>`;
 
