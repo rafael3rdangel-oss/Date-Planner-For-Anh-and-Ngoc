@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Comfort history v28</title>
+  <title>Date Planner for Us 🍓 Clean memories v29</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -323,6 +323,47 @@
       font-size: 12px;
       font-weight: 700;
       margin-top: 4px;
+    }
+
+    .input-helper {
+      margin: -4px 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .memory-link-card {
+      margin-top: 10px;
+      padding: 11px;
+      border: 1px dashed #ffb4ce;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #fff3f8, #edf7ff);
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+    .memory-link-card strong {
+      display: block;
+      color: var(--berry-dark);
+      margin-bottom: 4px;
+    }
+    .memory-host {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .photo-card { cursor: pointer; }
+    .photo-card-link-only {
+      min-height: 154px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: linear-gradient(135deg, #fff3f8, #edf7ff);
+    }
+    .photo-link-icon {
+      padding-top: 16px;
+      text-align: center;
+      font-size: 30px;
     }
 
     .stats-grid {
@@ -662,7 +703,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Comfort history v28</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Clean memories v29</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -833,7 +874,7 @@
 
         <div class="card compact-card">
           <h2 class="title">🖼️ Memory photo wall</h2>
-          <p class="subtitle">A cute preview of photos saved in Journal. Add photo URLs to journal entries and they will appear here.</p>
+          <p class="subtitle">A cute preview of direct photo links and saved memory links from Journal. No photo upload needed.</p>
           <div id="photoWallList" class="photo-wall-grid">
             <div class="empty">Loading photos...</div>
           </div>
@@ -1213,7 +1254,7 @@
       <main id="journalPage" class="page">
         <div class="card">
           <h2 class="title">📝 Journal</h2>
-          <p class="subtitle">Save memories, notes, shopping lists, date ideas and photo URLs.</p>
+          <p class="subtitle">Save memories, notes, shopping lists, date ideas and optional memory/photo links.</p>
 
           <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
             <h3 class="title">Add journal entry</h3>
@@ -1230,7 +1271,8 @@
 
               <input id="journalTitle" placeholder="Title, e.g. First date memory, Gift ideas, Things em likes">
               <textarea id="journalBody" placeholder="Write the note, memory, shopping list or idea here..."></textarea>
-              <input id="journalImageUrl" placeholder="Photo URL (optional)">
+              <input id="journalImageUrl" placeholder="Memory/photo link URL (optional — only if you already have one)">
+              <p class="input-helper">Tip: direct .jpg/.png/.webp links show as photos. Other links are saved as an “Open memory link” button.</p>
 
               <button class="button" onclick="addJournalEntry()">Add to Journal</button>
             </div>
@@ -1238,7 +1280,7 @@
 
           <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
             <h3 class="title">Search journal</h3>
-            <p class="subtitle">Filter memories, notes, shopping lists and photo/post URLs. Instagram/Facebook links can be opened even when they cannot preview as images.</p>
+            <p class="subtitle">Filter memories, notes, shopping lists and memory links. Direct image links can preview; other links stay as clean openable buttons.</p>
             <div class="filter-panel">
               <input id="journalSearchInput" placeholder="Search title, body or URL..." oninput="loadJournal()">
               <div class="row">
@@ -1254,13 +1296,20 @@
                   <option value="oldest">Oldest first</option>
                 </select>
               </div>
+              <select id="journalLinkFilter" onchange="loadJournal()">
+                <option value="all">All link types</option>
+                <option value="any">Has memory link</option>
+                <option value="image">Direct image links only</option>
+                <option value="external">Open-button links only</option>
+                <option value="none">No memory link</option>
+              </select>
               <div class="row">
                 <input id="journalFromDate" type="date" onchange="loadJournal()">
                 <input id="journalToDate" type="date" onchange="loadJournal()">
               </div>
               <label class="checkbox-row">
                 <input id="journalPhotoOnly" type="checkbox" onchange="loadJournal()">
-                Photo/post URL only
+                Memory/photo link only
               </label>
               <button class="button ghost" onclick="clearJournalFilters()">Clear journal filters</button>
             </div>
@@ -1727,7 +1776,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Comfort history v28",
+          version: "Clean memories v29",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -3755,6 +3804,22 @@
 
 
 
+
+    function isDirectImageURL(url) {
+      const clean = String(url || "").trim().split("#")[0].split("?")[0].toLowerCase();
+      return /\.(jpg|jpeg|png|webp|gif|avif|svg)$/.test(clean)
+        || clean.includes("shared.cloudflare.steamstatic.com")
+        || clean.includes("cdn.cloudflare.steamstatic.com");
+    }
+
+    function memoryLinkHost(url) {
+      try {
+        return new URL(url).hostname.replace(/^www\./, "");
+      } catch (error) {
+        return "saved link";
+      }
+    }
+
     function journalTypeLabel(type) {
       const labels = {
         note: "📝 Note",
@@ -3768,20 +3833,35 @@
     function journalImageHTML(entry) {
       const url = String(entry.image_url || "").trim();
       if (!url) return "";
-      return `
-        <img
-          class="library-image"
-          src="${escapeHTML(url)}"
-          alt="${escapeHTML(entry.title || 'Journal photo')}"
-          loading="lazy"
-          onerror="this.style.display='none'"
-        >
+
+      const openButton = `
         <a
           class="library-link"
           href="${escapeHTML(url)}"
           target="_blank"
           rel="noopener noreferrer"
-        >Open photo / post ↗</a>
+        >Open memory link ↗</a>
+      `;
+
+      if (isDirectImageURL(url)) {
+        return `
+          <img
+            class="library-image"
+            src="${escapeHTML(url)}"
+            alt="${escapeHTML(entry.title || 'Journal photo')}"
+            loading="lazy"
+            onerror="this.style.display='none'"
+          >
+          ${openButton}
+        `;
+      }
+
+      return `
+        <div class="memory-link-card">
+          <strong>🔗 Memory link saved</strong>
+          <span class="memory-host">${escapeHTML(memoryLinkHost(url))}</span>
+          ${openButton}
+        </div>
       `;
     }
 
@@ -3813,6 +3893,7 @@
         search: (qs("journalSearchInput")?.value || "").trim().toLowerCase(),
         type: qs("journalTypeFilter")?.value || "all",
         sort: qs("journalSortMode")?.value || "newest",
+        linkMode: qs("journalLinkFilter")?.value || "all",
         fromDate: qs("journalFromDate")?.value || "",
         toDate: qs("journalToDate")?.value || "",
         photoOnly: Boolean(qs("journalPhotoOnly")?.checked)
@@ -3820,10 +3901,18 @@
     }
 
     function journalEntryMatchesFilters(entry, filters) {
+      const memoryUrl = String(entry.image_url || "").trim();
+      const hasMemoryUrl = Boolean(memoryUrl);
+      const directImage = hasMemoryUrl && isDirectImageURL(memoryUrl);
+
       if (filters.type !== "all" && entry.entry_type !== filters.type) return false;
       if (filters.fromDate && entry.entry_date < filters.fromDate) return false;
       if (filters.toDate && entry.entry_date > filters.toDate) return false;
-      if (filters.photoOnly && !String(entry.image_url || "").trim()) return false;
+      if (filters.photoOnly && !hasMemoryUrl) return false;
+      if (filters.linkMode === "any" && !hasMemoryUrl) return false;
+      if (filters.linkMode === "image" && !directImage) return false;
+      if (filters.linkMode === "external" && (!hasMemoryUrl || directImage)) return false;
+      if (filters.linkMode === "none" && hasMemoryUrl) return false;
       if (!filters.search) return true;
 
       const searchable = [
@@ -3854,6 +3943,7 @@
       if (qs("journalSearchInput")) qs("journalSearchInput").value = "";
       if (qs("journalTypeFilter")) qs("journalTypeFilter").value = "all";
       if (qs("journalSortMode")) qs("journalSortMode").value = "newest";
+      if (qs("journalLinkFilter")) qs("journalLinkFilter").value = "all";
       if (qs("journalFromDate")) qs("journalFromDate").value = "";
       if (qs("journalToDate")) qs("journalToDate").value = "";
       if (qs("journalPhotoOnly")) qs("journalPhotoOnly").checked = false;
@@ -3916,7 +4006,7 @@
       const entryType = qs("journalType").value || "note";
 
       if (!title && !body && !imageUrl) {
-        alert("Add a title, note, or photo URL first.");
+        alert("Add a title, note, or memory link first.");
         return;
       }
 
@@ -3965,7 +4055,7 @@
         ] },
         { name: "title", label: "Title", value: current.title, placeholder: "Title" },
         { name: "body", label: "Body / notes", type: "textarea", value: current.body, placeholder: "Write your note here..." },
-        { name: "imageUrl", label: "Photo URL", type: "url", value: current.imageUrl, placeholder: "https://...jpg" }
+        { name: "imageUrl", label: "Memory/photo link URL", type: "url", value: current.imageUrl, placeholder: "https://..." }
       ], async values => {
         const { error } = await supabaseClient
           .from("journal_entries")
@@ -4214,25 +4304,34 @@
         const photos = (entries || []).filter(entry => String(entry.image_url || "").trim());
 
         if (!photos.length) {
-          container.innerHTML = `<div class="empty">No journal photos yet. Add a Photo URL in Journal ✨</div>`;
+          container.innerHTML = `<div class="empty">No memory links yet. Add an optional memory/photo link in Journal ✨</div>`;
           return;
         }
 
-        container.innerHTML = photos.map(entry => `
-          <div class="photo-card" onclick="openPage('journalPage','journalNav')" title="Open Journal">
-            <img
-              src="${escapeHTML(entry.image_url)}"
-              alt="${escapeHTML(entry.title || 'Journal photo')}"
-              loading="lazy"
-              onerror="this.style.display='none'; this.closest('.photo-card').classList.add('photo-card-no-image')"
-            >
-            <div class="photo-caption">
-              <strong>${escapeHTML(entry.title || 'Journal photo/post')}</strong>
-              ${escapeHTML(formatDate(entry.entry_date))}<br>
-              <span class="photo-open-note">Open in Journal</span>
+        container.innerHTML = photos.map(entry => {
+          const url = String(entry.image_url || "").trim();
+          const imagePreview = isDirectImageURL(url)
+            ? `
+              <img
+                src="${escapeHTML(url)}"
+                alt="${escapeHTML(entry.title || 'Journal photo')}"
+                loading="lazy"
+                onerror="this.style.display='none'; this.closest('.photo-card').classList.add('photo-card-link-only')"
+              >
+            `
+            : `<div class="photo-link-icon">🔗</div>`;
+
+          return `
+            <div class="photo-card ${isDirectImageURL(url) ? '' : 'photo-card-link-only'}" onclick="openPage('journalPage','journalNav')" title="Open Journal">
+              ${imagePreview}
+              <div class="photo-caption">
+                <strong>${escapeHTML(entry.title || 'Journal memory link')}</strong>
+                ${escapeHTML(formatDate(entry.entry_date))}<br>
+                <span class="photo-open-note">${escapeHTML(memoryLinkHost(url))} · Open in Journal</span>
+              </div>
             </div>
-          </div>
-        `).join("");
+          `;
+        }).join("");
       } catch (error) {
         console.error(error);
         container.innerHTML = `<div class="empty">Could not load photo wall.</div>`;
