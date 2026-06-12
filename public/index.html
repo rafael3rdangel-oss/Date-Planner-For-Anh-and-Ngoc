@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Phone share v22</title>
+  <title>Date Planner for Us 🍓 Couple members v23</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -390,7 +390,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Phone share v22</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Couple members v23</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -448,6 +448,18 @@
             <button class="button secondary" onclick="shareInvite()">Share invite</button>
           </div>
           <p id="inviteCopyMessage" class="copy-message"></p>
+        </div>
+
+        <div class="card compact-card">
+          <h2 class="title">👥 Couple members</h2>
+          <p class="subtitle">See who has joined this planner and set your nickname.</p>
+          <div id="coupleMembersList" class="stats-grid">
+            <div class="empty">Loading members...</div>
+          </div>
+          <div class="actions">
+            <button class="button secondary" onclick="changeMyNickname()">Edit my nickname</button>
+            <button class="button ghost" onclick="loadCoupleMembers()">Refresh members</button>
+          </div>
         </div>
 
         <div class="card compact-card">
@@ -2952,6 +2964,82 @@
     }
 
 
+    function memberDisplayName(member, profilesById) {
+      const profile = profilesById[member.user_id] || {};
+      return member.nickname || profile.display_name || (member.user_id === currentUser?.id ? currentUser.email : "Member");
+    }
+
+    async function loadCoupleMembers() {
+      if (!currentCouple) return;
+      const container = qs("coupleMembersList");
+      if (!container) return;
+      container.innerHTML = `<div class="empty">Loading members...</div>`;
+
+      try {
+        const { data: members, error: membersError } = await supabaseClient
+          .from("couple_members")
+          .select("couple_id, user_id, nickname, role, joined_at")
+          .eq("couple_id", currentCouple.id)
+          .order("joined_at", { ascending: true });
+
+        if (membersError) throw membersError;
+
+        const rows = members || [];
+        if (!rows.length) {
+          container.innerHTML = `<div class="empty">No members found yet.</div>`;
+          return;
+        }
+
+        const userIds = rows.map(member => member.user_id).filter(Boolean);
+        const { data: profiles, error: profilesError } = await supabaseClient
+          .from("profiles")
+          .select("id, display_name, avatar_url")
+          .in("id", userIds);
+
+        if (profilesError) console.warn(profilesError);
+
+        const profilesById = Object.fromEntries((profiles || []).map(profile => [profile.id, profile]));
+
+        container.innerHTML = rows.map(member => {
+          const isMe = member.user_id === currentUser?.id;
+          const role = member.role === "owner" ? "Owner" : "Member";
+          const joined = member.joined_at ? new Date(member.joined_at).toLocaleDateString() : "";
+          return `
+            <div class="stat-pill">
+              <span class="stat-number">${isMe ? "💖" : "👤"} ${escapeHTML(memberDisplayName(member, profilesById))}</span>
+              <span class="stat-label">${escapeHTML(role)}${isMe ? " · You" : ""}${joined ? ` · joined ${escapeHTML(joined)}` : ""}</span>
+            </div>
+          `;
+        }).join("");
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = `<div class="empty">Could not load members.</div>`;
+      }
+    }
+
+    async function changeMyNickname() {
+      if (!currentCouple || !currentUser) return;
+      const currentText = "";
+      const nickname = prompt("Your nickname in this planner:", currentText);
+      if (nickname === null) return;
+
+      try {
+        const { error } = await supabaseClient
+          .from("couple_members")
+          .update({ nickname: nickname.trim() || null })
+          .eq("couple_id", currentCouple.id)
+          .eq("user_id", currentUser.id);
+
+        if (error) throw error;
+        await loadCoupleMembers();
+        alert("Nickname saved 💖");
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+
     function itemTypeEmoji(type) {
       const map = {
         food: "🍜",
@@ -3111,6 +3199,7 @@
     }
 
     async function loadHome() {
+      loadCoupleMembers();
       loadDashboardStats();
       loadPhotoWall();
       loadFavoritePicks();
