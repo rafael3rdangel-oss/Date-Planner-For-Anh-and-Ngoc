@@ -1171,6 +1171,119 @@
       }
     }
 
+  
+    .storybook-uploader {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.70);
+      border: 1px solid rgba(239,111,159,.14);
+    }
+    .storybook-uploader label {
+      display: grid;
+      gap: 6px;
+      color: var(--berry-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .storybook-uploader input[type="file"] {
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(239,111,159,.18);
+      background: rgba(255,255,255,.88);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .upload-status-list {
+      display: grid;
+      gap: 7px;
+      margin-top: 4px;
+    }
+    .upload-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: rgba(255, 244, 249, .78);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .upload-status-row strong {
+      color: var(--berry-dark);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+    .upload-status-row span {
+      flex-shrink: 0;
+    }
+    .storybook-supabase-note {
+      margin: 0;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255, 244, 183, .28);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+  
+    .storybook-bookshelf {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(239,111,159,.16);
+    }
+    .storybook-bookshelf-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--berry-dark);
+      font-weight: 900;
+    }
+    .storybook-bookshelf small {
+      color: var(--muted);
+      font-weight: 600;
+      line-height: 1.45;
+    }
+    .storybook-book-row {
+      display: grid;
+      gap: 8px;
+    }
+    .storybook-page-form {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255, 244, 249, .72);
+      border: 1px dashed rgba(239,111,159,.22);
+    }
+    .storybook-mini-count {
+      width: fit-content;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(239,111,159,.10);
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .storybook-empty-book {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.72);
+      border: 1px dashed rgba(239,111,159,.24);
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
   </style>
 </head>
 
@@ -1348,32 +1461,100 @@
 
         <div class="card compact-card">
           <div class="section-sparkle">📚 private storybook</div>
-          <h2 class="title">🍓 Our Vietnam storybook</h2>
-          <p class="subtitle">A soft storybook timeline for your PDF memories. Use Supabase Storage links so the private files are not bundled inside the app zip.</p>
+          <h2 class="title">📚 Our storybook shelf</h2>
+          <p class="subtitle">Make separate private storybooks for Vietnam 2025, Next Vietnam, Belgium memories, anniversaries, food adventures, or anything else.</p>
 
           <div class="storybook-shell">
             <div class="storybook-cover">
               <div class="storybook-kicker">🔒 Only for our couple space</div>
-              <h3 class="storybook-title">Just me remembering, but cuter ✨</h3>
-              <p class="storybook-copy">Turn the long memory document into little story pages: airport hugs, food dates, Playtendo, Aeon Mall, strawberry blanket lore, escape rooms, and the quiet soft mornings.</p>
+              <h3 id="storybookDisplayTitle" class="storybook-title">Just me remembering, but cuter ✨</h3>
+              <p id="storybookDisplayCopy" class="storybook-copy">Turn long memory documents into little story pages: airport hugs, food dates, Playtendo, Aeon Mall, strawberry blanket lore, escape rooms, and soft mornings.</p>
               <div class="storybook-actions">
-                <button class="button" onclick="openStorybookPDF()">Open memory PDF</button>
-                <button class="button secondary" onclick="renderStorybook()">Refresh storybook</button>
-                <button class="button ghost" onclick="resetStorybookStorageLinks()">Use sample mode</button>
+                <button class="button" onclick="openStorybookPDF()">Open this book's PDF</button>
+                <button class="button secondary" onclick="loadStorybookLibrary()">Refresh shelf</button>
+                <button class="button ghost" onclick="createStarterNextVietnamBook()">Add Next Vietnam book</button>
               </div>
+            </div>
+
+            <div class="storybook-bookshelf">
+              <div class="storybook-bookshelf-title">
+                <span>📚 Storybook bookshelf</span>
+                <small id="storybookBookCount">Loading books...</small>
+              </div>
+
+              <div class="storybook-book-row">
+                <select id="storybookBookSelect" onchange="selectStorybookBook()"></select>
+                <div class="row">
+                  <input id="newStorybookTitle" placeholder="New book title, e.g. Next Vietnam">
+                  <button class="button secondary" onclick="createStorybookBook()">Create book</button>
+                </div>
+              </div>
+
+              <details>
+                <summary>Edit selected book</summary>
+                <div class="form-grid" style="margin-top:10px;">
+                  <input id="storybookEditTitle" placeholder="Book title">
+                  <input id="storybookEditSubtitle" placeholder="Book subtitle / description">
+                  <input id="storybookEditDateLabel" placeholder="Date label, e.g. Summer 2026 or 8 Jul – 5 Aug 2025">
+                  <div class="row">
+                    <button class="button secondary" onclick="saveStorybookBookDetails()">Save book details</button>
+                    <button class="button ghost" onclick="deleteStorybookBook()">Delete selected book</button>
+                  </div>
+                </div>
+              </details>
+
+              <details>
+                <summary>Add a custom story page</summary>
+                <div class="storybook-page-form">
+                  <input id="storybookPageDate" placeholder="Date, e.g. Day 1 / 12 Aug 2026">
+                  <input id="storybookPageTitle" placeholder="Page title, e.g. Airport hug again">
+                  <textarea id="storybookPageSummary" placeholder="Story text for this page..."></textarea>
+                  <input id="storybookPageQuote" placeholder="Cute quote, optional">
+                  <input id="storybookPageTags" placeholder="Tags separated by commas, e.g. airport, food, cozy">
+                  <input id="storybookPageImageIndex" type="number" min="1" placeholder="Image number to use, optional. 1 = first uploaded image">
+                  <button class="button secondary" onclick="addStorybookPage()">Add page to this book</button>
+                </div>
+              </details>
+
+              <div id="storybookSyncMessage" class="plan-copy-message"></div>
             </div>
 
             <div class="storybook-settings">
               <details>
                 <summary>Supabase Storage setup</summary>
-                <p class="storybook-help">Recommended: upload the PDF and selected page images to a private Supabase Storage bucket, then paste the signed/public URLs below. For quick testing you can also paste normal image links. This app saves the links locally in this browser, not in a new SQL table.</p>
+                <p class="storybook-help">Upload the PDF and page images for the selected storybook. Files go into Supabase Storage under that book's private folder. Book details are saved in your existing Journal table as one hidden sync entry, so both of you can see the same storybook shelf.</p>
                 <div class="form-grid" style="margin-top:10px;">
-                  <input id="storybookPdfUrl" placeholder="Memory PDF URL or signed Supabase URL">
-                  <textarea id="storybookImageUrls" placeholder="Optional page image URLs, one per line. Example: first-date.jpg URL, Unatoto.jpg URL, strawberry blanket.jpg URL..."></textarea>
-                  <div class="row">
-                    <button class="button secondary" onclick="saveStorybookStorageLinks()">Save storybook links</button>
-                    <button class="button ghost" onclick="copyStorybookSupabaseGuide()">Copy Supabase guide</button>
+                  <p class="storybook-supabase-note">Best setup: create a Supabase Storage bucket named <strong>couple-memories</strong>. The app uploads into the currently selected storybook. Example path: couple/storybook/next-vietnam/images/...</p>
+
+                  <div class="storybook-uploader">
+                    <label>
+                      Memory PDF
+                      <input id="storybookPdfFile" type="file" accept="application/pdf">
+                    </label>
+                    <button class="button secondary" onclick="uploadStorybookPDF()">Upload PDF to Supabase</button>
                   </div>
+
+                  <div class="storybook-uploader">
+                    <label>
+                      Story images / page previews
+                      <input id="storybookImageFiles" type="file" accept="image/*" multiple>
+                    </label>
+                    <button class="button secondary" onclick="uploadStorybookImages()">Upload images to Supabase</button>
+                    <div id="storybookUploadStatus" class="upload-status-list"></div>
+                  </div>
+
+                  <details>
+                    <summary>Manual links / advanced</summary>
+                    <div class="form-grid" style="margin-top:10px;">
+                      <input id="storybookPdfUrl" placeholder="Manual PDF URL for selected book">
+                      <textarea id="storybookImageUrls" placeholder="Manual image URLs for selected book, one per line."></textarea>
+                      <div class="row">
+                        <button class="button secondary" onclick="saveStorybookStorageLinks()">Save manual links</button>
+                        <button class="button ghost" onclick="copyStorybookSupabaseGuide()">Copy Supabase guide</button>
+                      </div>
+                    </div>
+                  </details>
+
                   <p id="storybookStorageMessage" class="plan-copy-message"></p>
                 </div>
               </details>
@@ -1386,8 +1567,8 @@
         </div>
 
         <div class="card compact-card">
-          <h2 class="title">🧸 Storybook photo shelf</h2>
-          <p class="subtitle">Cute page/photo previews from the memory book. Add Supabase image links above to replace the soft placeholders.</p>
+          <h2 class="title">🧸 Selected book photo shelf</h2>
+          <p class="subtitle">Photo/page previews for the selected storybook. Upload images above or paste manual links.</p>
           <div id="storybookAlbum" class="storybook-album">
             <div class="empty">Loading storybook album...</div>
           </div>
@@ -2327,6 +2508,10 @@
     ];
 
     const STORYBOOK_STORAGE_KEY = "datePlannerStorybookStorageV1";
+    const STORYBOOK_LIBRARY_TITLE = "__storybook_library_v1__";
+    const STORYBOOK_ACTIVE_KEY = "datePlannerActiveStorybookV1";
+    let storybookLibraryCache = null;
+    let activeStorybookId = localStorage.getItem(STORYBOOK_ACTIVE_KEY) || "vietnam-2025";
 
     function qs(id) { return document.getElementById(id); }
     function show(id) { qs(id).classList.remove("hidden"); }
@@ -3266,103 +3451,481 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function loadOverview() {
+    async function loadOverview() {
       loadDashboardStats();
       loadCoupleProfile();
       loadRelationshipMemoryBook();
-      renderStorybook();
-      loadStorybookStorageInputs();
+      await loadStorybookLibrary();
       loadPhotoWall();
       loadFavoritePicks();
       loadPlanHistory();
     }
 
 
-    function getStorybookStorageLinks() {
-      try {
-        const raw = localStorage.getItem(STORYBOOK_STORAGE_KEY);
-        if (!raw) return { pdfUrl: "", imageUrls: [] };
-        const parsed = JSON.parse(raw);
-        return {
-          pdfUrl: String(parsed.pdfUrl || ""),
-          imageUrls: Array.isArray(parsed.imageUrls) ? parsed.imageUrls.map(String).filter(Boolean) : []
-        };
-      } catch (error) {
-        return { pdfUrl: "", imageUrls: [] };
+
+    function makeStorybookId(title) {
+      const base = String(title || "storybook")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 44) || "storybook";
+      return `${base}-${Math.random().toString(36).slice(2, 7)}`;
+    }
+
+    function defaultVietnamChapters() {
+      return STORYBOOK_MEMORIES.map((item, index) => ({
+        id: `sample-${index + 1}`,
+        date: item.date,
+        title: item.title,
+        summary: item.summary,
+        quote: item.quote,
+        tags: item.tags || [],
+        imageKey: item.imageKey,
+        imageIndex: index
+      }));
+    }
+
+    function defaultStorybookLibrary() {
+      return {
+        version: 2,
+        books: [
+          {
+            id: "vietnam-2025",
+            title: "Vietnam 2025",
+            subtitle: "Airport hugs, Playtendo, Unatoto, Aeon Mall, strawberry blanket lore, escape rooms, and soft mornings.",
+            dateLabel: "8 Jul – 5 Aug 2025",
+            pdfPath: "",
+            pdfUrl: "",
+            imagePaths: [],
+            imageUrls: [],
+            chapters: defaultVietnamChapters()
+          }
+        ]
+      };
+    }
+
+    function normalizeStorybookLibrary(value) {
+      const fallback = defaultStorybookLibrary();
+      const rawBooks = Array.isArray(value?.books) ? value.books : fallback.books;
+      const books = rawBooks.map((book, index) => ({
+        id: String(book.id || makeStorybookId(book.title || `Book ${index + 1}`)),
+        title: String(book.title || `Storybook ${index + 1}`),
+        subtitle: String(book.subtitle || ""),
+        dateLabel: String(book.dateLabel || ""),
+        pdfPath: String(book.pdfPath || ""),
+        pdfUrl: String(book.pdfUrl || ""),
+        imagePaths: Array.isArray(book.imagePaths) ? book.imagePaths.map(String).filter(Boolean) : [],
+        imageUrls: Array.isArray(book.imageUrls) ? book.imageUrls.map(String).filter(Boolean) : [],
+        chapters: Array.isArray(book.chapters) ? book.chapters.map((chapter, cIndex) => ({
+          id: String(chapter.id || `chapter-${cIndex + 1}`),
+          date: String(chapter.date || ""),
+          title: String(chapter.title || `Memory page ${cIndex + 1}`),
+          summary: String(chapter.summary || ""),
+          quote: String(chapter.quote || ""),
+          tags: Array.isArray(chapter.tags)
+            ? chapter.tags.map(String).filter(Boolean)
+            : String(chapter.tags || "").split(",").map(x => x.trim()).filter(Boolean),
+          imageKey: String(chapter.imageKey || ""),
+          imageIndex: Number.isFinite(Number(chapter.imageIndex)) ? Number(chapter.imageIndex) : cIndex
+        })) : []
+      })).filter(book => book.id && book.title);
+
+      return { version: 2, books: books.length ? books : fallback.books };
+    }
+
+    function publicStorybookLibrary(library) {
+      const normalized = normalizeStorybookLibrary(library);
+      return {
+        version: 2,
+        books: normalized.books.map(book => ({
+          id: book.id,
+          title: book.title,
+          subtitle: book.subtitle,
+          dateLabel: book.dateLabel,
+          pdfPath: book.pdfPath || "",
+          pdfUrl: book.pdfPath ? "" : (book.pdfUrl || ""),
+          imagePaths: book.imagePaths || [],
+          imageUrls: book.imagePaths?.length ? [] : (book.imageUrls || []),
+          chapters: book.chapters || []
+        }))
+      };
+    }
+
+    function activeStorybook() {
+      const library = storybookLibraryCache || defaultStorybookLibrary();
+      let book = library.books.find(item => item.id === activeStorybookId);
+      if (!book) {
+        book = library.books[0];
+        activeStorybookId = book?.id || "vietnam-2025";
+        localStorage.setItem(STORYBOOK_ACTIVE_KEY, activeStorybookId);
       }
+      return book;
+    }
+
+    async function fetchStorybookLibraryEntry() {
+      if (!currentCouple) return null;
+      const { data, error } = await supabaseClient
+        .from("journal_entries")
+        .select("*")
+        .eq("couple_id", currentCouple.id)
+        .eq("title", STORYBOOK_LIBRARY_TITLE)
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data || null;
+    }
+
+    async function signStorybookUrl(path) {
+      if (!path) return "";
+      const { data, error } = await supabaseClient.storage
+        .from(STORYBOOK_BUCKET)
+        .createSignedUrl(path, STORYBOOK_SIGNED_URL_SECONDS);
+      if (error) {
+        console.warn("Could not sign storybook URL", error);
+        return "";
+      }
+      return data?.signedUrl || "";
+    }
+
+    async function hydrateStorybookSignedUrls(library) {
+      const normalized = normalizeStorybookLibrary(library);
+      for (const book of normalized.books) {
+        if (book.pdfPath) book.pdfUrl = await signStorybookUrl(book.pdfPath);
+        if (book.imagePaths?.length) {
+          const signed = [];
+          for (const path of book.imagePaths) {
+            signed.push(await signStorybookUrl(path));
+          }
+          book.imageUrls = signed.filter(Boolean);
+        }
+      }
+      return normalized;
+    }
+
+    async function loadStorybookLibrary() {
+      const message = qs("storybookSyncMessage");
+      try {
+        let library = defaultStorybookLibrary();
+        const entry = await fetchStorybookLibraryEntry();
+        if (entry?.body) {
+          try {
+            library = normalizeStorybookLibrary(JSON.parse(entry.body));
+          } catch (error) {
+            console.warn("Could not parse storybook library. Using default.", error);
+          }
+        }
+        storybookLibraryCache = await hydrateStorybookSignedUrls(library);
+        if (!storybookLibraryCache.books.some(book => book.id === activeStorybookId)) {
+          activeStorybookId = storybookLibraryCache.books[0]?.id || "vietnam-2025";
+          localStorage.setItem(STORYBOOK_ACTIVE_KEY, activeStorybookId);
+        }
+        renderStorybookBookshelf();
+        renderStorybook();
+        loadStorybookStorageInputs();
+        if (message) message.textContent = "";
+      } catch (error) {
+        console.error(error);
+        storybookLibraryCache = defaultStorybookLibrary();
+        renderStorybookBookshelf();
+        renderStorybook();
+        if (message) message.textContent = "Could not sync storybook shelf. Showing sample mode.";
+      }
+    }
+
+    async function saveStorybookLibrary(library = storybookLibraryCache) {
+      if (!currentCouple || !currentUser) return;
+      const safeLibrary = publicStorybookLibrary(library || defaultStorybookLibrary());
+      const body = JSON.stringify(safeLibrary);
+      const existing = await fetchStorybookLibraryEntry();
+      if (existing?.id) {
+        const { error } = await supabaseClient
+          .from("journal_entries")
+          .update({
+            entry_date: getToday(),
+            entry_type: "note",
+            body,
+            image_url: null
+          })
+          .eq("id", existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabaseClient
+          .from("journal_entries")
+          .insert({
+            couple_id: currentCouple.id,
+            entry_date: getToday(),
+            entry_type: "note",
+            title: STORYBOOK_LIBRARY_TITLE,
+            body,
+            image_url: null,
+            created_by: currentUser.id
+          });
+        if (error) throw error;
+      }
+      storybookLibraryCache = await hydrateStorybookSignedUrls(safeLibrary);
+    }
+
+    function renderStorybookBookshelf() {
+      const library = storybookLibraryCache || defaultStorybookLibrary();
+      const select = qs("storybookBookSelect");
+      const count = qs("storybookBookCount");
+      if (select) {
+        select.innerHTML = library.books.map(book => `
+          <option value="${escapeHTML(book.id)}">${escapeHTML(book.title)}</option>
+        `).join("");
+        select.value = activeStorybookId;
+      }
+      if (count) count.textContent = `${library.books.length} book${library.books.length === 1 ? "" : "s"}`;
+      const book = activeStorybook();
+      if (qs("storybookEditTitle")) qs("storybookEditTitle").value = book?.title || "";
+      if (qs("storybookEditSubtitle")) qs("storybookEditSubtitle").value = book?.subtitle || "";
+      if (qs("storybookEditDateLabel")) qs("storybookEditDateLabel").value = book?.dateLabel || "";
+      if (qs("storybookDisplayTitle")) qs("storybookDisplayTitle").textContent = book?.title || "Our storybook";
+      if (qs("storybookDisplayCopy")) {
+        qs("storybookDisplayCopy").textContent = book?.subtitle || "A private scrapbook for this chapter of your relationship.";
+      }
+    }
+
+    function selectStorybookBook() {
+      const select = qs("storybookBookSelect");
+      if (!select?.value) return;
+      activeStorybookId = select.value;
+      localStorage.setItem(STORYBOOK_ACTIVE_KEY, activeStorybookId);
+      renderStorybookBookshelf();
+      renderStorybook();
+      loadStorybookStorageInputs();
+      if (qs("storybookStorageMessage")) qs("storybookStorageMessage").textContent = "";
+    }
+
+    async function createStorybookBook() {
+      const title = qs("newStorybookTitle")?.value.trim() || "";
+      if (!title) {
+        alert("Type a storybook title first, like Next Vietnam.");
+        return;
+      }
+      const library = storybookLibraryCache || defaultStorybookLibrary();
+      const book = {
+        id: makeStorybookId(title),
+        title,
+        subtitle: title.toLowerCase().includes("vietnam")
+          ? "A fresh book for the next Vietnam memories, ready for airport hugs, food dates, cozy days and new tiny lore."
+          : "A fresh private storybook, ready for new memories.",
+        dateLabel: "",
+        pdfPath: "",
+        pdfUrl: "",
+        imagePaths: [],
+        imageUrls: [],
+        chapters: []
+      };
+      library.books.push(book);
+      activeStorybookId = book.id;
+      localStorage.setItem(STORYBOOK_ACTIVE_KEY, activeStorybookId);
+      qs("newStorybookTitle").value = "";
+      await saveStorybookLibrary(library);
+      renderStorybookBookshelf();
+      renderStorybook();
+      loadStorybookStorageInputs();
+      if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "New storybook created and synced 💌";
+    }
+
+    async function createStarterNextVietnamBook() {
+      const input = qs("newStorybookTitle");
+      if (input && !input.value.trim()) input.value = "Next Vietnam";
+      await createStorybookBook();
+    }
+
+    async function saveStorybookBookDetails() {
+      const library = storybookLibraryCache || defaultStorybookLibrary();
+      const book = activeStorybook();
+      if (!book) return;
+      book.title = qs("storybookEditTitle")?.value.trim() || book.title;
+      book.subtitle = qs("storybookEditSubtitle")?.value.trim() || "";
+      book.dateLabel = qs("storybookEditDateLabel")?.value.trim() || "";
+      await saveStorybookLibrary(library);
+      renderStorybookBookshelf();
+      renderStorybook();
+      if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Book details saved 💖";
+    }
+
+    async function deleteStorybookBook() {
+      const library = storybookLibraryCache || defaultStorybookLibrary();
+      if (library.books.length <= 1) {
+        alert("Keep at least one storybook.");
+        return;
+      }
+      const book = activeStorybook();
+      if (!book) return;
+      if (!confirm(`Delete "${book.title}" from the bookshelf? This removes the book from the app, but does not delete uploaded files from Supabase Storage.`)) return;
+      library.books = library.books.filter(item => item.id !== book.id);
+      activeStorybookId = library.books[0]?.id || "vietnam-2025";
+      localStorage.setItem(STORYBOOK_ACTIVE_KEY, activeStorybookId);
+      await saveStorybookLibrary(library);
+      renderStorybookBookshelf();
+      renderStorybook();
+      loadStorybookStorageInputs();
+      if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Storybook removed from the shelf.";
+    }
+
+    async function addStorybookPage() {
+      const book = activeStorybook();
+      if (!book) return;
+      const title = qs("storybookPageTitle")?.value.trim() || "";
+      const summary = qs("storybookPageSummary")?.value.trim() || "";
+      if (!title && !summary) {
+        alert("Add a page title or story text first.");
+        return;
+      }
+      const imageIndexRaw = qs("storybookPageImageIndex")?.value;
+      const imageIndex = imageIndexRaw ? Math.max(0, Number(imageIndexRaw) - 1) : Math.max(0, (book.chapters || []).length);
+      book.chapters = Array.isArray(book.chapters) ? book.chapters : [];
+      book.chapters.push({
+        id: makeStorybookId(title || "page"),
+        date: qs("storybookPageDate")?.value.trim() || "",
+        title: title || `Memory page ${book.chapters.length + 1}`,
+        summary,
+        quote: qs("storybookPageQuote")?.value.trim() || "",
+        tags: (qs("storybookPageTags")?.value || "").split(",").map(tag => tag.trim()).filter(Boolean),
+        imageIndex
+      });
+      ["storybookPageDate", "storybookPageTitle", "storybookPageSummary", "storybookPageQuote", "storybookPageTags", "storybookPageImageIndex"].forEach(id => {
+        if (qs(id)) qs(id).value = "";
+      });
+      await saveStorybookLibrary(storybookLibraryCache);
+      renderStorybook();
+      if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Story page added 💌";
+    }
+
+    function getStorybookStorageLinks() {
+      const book = activeStorybook();
+      return {
+        pdfUrl: book?.pdfUrl || "",
+        imageUrls: Array.isArray(book?.imageUrls) ? book.imageUrls : []
+      };
     }
 
     function loadStorybookStorageInputs() {
-      const saved = getStorybookStorageLinks();
-      if (qs("storybookPdfUrl")) qs("storybookPdfUrl").value = saved.pdfUrl || "";
-      if (qs("storybookImageUrls")) qs("storybookImageUrls").value = saved.imageUrls.join("\n");
+      const book = activeStorybook();
+      if (qs("storybookPdfUrl")) qs("storybookPdfUrl").value = book?.pdfPath ? "" : (book?.pdfUrl || "");
+      if (qs("storybookImageUrls")) qs("storybookImageUrls").value = book?.imagePaths?.length ? "" : (book?.imageUrls || []).join("\n");
     }
 
-    function saveStorybookStorageLinks() {
-      const pdfUrl = qs("storybookPdfUrl") ? qs("storybookPdfUrl").value.trim() : "";
-      const imageUrls = qs("storybookImageUrls") ? qs("storybookImageUrls").value.split(/\n+/).map(x => x.trim()).filter(Boolean) : [];
-      localStorage.setItem(STORYBOOK_STORAGE_KEY, JSON.stringify({ pdfUrl, imageUrls }));
-      if (qs("storybookStorageMessage")) qs("storybookStorageMessage").textContent = "Storybook links saved on this device 💌";
+    async function saveStorybookStorageLinks() {
+      const book = activeStorybook();
+      if (!book) return;
+      book.pdfUrl = qs("storybookPdfUrl") ? qs("storybookPdfUrl").value.trim() : "";
+      book.pdfPath = "";
+      book.imageUrls = qs("storybookImageUrls") ? qs("storybookImageUrls").value.split(/\n+/).map(x => x.trim()).filter(Boolean) : [];
+      book.imagePaths = [];
+      await saveStorybookLibrary(storybookLibraryCache);
       renderStorybook();
+      if (qs("storybookStorageMessage")) qs("storybookStorageMessage").textContent = "Manual links saved for this storybook 💌";
     }
 
-    function resetStorybookStorageLinks() {
-      localStorage.removeItem(STORYBOOK_STORAGE_KEY);
+    async function resetStorybookStorageLinks() {
+      const book = activeStorybook();
+      if (!book) return;
+      if (!confirm(`Remove connected PDF/images from "${book.title}"? This does not delete Supabase files.`)) return;
+      book.pdfPath = "";
+      book.pdfUrl = "";
+      book.imagePaths = [];
+      book.imageUrls = [];
+      await saveStorybookLibrary(storybookLibraryCache);
       loadStorybookStorageInputs();
       renderStorybook();
-      if (qs("storybookStorageMessage")) qs("storybookStorageMessage").textContent = "Sample storybook mode restored 🍓";
+      if (qs("storybookStorageMessage")) qs("storybookStorageMessage").textContent = "This storybook is back to placeholder/sample images 🍓";
     }
 
     function storybookImageFor(index, item) {
-      const saved = getStorybookStorageLinks();
-      return saved.imageUrls[index] || STORYBOOK_SAMPLE_SVGS[item.imageKey] || STORYBOOK_SAMPLE_SVGS.airport;
+      const book = activeStorybook();
+      const imageIndex = Number.isFinite(Number(item?.imageIndex)) ? Number(item.imageIndex) : index;
+      return book?.imageUrls?.[imageIndex] || STORYBOOK_SAMPLE_SVGS[item?.imageKey] || STORYBOOK_SAMPLE_SVGS.airport;
     }
 
     function openStorybookPDF() {
-      const saved = getStorybookStorageLinks();
-      if (saved.pdfUrl) {
-        window.open(saved.pdfUrl, "_blank", "noopener");
+      const book = activeStorybook();
+      if (book?.pdfUrl) {
+        window.open(book.pdfUrl, "_blank", "noopener");
         return;
       }
       const message = qs("storybookStorageMessage");
-      if (message) message.textContent = "Paste your Supabase PDF URL first, then save it 💌";
-      alert("Paste your Supabase PDF URL in the storybook setup first.");
+      if (message) message.textContent = "Upload a PDF for this storybook first 💌";
+      alert("Upload a PDF for this selected storybook first.");
+    }
+
+    function storybookPagesForActiveBook() {
+      const book = activeStorybook();
+      if (!book) return [];
+      if (Array.isArray(book.chapters) && book.chapters.length) return book.chapters;
+      if (book.imageUrls?.length) {
+        return book.imageUrls.map((url, index) => ({
+          id: `image-${index + 1}`,
+          date: book.dateLabel || "Memory page",
+          title: `Memory page ${index + 1}`,
+          summary: "A saved photo/page preview from this storybook. Add custom pages if you want captions and dates.",
+          quote: "",
+          tags: ["uploaded", "storybook"],
+          imageIndex: index
+        }));
+      }
+      return [
+        {
+          id: "blank-1",
+          date: book.dateLabel || "Soon",
+          title: `${book.title} begins here`,
+          summary: "Upload photos or add custom story pages to turn this blank book into a real memory timeline.",
+          quote: "A new chapter waiting to happen.",
+          tags: ["new book", "future memories"],
+          imageKey: "airport",
+          imageIndex: 0
+        }
+      ];
     }
 
     function renderStorybook() {
+      renderStorybookBookshelf();
       const timeline = qs("storybookTimeline");
       const album = qs("storybookAlbum");
+      const book = activeStorybook();
+      const pages = storybookPagesForActiveBook();
+
       if (timeline) {
-        timeline.innerHTML = STORYBOOK_MEMORIES.map((item, index) => {
-          const image = storybookImageFor(index, item);
-          const sticker = index % 3 === 0 ? "[sticker:strawberry-wiggle]" : index % 3 === 1 ? "[sticker:cat-bounce]" : "[sticker:heart-pulse]";
-          return `
-            <div class="storybook-page">
-              <div class="storybook-text">
-                <div class="storybook-date">${escapeHTML(item.date)}</div>
-                <h3>${renderRichText(sticker)} ${escapeHTML(item.title)}</h3>
-                <p>${escapeHTML(item.summary)}</p>
-                <div class="storybook-quote">“${escapeHTML(item.quote)}”</div>
-                <div class="storybook-chips">
-                  ${item.tags.map(tag => `<span class="storybook-chip">${escapeHTML(tag)}</span>`).join("")}
+        if (!pages.length) {
+          timeline.innerHTML = `<div class="storybook-empty-book">This storybook is empty. Add a custom page or upload images to start building it ✨</div>`;
+        } else {
+          timeline.innerHTML = pages.map((item, index) => {
+            const image = storybookImageFor(index, item);
+            const sticker = index % 3 === 0 ? "[sticker:strawberry-wiggle]" : index % 3 === 1 ? "[sticker:cat-bounce]" : "[sticker:heart-pulse]";
+            const tags = Array.isArray(item.tags) ? item.tags : [];
+            return `
+              <div class="storybook-page">
+                <div class="storybook-text">
+                  <div class="storybook-date">${escapeHTML(item.date || book?.dateLabel || "Memory")}</div>
+                  <h3>${renderRichText(sticker)} ${escapeHTML(item.title || `Memory page ${index + 1}`)}</h3>
+                  <p>${escapeHTML(item.summary || "")}</p>
+                  ${item.quote ? `<div class="storybook-quote">“${escapeHTML(item.quote)}”</div>` : ""}
+                  <div class="storybook-chips">
+                    ${tags.map(tag => `<span class="storybook-chip">${escapeHTML(tag)}</span>`).join("")}
+                  </div>
+                </div>
+                <div class="storybook-photo-frame" onclick="openStorybookLightbox('${escapeHTML(image)}', '${escapeHTML(item.title || book?.title || "Storybook memory")}', '${escapeHTML(item.summary || "")}')">
+                  <img src="${escapeHTML(image)}" alt="${escapeHTML(item.title || "Storybook memory")}">
+                  <span>${escapeHTML(item.date || book?.dateLabel || "Memory")} · tap to enlarge</span>
                 </div>
               </div>
-              <div class="storybook-photo-frame" onclick="openStorybookLightbox('${escapeHTML(image)}', '${escapeHTML(item.title)}', '${escapeHTML(item.summary)}')">
-                <img src="${escapeHTML(image)}" alt="${escapeHTML(item.title)}">
-                <span>${escapeHTML(item.date)} · tap to enlarge</span>
-              </div>
-            </div>
-          `;
-        }).join("");
+            `;
+          }).join("");
+        }
       }
+
       if (album) {
-        album.innerHTML = STORYBOOK_MEMORIES.map((item, index) => {
-          const image = storybookImageFor(index, item);
+        const imageUrls = book?.imageUrls?.length ? book.imageUrls : pages.map((item, index) => storybookImageFor(index, item));
+        album.innerHTML = imageUrls.map((image, index) => {
+          const page = pages[index] || { title: `Photo ${index + 1}`, date: book?.dateLabel || "" };
           return `
-            <div class="storybook-album-card" onclick="openStorybookLightbox('${escapeHTML(image)}', '${escapeHTML(item.title)}', '${escapeHTML(item.quote)}')">
-              <img src="${escapeHTML(image)}" alt="${escapeHTML(item.title)}">
-              <strong>${escapeHTML(item.title)}</strong>
-              <span>${escapeHTML(item.date)}</span>
+            <div class="storybook-album-card" onclick="openStorybookLightbox('${escapeHTML(image)}', '${escapeHTML(page.title || `Photo ${index + 1}`)}', '${escapeHTML(page.quote || page.summary || book?.title || "")}')">
+              <img src="${escapeHTML(image)}" alt="${escapeHTML(page.title || `Photo ${index + 1}`)}">
+              <strong>${escapeHTML(page.title || `Photo ${index + 1}`)}</strong>
+              <span>${escapeHTML(page.date || book?.dateLabel || "Storybook photo")}</span>
             </div>
           `;
         }).join("");
@@ -3391,17 +3954,133 @@
     async function copyStorybookSupabaseGuide() {
       const text = [
         "Supabase storybook setup:",
+        "",
         "1. Go to Supabase > Storage.",
-        "2. Create a private bucket, for example: couple-memories.",
-        "3. Upload the memory PDF.",
-        "4. Upload a few selected page images/screenshots for the timeline.",
-        "5. Create signed URLs or use public URLs if the bucket is intentionally public.",
-        "6. Paste the PDF URL into Memory PDF URL.",
-        "7. Paste image URLs one per line into page image URLs.",
-        "8. Save storybook links."
+        "2. Create a bucket named: couple-memories",
+        "3. Keep it private if you want the PDF/images protected.",
+        "4. Use the SQL policies ChatGPT gave you for the couple-memories bucket.",
+        "5. The app uploads to paths like:",
+        "   {couple_id}/storybook/{storybook_id}/pdf/...",
+        "   {couple_id}/storybook/{storybook_id}/images/...",
+        "6. The storybook bookshelf itself is saved as one hidden Journal entry.",
+        "7. Create books such as Vietnam 2025, Next Vietnam, Belgium memories, Food adventures, Anniversary, etc."
       ].join("\\n");
       await copyTextToClipboard(text, "Supabase guide copied 💌");
       if (qs("storybookStorageMessage")) qs("storybookStorageMessage").textContent = "Supabase guide copied 💌";
+    }
+
+
+    const STORYBOOK_BUCKET = "couple-memories";
+    const STORYBOOK_SIGNED_URL_SECONDS = 60 * 60 * 24 * 30;
+
+    function safeStorageName(name) {
+      const raw = String(name || "memory-file").toLowerCase();
+      const dot = raw.includes(".") ? "." + raw.split(".").pop().replace(/[^a-z0-9]/g, "") : "";
+      const base = raw.replace(/\.[^.]+$/, "").replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 50) || "memory-file";
+      return `${Date.now()}-${base}${dot}`;
+    }
+
+    function getStorybookFolder() {
+      const coupleId = currentCouple?.id || "uncoupled";
+      const bookId = activeStorybook()?.id || activeStorybookId || "storybook";
+      return `${coupleId}/storybook/${bookId}`;
+    }
+
+    function addStorybookUploadStatus(name, status) {
+      const box = qs("storybookUploadStatus");
+      if (!box) return;
+      const row = document.createElement("div");
+      row.className = "upload-status-row";
+      row.innerHTML = `<strong>${escapeHTML(name)}</strong><span>${escapeHTML(status)}</span>`;
+      box.prepend(row);
+    }
+
+    async function uploadFileToStorybookBucket(file, subfolder) {
+      if (!currentUser || !currentCouple) throw new Error("Please sign in and open your couple space first.");
+      if (!file) throw new Error("Choose a file first.");
+      if (!activeStorybook()) throw new Error("Create or select a storybook first.");
+
+      const path = `${getStorybookFolder()}/${subfolder}/${safeStorageName(file.name)}`;
+      const { error: uploadError } = await supabaseClient.storage
+        .from(STORYBOOK_BUCKET)
+        .upload(path, file, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: file.type || undefined
+        });
+
+      if (uploadError) {
+        throw new Error(uploadError.message || "Upload failed. Check that the couple-memories bucket exists and Storage policies allow authenticated uploads.");
+      }
+
+      const { data, error: signedError } = await supabaseClient.storage
+        .from(STORYBOOK_BUCKET)
+        .createSignedUrl(path, STORYBOOK_SIGNED_URL_SECONDS);
+
+      if (signedError) {
+        throw new Error(signedError.message || "Uploaded, but could not create a signed URL.");
+      }
+
+      return { path, url: data.signedUrl };
+    }
+
+    async function uploadStorybookPDF() {
+      const input = qs("storybookPdfFile");
+      const file = input?.files?.[0];
+      const message = qs("storybookStorageMessage");
+      try {
+        if (!file) throw new Error("Choose the memory PDF first.");
+        const book = activeStorybook();
+        if (!book) throw new Error("Create or select a storybook first.");
+        if (message) message.textContent = `Uploading PDF to ${book.title}...`;
+        addStorybookUploadStatus(file.name, "uploading...");
+        const uploaded = await uploadFileToStorybookBucket(file, "pdf");
+        book.pdfPath = uploaded.path;
+        book.pdfUrl = uploaded.url;
+        await saveStorybookLibrary(storybookLibraryCache);
+        renderStorybookBookshelf();
+        loadStorybookStorageInputs();
+        renderStorybook();
+        addStorybookUploadStatus(file.name, "done 💌");
+        if (message) message.textContent = `PDF uploaded and connected to ${book.title} 💌`;
+      } catch (error) {
+        console.error(error);
+        addStorybookUploadStatus(file?.name || "PDF", "failed");
+        if (message) message.textContent = error.message || "PDF upload failed.";
+        alert(error.message || "PDF upload failed.");
+      }
+    }
+
+    async function uploadStorybookImages() {
+      const input = qs("storybookImageFiles");
+      const files = Array.from(input?.files || []);
+      const message = qs("storybookStorageMessage");
+      try {
+        if (!files.length) throw new Error("Choose one or more story images first.");
+        const book = activeStorybook();
+        if (!book) throw new Error("Create or select a storybook first.");
+        if (message) message.textContent = `Uploading ${files.length} image(s) to ${book.title}...`;
+
+        book.imagePaths = Array.isArray(book.imagePaths) ? book.imagePaths : [];
+        book.imageUrls = Array.isArray(book.imageUrls) ? book.imageUrls : [];
+
+        for (const file of files) {
+          addStorybookUploadStatus(file.name, "uploading...");
+          const uploaded = await uploadFileToStorybookBucket(file, "images");
+          book.imagePaths.push(uploaded.path);
+          book.imageUrls.push(uploaded.url);
+          addStorybookUploadStatus(file.name, "done ✨");
+        }
+
+        await saveStorybookLibrary(storybookLibraryCache);
+        loadStorybookStorageInputs();
+        renderStorybook();
+        if (message) message.textContent = `Images uploaded and added to ${book.title} 🍓`;
+      } catch (error) {
+        console.error(error);
+        if (message) message.textContent = error.message || "Image upload failed.";
+        alert(error.message || "Image upload failed.");
+      }
     }
 
     function renderStickerShortcutList() {
@@ -5057,7 +5736,7 @@
 
         if (error) throw error;
 
-        const visibleEntries = (entries || []).filter(entry => entry.title !== PROFILE_ENTRY_TITLE);
+        const visibleEntries = (entries || []).filter(entry => entry.title !== PROFILE_ENTRY_TITLE && entry.title !== STORYBOOK_LIBRARY_TITLE);
         const filters = readJournalFilters();
         const filteredEntries = sortJournalEntries(
           visibleEntries.filter(entry => journalEntryMatchesFilters(entry, filters)),
@@ -5354,7 +6033,7 @@
           { label: "Places", value: countType("place"), emoji: "📍" },
           { label: "Games", value: countType("game"), emoji: "🎮" },
           { label: "Activities", value: countType("activity"), emoji: "✨" },
-          { label: "Journal entries", value: (journals || []).filter(entry => entry.title !== PROFILE_ENTRY_TITLE).length, emoji: "📝" },
+          { label: "Journal entries", value: (journals || []).filter(entry => entry.title !== PROFILE_ENTRY_TITLE && entry.title !== STORYBOOK_LIBRARY_TITLE).length, emoji: "📝" },
           { label: "Upcoming dates", value: (plans || []).length, emoji: "📅" },
           { label: "Favorites", value: favorites, emoji: "💖" },
           { label: "Total library", value: items.length, emoji: "♡" }
