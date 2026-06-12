@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Period storybook v43</title>
+  <title>Date Planner for Us 🍓 Year timeline fix v44</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1481,6 +1481,25 @@
       box-shadow: 0 8px 18px rgba(92,66,80,.10);
     }
 
+  
+    .cute-timeline-year {
+      position: relative;
+      z-index: 1;
+      width: fit-content;
+      margin: 8px 0 2px 48px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255, 209, 226, .95), rgba(255, 244, 183, .85));
+      color: var(--berry-dark);
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(92,66,80,.10);
+      border: 1px solid rgba(239,111,159,.15);
+    }
+    .cute-timeline-date strong {
+      font-weight: 900;
+    }
+
   </style>
 </head>
 
@@ -1493,7 +1512,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Period storybook v43</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Year timeline fix v44</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -1901,7 +1920,7 @@
           <div class="section-sparkle">🛠️ Technical</div>
           <h2 class="title">Help, backup & phone setup</h2>
           <p class="subtitle">Instructions and safety tools are grouped here instead of making Home too long.</p>
-          <div class="empty" style="margin-top:10px;">Current app version: <strong>Period storybook v43</strong></div>
+          <div class="empty" style="margin-top:10px;">Current app version: <strong>Year timeline fix v44</strong></div>
         </div>
 
         <div class="card compact-card">
@@ -3144,7 +3163,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Period storybook v43",
+          version: "Year timeline fix v44",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -4536,6 +4555,92 @@
     }
 
 
+
+    function parseTimelineDateValue(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return null;
+
+      const iso = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (iso) {
+        return {
+          year: Number(iso[1]),
+          month: Number(iso[2]),
+          day: Number(iso[3]),
+          key: `${iso[1]}-${String(iso[2]).padStart(2, "0")}-${String(iso[3]).padStart(2, "0")}`
+        };
+      }
+
+      const slash = raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+      if (slash) {
+        return {
+          year: Number(slash[3]),
+          month: Number(slash[2]),
+          day: Number(slash[1]),
+          key: `${slash[3]}-${String(slash[2]).padStart(2, "0")}-${String(slash[1]).padStart(2, "0")}`
+        };
+      }
+
+      const monthNames = {
+        jan: 1, january: 1,
+        feb: 2, february: 2,
+        mar: 3, march: 3,
+        apr: 4, april: 4,
+        may: 5,
+        jun: 6, june: 6,
+        jul: 7, july: 7,
+        aug: 8, august: 8,
+        sep: 9, sept: 9, september: 9,
+        oct: 10, october: 10,
+        nov: 11, november: 11,
+        dec: 12, december: 12
+      };
+
+      const textDate = raw.match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+      if (textDate) {
+        const month = monthNames[textDate[2].toLowerCase()];
+        if (month) {
+          return {
+            year: Number(textDate[3]),
+            month,
+            day: Number(textDate[1]),
+            key: `${textDate[3]}-${String(month).padStart(2, "0")}-${String(textDate[1]).padStart(2, "0")}`
+          };
+        }
+      }
+
+      const parsed = new Date(raw);
+      if (!Number.isNaN(parsed.getTime())) {
+        const year = parsed.getFullYear();
+        const month = parsed.getMonth() + 1;
+        const day = parsed.getDate();
+        return {
+          year,
+          month,
+          day,
+          key: `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+        };
+      }
+
+      return null;
+    }
+
+    function timelineDateSortKey(value) {
+      const parsed = parseTimelineDateValue(value);
+      return parsed ? parsed.key : "0000-00-00";
+    }
+
+    function timelineYearLabel(value) {
+      const parsed = parseTimelineDateValue(value);
+      return parsed ? String(parsed.year) : "No year";
+    }
+
+    function dateWithYear(value) {
+      const parsed = parseTimelineDateValue(value);
+      if (!parsed) return escapeHTML(value || "No date");
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      return `${months[parsed.month - 1]} ${parsed.day}, <strong>${parsed.year}</strong>`;
+    }
+
     function cuteTimelineIcon(item) {
       if (item.kind === "memory") return "💖";
       if (item.kind === "journal") return "📝";
@@ -4650,8 +4755,10 @@
         });
 
         items.sort((a, b) => {
-          if (mode === "upcoming") return String(a.date || "").localeCompare(String(b.date || ""));
-          return String(b.date || "").localeCompare(String(a.date || ""));
+          const aKey = timelineDateSortKey(a.date);
+          const bKey = timelineDateSortKey(b.date);
+          if (mode === "upcoming") return aKey.localeCompare(bKey);
+          return bKey.localeCompare(aKey);
         });
 
         const selected = items.slice(0, limit);
@@ -4660,22 +4767,29 @@
           return;
         }
 
-        box.innerHTML = selected.map(item => `
-          <div class="cute-timeline-item">
-            <div class="cute-timeline-dot">${cuteTimelineIcon(item)}</div>
-            <div class="cute-timeline-card">
-              <div class="cute-timeline-head">
-                <h3 class="cute-timeline-title">${renderRichText(item.title)}</h3>
-                <div class="cute-timeline-date">${escapeHTML(dateShort(item.date))}</div>
+        let lastYear = "";
+        box.innerHTML = selected.map(item => {
+          const year = timelineYearLabel(item.date);
+          const yearHeader = year !== lastYear ? `<div class="cute-timeline-year">✨ ${escapeHTML(year)}</div>` : "";
+          lastYear = year;
+          return `
+            ${yearHeader}
+            <div class="cute-timeline-item">
+              <div class="cute-timeline-dot">${cuteTimelineIcon(item)}</div>
+              <div class="cute-timeline-card">
+                <div class="cute-timeline-head">
+                  <h3 class="cute-timeline-title">${renderRichText(item.title)}</h3>
+                  <div class="cute-timeline-date">${dateWithYear(item.date)}</div>
+                </div>
+                ${item.body ? `<p>${renderRichText(item.body).slice(0, 260)}${String(item.body).length > 260 ? "..." : ""}</p>` : ""}
+                <div class="cute-timeline-tags">
+                  ${item.tags.map(tag => `<span class="cute-timeline-tag">${escapeHTML(tag)}</span>`).join("")}
+                </div>
+                <button class="story-add-button" onclick="addTimelineItemToStorybook('${encodeURIComponent(JSON.stringify(item))}')">Add to selected memory book</button>
               </div>
-              ${item.body ? `<p>${renderRichText(item.body).slice(0, 260)}${String(item.body).length > 260 ? "..." : ""}</p>` : ""}
-              <div class="cute-timeline-tags">
-                ${item.tags.map(tag => `<span class="cute-timeline-tag">${escapeHTML(tag)}</span>`).join("")}
-              </div>
-              <button class="story-add-button" onclick="addTimelineItemToStorybook('${encodeURIComponent(JSON.stringify(item))}')">Add to selected memory book</button>
             </div>
-          </div>
-        `).join("");
+          `;
+        }).join("");
       } catch (error) {
         console.error(error);
         box.innerHTML = `<div class="empty">Could not load the cute timeline yet.</div>`;
