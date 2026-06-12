@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Couple members v23</title>
+  <title>Date Planner for Us 🍓 Surprise picker v24</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -390,7 +390,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Couple members v23</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Surprise picker v24</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -490,6 +490,47 @@
           <p class="subtitle">Your favorite food, places, games and activities. Mark items as Favorite in Library and they appear here.</p>
           <div id="favoritePicksList" class="favorite-grid">
             <div class="empty">Loading favorites...</div>
+          </div>
+        </div>
+
+        <div class="card compact-card">
+          <h2 class="title">🎲 Surprise date picker</h2>
+          <p class="subtitle">Let the app pick a cute date idea from your saved food, places, games and activities. It will not change anything until you click “Add to plan”.</p>
+          <div class="row">
+            <div>
+              <div class="filter-small-label">Date</div>
+              <input id="surpriseDate" type="date">
+            </div>
+            <div>
+              <div class="filter-small-label">Mood</div>
+              <select id="surpriseMood">
+                <option value="Cozy">Cozy</option>
+                <option value="Romantic">Romantic</option>
+                <option value="Fun">Fun</option>
+                <option value="Chill">Chill</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Random">Random</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <select id="surpriseBudget">
+              <option value="">Budget unknown</option>
+              <option value="Free">Free</option>
+              <option value="€">€ cheap</option>
+              <option value="€€">€€ normal</option>
+              <option value="€€€">€€€ special date</option>
+              <option value="Home">Home / already have supplies</option>
+            </select>
+            <button class="button" onclick="generateSurpriseDate()">Generate idea</button>
+          </div>
+          <div class="actions">
+            <button class="button secondary" onclick="addSurpriseToPlan()">Add to plan</button>
+            <button class="button ghost" onclick="copySurpriseIdea()">Copy idea</button>
+          </div>
+          <div id="surpriseResult" class="entry">
+            <div class="entry-title">No surprise generated yet.</div>
+            <div class="entry-meta">Click “Generate idea” first ✨</div>
           </div>
         </div>
 
@@ -881,6 +922,7 @@
     let currentPlan = null;
     let homeMode = "upcoming";
     let libraryMode = "food";
+    let currentSurpriseIdea = null;
     let librarySearchText = "";
     let libraryStatusFilter = "all";
     let librarySortMode = "name";
@@ -3198,6 +3240,198 @@
       }
     }
 
+
+    function pickRandomItem(items) {
+      if (!items || !items.length) return null;
+      const favorites = items.filter(item => item.status === "favorite");
+      const pool = favorites.length && Math.random() < 0.6 ? favorites : items;
+      return pool[Math.floor(Math.random() * pool.length)] || null;
+    }
+
+    function surpriseLineHTML(label, item) {
+      if (!item) return "";
+      return `
+        <div class="summary-line">
+          <span>${label}</span>
+          <span>
+            ${itemTypeEmoji(item.item_type)} ${escapeHTML(item.name)}
+            ${item.category ? `<br><small>${escapeHTML(item.category)}</small>` : ""}
+          </span>
+        </div>
+      `;
+    }
+
+    function surpriseText(idea) {
+      if (!idea) return "";
+      const lines = [
+        `💖 ${idea.title}`,
+        `📅 ${formatDate(idea.date)}`,
+        `Mood: ${idea.mood}`,
+        idea.budget ? `Budget: ${idea.budget}` : "Budget: flexible",
+        `Notes: ${idea.notes}`,
+        ""
+      ];
+
+      idea.entries.forEach(entry => {
+        lines.push(`${periods[entry.period]?.emoji || "♡"} ${entry.period}: ${entry.title}`);
+        if (entry.link_url) lines.push(`  ${entry.link_url}`);
+      });
+
+      return lines.join("\n");
+    }
+
+    function renderSurpriseIdea(idea) {
+      const container = qs("surpriseResult");
+      if (!container) return;
+      if (!idea) {
+        container.innerHTML = `
+          <div class="entry-title">No surprise generated yet.</div>
+          <div class="entry-meta">Click “Generate idea” first ✨</div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="entry-title">💖 ${escapeHTML(idea.title)}</div>
+        <div class="entry-meta">${formatDate(idea.date)} · ${escapeHTML(idea.mood)}${idea.budget ? ` · ${escapeHTML(idea.budget)}` : ""}</div>
+        <div class="library-item-notes">${escapeHTML(idea.notes)}</div>
+        <div class="summary-body">
+          ${idea.entries.map(entry => surpriseLineHTML(`${periods[entry.period]?.emoji || "♡"} ${entry.period}`, entry)).join("")}
+        </div>
+        ${idea.entries.map(entry => libraryMediaHTML({ name: entry.title, image_url: entry.image_url, link_url: entry.link_url })).join("")}
+      `;
+    }
+
+    async function generateSurpriseDate() {
+      if (!currentCouple) return;
+      const container = qs("surpriseResult");
+      if (container) container.innerHTML = `<div class="empty">Picking something cute...</div>`;
+
+      try {
+        const { data: items, error } = await supabaseClient
+          .from("library_items")
+          .select("id, item_type, name, category, status, price_range, notes, image_url, link_url")
+          .eq("couple_id", currentCouple.id)
+          .neq("status", "archived");
+
+        if (error) throw error;
+
+        const all = items || [];
+        if (!all.length) {
+          currentSurpriseIdea = null;
+          if (container) container.innerHTML = `<div class="empty">Add some food, places, games or activities first.</div>`;
+          return;
+        }
+
+        const byType = type => all.filter(item => item.item_type === type);
+        const date = qs("surpriseDate")?.value || getToday();
+        let mood = qs("surpriseMood")?.value || "Cozy";
+        if (mood === "Random") {
+          const moods = ["Cozy", "Romantic", "Fun", "Chill", "Adventure"];
+          mood = moods[Math.floor(Math.random() * moods.length)];
+        }
+        const budget = qs("surpriseBudget")?.value || "";
+
+        const food = pickRandomItem(byType("food"));
+        const place = pickRandomItem(byType("place"));
+        const activity = pickRandomItem(byType("activity"));
+        const game = pickRandomItem(byType("game"));
+
+        const entries = [];
+        if (place) entries.push({ ...place, period: "Noon", title: place.name });
+        if (food) entries.push({ ...food, period: "Noon", title: food.name });
+        if (activity) entries.push({ ...activity, period: "Afternoon", title: activity.name });
+        if (game) entries.push({ ...game, period: "Evening", title: game.name });
+
+        if (!entries.length) {
+          entries.push({ item_type: "custom", period: "Evening", title: "Cozy free date night", notes: "Add more library items later for better suggestions." });
+        }
+
+        const titleBits = [mood, activity?.name || game?.name || food?.name || place?.name || "Surprise Date"];
+        currentSurpriseIdea = {
+          date,
+          mood,
+          budget,
+          title: `${titleBits[0]} ${titleBits[1]}`,
+          notes: "Generated from your saved library. You can edit the plan after adding it.",
+          entries
+        };
+
+        renderSurpriseIdea(currentSurpriseIdea);
+      } catch (error) {
+        console.error(error);
+        currentSurpriseIdea = null;
+        if (container) container.innerHTML = `<div class="empty">Could not generate a surprise idea.</div>`;
+      }
+    }
+
+    async function addSurpriseToPlan() {
+      if (!currentSurpriseIdea) {
+        await generateSurpriseDate();
+        if (!currentSurpriseIdea) return;
+      }
+
+      const idea = currentSurpriseIdea;
+      if (!confirm(`Add “${idea.title}” to ${idea.date}? It will not delete existing entries.`)) return;
+
+      try {
+        const plan = await getPlanForDate(idea.date, true);
+
+        const { error: updateError } = await supabaseClient
+          .from("date_plans")
+          .update({
+            title: idea.title,
+            mood: idea.mood,
+            budget: idea.budget || null,
+            notes: idea.notes
+          })
+          .eq("id", plan.id);
+
+        if (updateError) throw updateError;
+
+        const rows = idea.entries.map((entry, index) => ({
+          plan_id: plan.id,
+          library_item_id: entry.id || null,
+          entry_type: entry.item_type || "custom",
+          time_period: entry.period,
+          title: entry.title,
+          sort_order: index,
+          created_by: currentUser.id
+        }));
+
+        const { error: insertError } = await supabaseClient
+          .from("plan_entries")
+          .insert(rows);
+
+        if (insertError) throw insertError;
+
+        const libraryIds = idea.entries.filter(entry => entry.id).map(entry => entry.id);
+        if (libraryIds.length) {
+          await supabaseClient
+            .from("library_items")
+            .update({ last_used_date: idea.date })
+            .in("id", libraryIds);
+        }
+
+        if (qs("selectedDate")) qs("selectedDate").value = idea.date;
+        await loadPlan();
+        await loadHome();
+        alert("Surprise date added 💖");
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function copySurpriseIdea() {
+      if (!currentSurpriseIdea) {
+        await generateSurpriseDate();
+        if (!currentSurpriseIdea) return;
+      }
+      await copyTextToClipboard(surpriseText(currentSurpriseIdea), "Surprise idea copied 💖");
+      if (qs("inviteCopyMessage")) qs("inviteCopyMessage").textContent = "Surprise idea copied 💖";
+    }
+
     async function loadHome() {
       loadCoupleMembers();
       loadDashboardStats();
@@ -3329,6 +3563,7 @@
       renderPeriodCards();
       qs("selectedDate").value = getToday();
       if (qs("journalDate")) qs("journalDate").value = getToday();
+      if (qs("surpriseDate")) qs("surpriseDate").value = getToday();
       if (qs("libraryPlanDate")) qs("libraryPlanDate").value = getToday();
       if (qs("libraryPlanPeriod")) qs("libraryPlanPeriod").value = "Evening";
 
