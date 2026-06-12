@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Memory wall v20</title>
+  <title>Date Planner for Us 🍓 Favorites v21</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -339,6 +339,38 @@
       .photo-card img { height: 110px; }
     }
 
+    .favorite-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .favorite-card {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fffafd;
+    }
+    .favorite-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .favorite-name {
+      color: var(--berry-dark);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .favorite-type {
+      white-space: nowrap;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--pink-2);
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
     .hidden { display: none !important; }
     @media (max-width: 470px) {
       .hero h1 { font-size: 24px; }
@@ -358,7 +390,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Memory wall v20</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Favorites v21</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -437,6 +469,14 @@
           <p class="subtitle">A cute preview of photos saved in Journal. Add photo URLs to journal entries and they will appear here.</p>
           <div id="photoWallList" class="photo-wall-grid">
             <div class="empty">Loading photos...</div>
+          </div>
+        </div>
+
+        <div class="card compact-card">
+          <h2 class="title">💖 Favorite picks</h2>
+          <p class="subtitle">Your favorite food, places, games and activities. Mark items as Favorite in Library and they appear here.</p>
+          <div id="favoritePicksList" class="favorite-grid">
+            <div class="empty">Loading favorites...</div>
           </div>
         </div>
 
@@ -2873,6 +2913,64 @@
     }
 
 
+    function itemTypeEmoji(type) {
+      const map = {
+        food: "🍜",
+        place: "📍",
+        game: "🎮",
+        activity: "✨"
+      };
+      return map[type] || "♡";
+    }
+
+    async function loadFavoritePicks() {
+      if (!currentCouple) return;
+      const container = qs("favoritePicksList");
+      if (!container) return;
+      container.innerHTML = `<div class="empty">Loading favorites...</div>`;
+
+      try {
+        const { data: items, error } = await supabaseClient
+          .from("library_items")
+          .select("*")
+          .eq("couple_id", currentCouple.id)
+          .eq("status", "favorite")
+          .order("updated_at", { ascending: false })
+          .limit(12);
+
+        if (error) throw error;
+
+        if (!items || !items.length) {
+          container.innerHTML = `<div class="empty">No favorites yet. Open Library, edit an item, and set status to Favorite 💖</div>`;
+          return;
+        }
+
+        container.innerHTML = items.map(item => `
+          <div class="favorite-card">
+            <div class="favorite-head">
+              <div>
+                <div class="favorite-name">${itemTypeEmoji(item.item_type)} ${escapeHTML(item.name)}</div>
+                <div class="entry-meta">
+                  ${escapeHTML(item.category || item.item_type || "Favorite")}
+                  ${item.price_range ? ` · ${escapeHTML(item.price_range)}` : ""}
+                </div>
+              </div>
+              <div class="favorite-type">Favorite</div>
+            </div>
+            ${item.notes ? `<div class="library-item-notes">${escapeHTML(item.notes)}</div>` : ""}
+            ${libraryMediaHTML(item)}
+            <div class="actions">
+              <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', '${item.item_type}')">Add to Plan</button>
+              <button class="button small secondary" onclick="openPage('libraryPage','libraryNav'); setLibraryMode('${item.item_type}')">Open Library</button>
+            </div>
+          </div>
+        `).join("");
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = `<div class="empty">Could not load favorites.</div>`;
+      }
+    }
+
     async function loadDashboardStats() {
       if (!currentCouple) return;
       const container = qs("dashboardStats");
@@ -2976,6 +3074,7 @@
     async function loadHome() {
       loadDashboardStats();
       loadPhotoWall();
+      loadFavoritePicks();
       const container = qs("homeList");
       container.innerHTML = `<div class="empty">Loading...</div>`;
 
