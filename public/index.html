@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Surprise picker v24</title>
+  <title>Date Planner for Us 🍓 Countdown v25</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -229,6 +229,46 @@
       font-weight: 700;
     }
 
+    .next-date-box {
+      margin-top: 10px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(135deg, #fff3f8, #edf7ff);
+    }
+    .next-date-count {
+      color: var(--berry-dark);
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .next-date-title {
+      margin-top: 6px;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .next-date-detail {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    .next-date-mini-list {
+      margin-top: 10px;
+      display: grid;
+      gap: 6px;
+    }
+    .next-date-mini-item {
+      padding: 8px 10px;
+      border: 1px dashed #f0dbe4;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .72);
+      font-size: 13px;
+    }
+
 
     .edit-modal-backdrop {
       position: fixed;
@@ -390,7 +430,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Surprise picker v24</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Countdown v25</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -474,6 +514,14 @@
           <p class="subtitle">Quick overview of your saved ideas, plans and memories.</p>
           <div id="dashboardStats" class="stats-grid">
             <div class="empty">Loading dashboard...</div>
+          </div>
+        </div>
+
+        <div class="card compact-card">
+          <h2 class="title">⏳ Next date countdown</h2>
+          <p class="subtitle">See the next planned date at a glance, then open, copy, or share it.</p>
+          <div id="nextDateCountdown">
+            <div class="empty">Loading next date...</div>
           </div>
         </div>
 
@@ -923,6 +971,7 @@
     let homeMode = "upcoming";
     let libraryMode = "food";
     let currentSurpriseIdea = null;
+    let nextDatePlanCache = null;
     let librarySearchText = "";
     let libraryStatusFilter = "all";
     let librarySortMode = "name";
@@ -3432,11 +3481,152 @@
       if (qs("inviteCopyMessage")) qs("inviteCopyMessage").textContent = "Surprise idea copied 💖";
     }
 
+    function daysUntilDate(dateString) {
+      const today = new Date(getToday() + "T12:00:00");
+      const target = new Date(dateString + "T12:00:00");
+      return Math.round((target - today) / 86400000);
+    }
+
+    function countdownLabel(days) {
+      if (days === 0) return "Today 💖";
+      if (days === 1) return "Tomorrow 💖";
+      if (days > 1) return `In ${days} days 💖`;
+      return "Past date";
+    }
+
+    function planHasContent(plan, entries) {
+      return Boolean(plan?.title || plan?.mood || plan?.budget || plan?.notes || (entries && entries.length));
+    }
+
+    async function buildPlanTextFromPlan(plan) {
+      if (!plan) return "";
+      const entries = await getEntriesForPlan(plan.id);
+      const lines = [];
+      lines.push(plan.title ? `💖 ${plan.title}` : `💖 Date plan`);
+      lines.push(`📅 ${formatDate(plan.plan_date)}`);
+      planDetailsText(plan).forEach(line => lines.push(line));
+      lines.push("");
+
+      Object.entries(periods).forEach(([period, info]) => {
+        const periodEntries = entries.filter(entry => entry.time_period === period);
+        if (!periodEntries.length) return;
+        lines.push(`${info.emoji} ${period}`);
+        periodEntries.forEach(entry => {
+          const linkedItem = entry.library_items || {};
+          lines.push(`- ${entry.title}${entry.completed ? " ✓" : ""}`);
+          if (linkedItem.link_url) lines.push(`  ${linkedItem.link_url}`);
+        });
+        lines.push("");
+      });
+
+      return lines.join("\n").trim();
+    }
+
+    async function loadNextDateCountdown() {
+      const container = qs("nextDateCountdown");
+      if (!container || !currentCouple) return;
+      container.innerHTML = `<div class="empty">Loading next date...</div>`;
+      nextDatePlanCache = null;
+
+      try {
+        const today = getToday();
+        const { data: plans, error } = await supabaseClient
+          .from("date_plans")
+          .select("*")
+          .eq("couple_id", currentCouple.id)
+          .gte("plan_date", today)
+          .order("plan_date", { ascending: true })
+          .limit(10);
+
+        if (error) throw error;
+
+        let chosenPlan = null;
+        let chosenEntries = [];
+
+        for (const plan of plans || []) {
+          const entries = await getEntriesForPlan(plan.id);
+          if (planHasContent(plan, entries)) {
+            chosenPlan = plan;
+            chosenEntries = entries;
+            break;
+          }
+        }
+
+        if (!chosenPlan) {
+          container.innerHTML = `
+            <div class="empty">No upcoming date yet. Open Plan or use Surprise date picker to create one 🍓</div>
+          `;
+          return;
+        }
+
+        nextDatePlanCache = chosenPlan;
+        const days = daysUntilDate(chosenPlan.plan_date);
+        const detailParts = [formatDate(chosenPlan.plan_date), chosenPlan.mood, chosenPlan.budget].filter(Boolean);
+        const previewEntries = chosenEntries.slice(0, 4);
+
+        container.innerHTML = `
+          <div class="next-date-box">
+            <div class="next-date-count">${escapeHTML(countdownLabel(days))}</div>
+            <div class="next-date-title">${escapeHTML(chosenPlan.title || "Untitled date plan")}</div>
+            <div class="next-date-detail">${detailParts.map(escapeHTML).join(" · ")}</div>
+            ${chosenPlan.notes ? `<div class="library-item-notes">${escapeHTML(chosenPlan.notes)}</div>` : ""}
+            <div class="next-date-mini-list">
+              ${previewEntries.length ? previewEntries.map(entry => `
+                <div class="next-date-mini-item">
+                  ${periods[entry.time_period]?.emoji || "♡"} <strong>${escapeHTML(entry.time_period)}</strong> · ${escapeHTML(entry.title)}${entry.completed ? " ✓" : ""}
+                </div>
+              `).join("") : `<div class="empty">No entries yet.</div>`}
+            </div>
+            <div class="actions">
+              <button class="button small" onclick="openNextDatePlan()">Open plan</button>
+              <button class="button small secondary" onclick="copyNextDatePlan()">Copy plan</button>
+              <button class="button small secondary" onclick="shareNextDatePlan()">Share plan</button>
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = `<div class="empty">Could not load next date.</div>`;
+      }
+    }
+
+    function openNextDatePlan() {
+      if (!nextDatePlanCache) return;
+      openPlanDate(nextDatePlanCache.plan_date);
+    }
+
+    async function copyNextDatePlan() {
+      try {
+        if (!nextDatePlanCache) return;
+        const text = await buildPlanTextFromPlan(nextDatePlanCache);
+        if (!text) return;
+        await copyTextToClipboard(text, "Next date copied 💌");
+        if (qs("inviteCopyMessage")) qs("inviteCopyMessage").textContent = "Next date copied 💌";
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function shareNextDatePlan() {
+      try {
+        if (!nextDatePlanCache) return;
+        const text = await buildPlanTextFromPlan(nextDatePlanCache);
+        if (!text) return;
+        await shareText(text, "Next date copied 💌");
+        if (qs("inviteCopyMessage")) qs("inviteCopyMessage").textContent = "Next date ready to share 💌";
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
     async function loadHome() {
       loadCoupleMembers();
       loadDashboardStats();
       loadPhotoWall();
       loadFavoritePicks();
+      loadNextDateCountdown();
       const container = qs("homeList");
       container.innerHTML = `<div class="empty">Loading...</div>`;
 
