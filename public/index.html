@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Clean memories v29</title>
+  <title>Date Planner for Us 🍓 Final comfort v30</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -691,6 +691,29 @@
       .couple-profile-line { grid-template-columns: 1fr; gap: 2px; }
       .photo-wall-grid, .favorite-grid, .stats-grid { grid-template-columns: 1fr; }
     }
+
+
+    /* v30 final comfort polish */
+    .comfort-steps { display: grid; gap: 8px; margin-top: 10px; }
+    .comfort-step { padding: 10px 12px; border: 1px solid var(--line); border-radius: 15px; background: #fffafd; font-size: 13px; line-height: 1.38; }
+    .comfort-step strong { color: var(--berry-dark); }
+    .memory-book-box { display: grid; gap: 9px; margin-top: 10px; }
+    .memory-book-row { padding: 10px 12px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(135deg, #fffafd, #f7fcff); font-size: 13px; line-height: 1.42; }
+    .memory-book-row strong { display: block; color: var(--berry-dark); margin-bottom: 3px; }
+    .review-box { padding: 12px; border: 1px dashed #ffb4ce; border-radius: 18px; background: #fff7fb; margin-top: 11px; }
+    .review-box ul { margin: 8px 0 0 18px; padding: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .journal-reader { display: grid; gap: 10px; }
+    .journal-reader-title { color: var(--berry-dark); font-weight: 800; font-size: 18px; overflow-wrap: anywhere; }
+    .journal-reader-body { white-space: pre-wrap; padding: 12px; border-radius: 16px; background: #fffafd; border: 1px solid var(--line); line-height: 1.5; max-height: 42vh; overflow: auto; }
+    .sticky-helper { position: sticky; top: 8px; z-index: 5; }
+    @media (max-width: 700px) {
+      .button { min-height: 48px; }
+      .button.small { min-height: 42px; font-size: 12px; }
+      .top-bar { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px); }
+      .summary-head, .history-head, .favorite-head, .library-item-head { align-items: stretch; }
+      .history-date-chip { white-space: normal; text-align: center; }
+    }
+
   </style>
 </head>
 
@@ -703,7 +726,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Clean memories v29</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Final comfort v30</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -775,6 +798,24 @@
           </div>
         </div>
 
+
+
+        <div class="card compact-card">
+          <div class="section-sparkle">🍓 v30 comfort</div>
+          <h2 class="title">🌷 How to use this app</h2>
+          <p class="subtitle">A small guide so the app feels easier for both of you.</p>
+          <div class="comfort-steps">
+            <div class="comfort-step"><strong>1. Save ideas:</strong> add food, places, games and activities in Library.</div>
+            <div class="comfort-step"><strong>2. Make a plan:</strong> choose a date in Plan, then add ideas to Morning, Noon, Afternoon or Evening.</div>
+            <div class="comfort-step"><strong>3. After the date:</strong> use the review shortcut to save the memory into Journal.</div>
+            <div class="comfort-step"><strong>4. Keep it safe:</strong> download a backup sometimes from Home.</div>
+          </div>
+          <div class="actions">
+            <button class="button secondary" onclick="quickStartForEm()">Copy join steps for em</button>
+            <button class="button ghost" onclick="openPage('libraryPage','libraryNav')">Open Library</button>
+          </div>
+        </div>
+
         <div class="card compact-card">
           <div class="section-sparkle">🍓 v27 personal touch</div>
           <h2 class="title">💞 Couple profile</h2>
@@ -793,6 +834,22 @@
             </div>
           </div>
           <p id="coupleProfileMessage" class="plan-copy-message"></p>
+        </div>
+
+
+
+        <div class="card compact-card">
+          <div class="section-sparkle">📖 v30 memory book</div>
+          <h2 class="title">📖 Relationship memory book</h2>
+          <p class="subtitle">A soft summary of your couple profile, favorite picks, memories and date history.</p>
+          <div id="relationshipMemoryBook" class="memory-book-box">
+            <div class="empty">Loading memory book...</div>
+          </div>
+          <div class="actions">
+            <button class="button secondary" onclick="loadRelationshipMemoryBook()">Refresh memory book</button>
+            <button class="button ghost" onclick="copyMemoryBook()">Copy memory book</button>
+          </div>
+          <p id="memoryBookMessage" class="plan-copy-message"></p>
         </div>
 
         <div class="card compact-card">
@@ -980,6 +1037,27 @@
               <button class="button ghost" onclick="downloadCurrentPlanCalendar()">Download calendar file</button>
             </div>
             <p id="planCopyMessage" class="plan-copy-message"></p>
+          </div>
+
+
+
+          <div class="plan-details">
+            <h3 class="title">💌 After-date review</h3>
+            <p class="subtitle">After a date, save a cute review into Journal without typing from zero.</p>
+            <div class="review-box">
+              <strong>It will ask:</strong>
+              <ul>
+                <li>Favorite moment</li>
+                <li>What we ate / played / did</li>
+                <li>Rating and would we do it again?</li>
+                <li>Memory/photo link if you already have one</li>
+              </ul>
+            </div>
+            <div class="actions">
+              <button class="button secondary" onclick="addDateReviewToJournal()">Add review to Journal</button>
+              <button class="button ghost" onclick="copyDateReviewPrompt()">Copy review prompt</button>
+            </div>
+            <p id="dateReviewMessage" class="plan-copy-message"></p>
           </div>
 
           <div class="plan-details">
@@ -1316,6 +1394,18 @@
             <div id="journalFilterCount" class="journal-filter-count"></div>
           </div>
 
+
+
+          <div class="card compact-card" style="box-shadow:none; background:#fffafd;">
+            <h3 class="title">📖 Reading comfort</h3>
+            <p class="subtitle">Quick views for reading old memories without changing anything.</p>
+            <div class="actions">
+              <button class="button secondary" onclick="setJournalReadingMode('memories')">Memories only</button>
+              <button class="button secondary" onclick="setJournalReadingMode('links')">With links only</button>
+              <button class="button ghost" onclick="setJournalReadingMode('all')">Show all</button>
+            </div>
+          </div>
+
           <div id="journalList" class="library-grid"></div>
         </div>
       </main>
@@ -1364,6 +1454,7 @@
     let librarySortMode = "name";
     let selectedBackupData = null;
     let planHistoryCache = [];
+    let relationshipMemoryBookTextCache = "";
     let deferredInstallPrompt = null;
     const PROFILE_ENTRY_TITLE = "__couple_profile__";
 
@@ -1595,6 +1686,8 @@
       qs("editModalTitle").textContent = title;
       qs("editModalFields").innerHTML = fields.map(fieldInputHTML).join("");
       qs("editModalSaveButton").disabled = false;
+      qs("editModalSaveButton").style.display = "";
+      qs("editModalSaveButton").textContent = "Save";
       show("editModalBackdrop");
       document.body.classList.add("modal-open");
       setTimeout(() => {
@@ -2486,7 +2579,7 @@
           return;
         }
 
-        if (!confirm("Delete this empty day from Home?")) return;
+        if (!confirm("Delete this empty day from Home? This only removes the empty date card.")) return;
 
         const { error } = await supabaseClient
           .from("date_plans")
@@ -2860,7 +2953,7 @@
     }
 
     async function deleteEntry(id) {
-      if (!confirm("Delete this activity?")) return;
+      if (!confirm("Delete this plan entry? This cannot be undone unless you re-add it.")) return;
 
       try {
         const { error } = await supabaseClient
@@ -3880,6 +3973,8 @@
           ${body ? `<div class="journal-body">${escapeHTML(body)}</div>` : ""}
           ${journalImageHTML(entry)}
           <div class="actions">
+            <button class="button small" onclick="readJournalEntry('${encodeURIComponent(entry.entry_date || '')}', '${encodeURIComponent(entry.entry_type || 'note')}', '${encodeURIComponent(entry.title || '')}', '${encodeURIComponent(entry.body || '')}', '${encodeURIComponent(entry.image_url || '')}')">Read</button>
+            <button class="button small ghost" onclick="copyJournalEntry('${encodeURIComponent(entry.entry_date || '')}', '${encodeURIComponent(entry.entry_type || 'note')}', '${encodeURIComponent(entry.title || '')}', '${encodeURIComponent(entry.body || '')}', '${encodeURIComponent(entry.image_url || '')}')">Copy</button>
             <button class="button small secondary" onclick="editJournalEntry('${entry.id}', '${encodeURIComponent(entry.entry_date || '')}', '${encodeURIComponent(entry.entry_type || 'note')}', '${encodeURIComponent(entry.title || '')}', '${encodeURIComponent(entry.body || '')}', '${encodeURIComponent(entry.image_url || '')}')">Edit</button>
             <button class="button small danger" onclick="deleteJournalEntry('${entry.id}')">Delete</button>
           </div>
@@ -4076,7 +4171,7 @@
     }
 
     async function deleteJournalEntry(id) {
-      if (!confirm("Delete this journal entry?")) return;
+      if (!confirm("Delete this journal entry? This cannot be undone unless you restore from a backup.")) return;
 
       try {
         const { error } = await supabaseClient
@@ -4756,6 +4851,7 @@
             ${journalCount ? `<div class="history-memory-chip">📝 ${journalCount} journal ${journalCount === 1 ? "memory" : "memories"} on this date</div>` : ""}
             <div class="actions">
               <button class="button small" onclick="openPlanDate('${plan.plan_date}')">Open plan</button>
+              <button class="button small secondary" onclick="openReviewForHistory('${plan.plan_date}')">Review</button>
               <button class="button small secondary" onclick="copyHistoryPlan('${plan.id}')">Copy</button>
               <button class="button small secondary" onclick="shareHistoryPlan('${plan.id}')">Share</button>
               <button class="button small ghost" onclick="downloadHistoryPlanCalendar('${plan.id}')">Calendar</button>
@@ -4883,6 +4979,251 @@
       }
     }
 
+
+
+    function quickStartForEm() {
+      const code = currentCouple?.invite_code || "";
+      const text = `Em ơi, join our Date Planner here 💌\n${window.location.origin}\n\nSteps:\n1. Create your own account\n2. Sign in\n3. Choose “Join with invite code”\n4. Enter invite code: ${code}\n\nDon’t create a new couple space nha 💖`;
+      shareText(text, "Join steps copied 💌");
+      if (qs("inviteCopyMessage")) qs("inviteCopyMessage").textContent = "Join steps ready for em 💌";
+    }
+
+    function setJournalReadingMode(mode) {
+      if (mode === "memories") {
+        if (qs("journalTypeFilter")) qs("journalTypeFilter").value = "memory";
+        if (qs("journalLinkFilter")) qs("journalLinkFilter").value = "all";
+        if (qs("journalPhotoOnly")) qs("journalPhotoOnly").checked = false;
+      } else if (mode === "links") {
+        if (qs("journalTypeFilter")) qs("journalTypeFilter").value = "all";
+        if (qs("journalLinkFilter")) qs("journalLinkFilter").value = "any";
+        if (qs("journalPhotoOnly")) qs("journalPhotoOnly").checked = true;
+      } else {
+        if (qs("journalTypeFilter")) qs("journalTypeFilter").value = "all";
+        if (qs("journalLinkFilter")) qs("journalLinkFilter").value = "all";
+        if (qs("journalPhotoOnly")) qs("journalPhotoOnly").checked = false;
+      }
+      loadJournal();
+    }
+
+    function buildJournalText(date, type, title, body, imageUrl) {
+      const lines = [];
+      lines.push(`${journalTypeLabel(type)} · ${date ? formatDate(date) : "No date"}`);
+      lines.push(title || "Untitled journal entry");
+      if (body) {
+        lines.push("");
+        lines.push(body);
+      }
+      if (imageUrl) {
+        lines.push("");
+        lines.push(`Memory link: ${imageUrl}`);
+      }
+      return lines.join("\n").trim();
+    }
+
+    function readJournalEntry(encodedDate, encodedType, encodedTitle, encodedBody, encodedImageUrl) {
+      const date = decodeFieldValue(encodedDate);
+      const type = decodeFieldValue(encodedType) || "note";
+      const title = decodeFieldValue(encodedTitle) || "Untitled journal entry";
+      const body = decodeFieldValue(encodedBody);
+      const imageUrl = decodeFieldValue(encodedImageUrl);
+      const fullText = buildJournalText(date, type, title, body, imageUrl);
+
+      activeEditModal = null;
+      qs("editModalTitle").textContent = "Read journal memory";
+      qs("editModalFields").innerHTML = `
+        <div class="journal-reader">
+          <div class="journal-reader-title">${escapeHTML(title)}</div>
+          <div class="entry-meta">${escapeHTML(journalTypeLabel(type))} · ${escapeHTML(date ? formatDate(date) : "No date")}</div>
+          <div class="journal-reader-body">${escapeHTML(body || "No body text yet.")}</div>
+          ${imageUrl ? journalImageHTML({ title, image_url: imageUrl }) : ""}
+          <button class="button secondary" onclick="copyTextToClipboard(${JSON.stringify(fullText)}, 'Journal copied 💌')">Copy this memory</button>
+        </div>
+      `;
+      qs("editModalSaveButton").style.display = "none";
+      show("editModalBackdrop");
+      document.body.classList.add("modal-open");
+    }
+
+    async function copyJournalEntry(encodedDate, encodedType, encodedTitle, encodedBody, encodedImageUrl) {
+      const text = buildJournalText(
+        decodeFieldValue(encodedDate),
+        decodeFieldValue(encodedType) || "note",
+        decodeFieldValue(encodedTitle) || "Untitled journal entry",
+        decodeFieldValue(encodedBody),
+        decodeFieldValue(encodedImageUrl)
+      );
+      await copyTextToClipboard(text, "Journal copied 💌");
+    }
+
+    async function buildDateReviewText() {
+      const date = qs("selectedDate")?.value || getToday();
+      const plan = await getPlanForDate(date, false);
+      const entries = plan ? await getEntriesForPlan(plan.id) : [];
+      const lines = [];
+      lines.push(`Date review for ${formatDate(date)}`);
+      if (plan?.title) lines.push(`Plan: ${plan.title}`);
+      if (plan?.mood) lines.push(`Mood: ${plan.mood}`);
+      if (plan?.budget) lines.push(`Budget: ${plan.budget}`);
+      if (entries.length) {
+        lines.push("");
+        lines.push("What we planned:");
+        entries.forEach(entry => lines.push(`- ${entry.time_period}: ${entry.title}${entry.completed ? " ✓" : ""}`));
+      }
+      lines.push("");
+      lines.push("Favorite moment:");
+      lines.push("- ");
+      lines.push("");
+      lines.push("What we ate / played / did:");
+      lines.push("- ");
+      lines.push("");
+      lines.push("How did em feel?");
+      lines.push("- ");
+      lines.push("");
+      lines.push("Would we do it again?");
+      lines.push("- ");
+      lines.push("");
+      lines.push("Memory/photo link:");
+      lines.push("- ");
+      return lines.join("\n");
+    }
+
+    async function copyDateReviewPrompt() {
+      try {
+        const text = await buildDateReviewText();
+        await copyTextToClipboard(text, "Date review prompt copied 💌");
+        if (qs("dateReviewMessage")) qs("dateReviewMessage").textContent = "Review prompt copied 💌";
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function addDateReviewToJournal() {
+      try {
+        const date = qs("selectedDate")?.value || getToday();
+        const plan = await getPlanForDate(date, false);
+        const title = `Date review: ${plan?.title || formatDate(date)}`;
+        const body = await buildDateReviewText();
+
+        if (!confirm(`Add a review journal entry for ${formatDate(date)}?`)) return;
+
+        const { error } = await supabaseClient
+          .from("journal_entries")
+          .insert({
+            couple_id: currentCouple.id,
+            entry_date: date,
+            entry_type: "memory",
+            title,
+            body,
+            created_by: currentUser.id
+          });
+
+        if (error) throw error;
+        if (qs("dateReviewMessage")) qs("dateReviewMessage").textContent = "Review added to Journal 💖";
+        await loadJournal();
+        await loadPhotoWall();
+        await loadPlanHistory();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    function openReviewForHistory(date) {
+      openPlanDate(date);
+      setTimeout(() => {
+        if (qs("dateReviewMessage")) qs("dateReviewMessage").textContent = "Use the review button when you are ready to save this date as a memory 💌";
+      }, 300);
+    }
+
+    function dateShort(dateString) {
+      if (!dateString) return "Not set";
+      return new Date(dateString + "T12:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    async function loadRelationshipMemoryBook() {
+      if (!currentCouple) return;
+      const box = qs("relationshipMemoryBook");
+      if (!box) return;
+      box.innerHTML = `<div class="empty">Loading memory book...</div>`;
+      relationshipMemoryBookTextCache = "";
+
+      try {
+        const [{ data: journals, error: journalError }, { data: favorites, error: favoriteError }, { data: plans, error: planError }] = await Promise.all([
+          supabaseClient
+            .from("journal_entries")
+            .select("entry_date, entry_type, title, body, image_url, created_at")
+            .eq("couple_id", currentCouple.id)
+            .neq("title", PROFILE_ENTRY_TITLE)
+            .order("entry_date", { ascending: true }),
+          supabaseClient
+            .from("library_items")
+            .select("item_type, name, category, status, notes")
+            .eq("couple_id", currentCouple.id)
+            .eq("status", "favorite")
+            .order("name", { ascending: true })
+            .limit(16),
+          supabaseClient
+            .from("date_plans")
+            .select("id, plan_date, title, mood, budget, notes")
+            .eq("couple_id", currentCouple.id)
+            .order("plan_date", { ascending: true })
+            .limit(120)
+        ]);
+
+        if (journalError) throw journalError;
+        if (favoriteError) throw favoriteError;
+        if (planError) throw planError;
+
+        const visibleJournals = journals || [];
+        const memories = visibleJournals.filter(item => item.entry_type === "memory");
+        const firstMemory = memories[0] || visibleJournals[0] || null;
+        const latestMemory = [...visibleJournals].sort((a, b) => String(b.entry_date || "").localeCompare(String(a.entry_date || "")))[0] || null;
+        const today = getToday();
+        const upcomingPlans = (plans || []).filter(plan => plan.plan_date >= today);
+        const pastPlans = (plans || []).filter(plan => plan.plan_date < today);
+        const nextPlan = upcomingPlans[0] || null;
+        const favoriteNames = (favorites || []).slice(0, 8).map(item => `${itemTypeLabel(item.item_type)} ${item.name}`);
+
+        const rows = [
+          { label: "Couple", value: currentCouple.name || "Anh Tommy & Em Ngoc" },
+          { label: "Date history", value: `${pastPlans.length} past date${pastPlans.length === 1 ? "" : "s"} · ${upcomingPlans.length} upcoming` },
+          { label: "Next date", value: nextPlan ? `${dateShort(nextPlan.plan_date)} — ${nextPlan.title || "Untitled date"}` : "No upcoming date yet" },
+          { label: "First saved memory", value: firstMemory ? `${dateShort(firstMemory.entry_date)} — ${firstMemory.title || "Untitled memory"}` : "No journal memories yet" },
+          { label: "Latest journal note", value: latestMemory ? `${dateShort(latestMemory.entry_date)} — ${latestMemory.title || "Untitled note"}` : "No journal notes yet" },
+          { label: "Favorite picks", value: favoriteNames.length ? favoriteNames.join(" · ") : "Mark food, places, games or activities as Favorite to show them here" }
+        ];
+
+        relationshipMemoryBookTextCache = [
+          `📖 Relationship memory book`,
+          `Couple: ${rows[0].value}`,
+          `Date history: ${rows[1].value}`,
+          `Next date: ${rows[2].value}`,
+          `First saved memory: ${rows[3].value}`,
+          `Latest journal note: ${rows[4].value}`,
+          `Favorite picks: ${rows[5].value}`
+        ].join("\n");
+
+        box.innerHTML = rows.map(row => `
+          <div class="memory-book-row">
+            <strong>${escapeHTML(row.label)}</strong>
+            ${escapeHTML(row.value)}
+          </div>
+        `).join("");
+      } catch (error) {
+        console.error(error);
+        box.innerHTML = `<div class="empty">Could not load memory book.</div>`;
+      }
+    }
+
+    async function copyMemoryBook() {
+      if (!relationshipMemoryBookTextCache) await loadRelationshipMemoryBook();
+      if (!relationshipMemoryBookTextCache) return;
+      await copyTextToClipboard(relationshipMemoryBookTextCache, "Memory book copied 💌");
+      if (qs("memoryBookMessage")) qs("memoryBookMessage").textContent = "Memory book copied 💌";
+    }
+
+
     async function loadHome() {
       loadCoupleMembers();
       loadCoupleProfile();
@@ -4891,6 +5232,7 @@
       loadFavoritePicks();
       loadNextDateCountdown();
       loadPlanHistory();
+      loadRelationshipMemoryBook();
       const container = qs("homeList");
       container.innerHTML = `<div class="empty">Loading...</div>`;
 
