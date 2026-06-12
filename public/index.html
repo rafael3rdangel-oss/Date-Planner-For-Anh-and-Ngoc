@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Year timeline fix v44</title>
+  <title>Date Planner for Us 🍓 Editable story pages v45</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1500,6 +1500,45 @@
       font-weight: 900;
     }
 
+  
+    .storybook-page-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .storybook-page-actions button {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(239,111,159,.18);
+      background: rgba(255,255,255,.82);
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .storybook-page-actions button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(92,66,80,.10);
+    }
+    .storybook-page-actions .danger {
+      color: #a33b52;
+      background: rgba(255, 235, 240, .88);
+    }
+    .storybook-editing-note {
+      display: none;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255, 244, 183, .35);
+      color: var(--berry-dark);
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+    .storybook-editing-note.active {
+      display: block;
+    }
+
   </style>
 </head>
 
@@ -1512,7 +1551,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Year timeline fix v44</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Editable story pages v45</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -1728,6 +1767,7 @@
                 <li><strong>Upload cute images or page previews</strong>. Around 7–12 images is enough for a nice storybook.</li>
                 <li><strong>Create periods/chapters</strong>, like Before trip, Day 1, Da Lat, Last day, or Belgium winter.</li>
                 <li><strong>Add custom story pages</strong> into a period if you want date captions, quotes, tags, and little story text.</li>
+                <li><strong>Edit or delete pages</strong> directly from each story page using the buttons under the tags.</li>
                 <li><strong>Use the relationship timeline</strong> to send a saved plan or memory into the selected storybook.</li>
                 <li><strong>Use Storybook photo shelf</strong> to quickly open uploaded images larger.</li>
                 <li>The full PDF stays in Supabase, while the app shows a soft readable storybook version.</li>
@@ -1788,7 +1828,8 @@
 
               <details>
                 <summary>Add a custom story page</summary>
-                <div class="storybook-page-form">
+                <div id="storybookPageForm" class="storybook-page-form">
+                  <div id="storybookEditingNote" class="storybook-editing-note">Editing a storybook page. Save changes or cancel edit.</div>
                   <select id="storybookPagePeriod"></select>
                   <input id="storybookPageDate" placeholder="Date, e.g. Day 1 / 12 Aug 2026">
                   <input id="storybookPageTitle" placeholder="Page title, e.g. Airport hug again">
@@ -1796,7 +1837,10 @@
                   <input id="storybookPageQuote" placeholder="Cute quote, optional">
                   <input id="storybookPageTags" placeholder="Tags separated by commas, e.g. airport, food, cozy">
                   <input id="storybookPageImageIndex" type="number" min="1" placeholder="Image number to use, optional. 1 = first uploaded image">
-                  <button class="button secondary" onclick="addStorybookPage()">Add page to this book</button>
+                  <div class="row">
+                    <button id="storybookPageSaveButton" class="button secondary" onclick="saveStorybookPageFromForm()">Add page to this book</button>
+                    <button id="storybookPageCancelButton" class="button ghost" onclick="cancelStorybookPageEdit()" style="display:none;">Cancel edit</button>
+                  </div>
                 </div>
               </details>
 
@@ -1920,7 +1964,7 @@
           <div class="section-sparkle">🛠️ Technical</div>
           <h2 class="title">Help, backup & phone setup</h2>
           <p class="subtitle">Instructions and safety tools are grouped here instead of making Home too long.</p>
-          <div class="empty" style="margin-top:10px;">Current app version: <strong>Year timeline fix v44</strong></div>
+          <div class="empty" style="margin-top:10px;">Current app version: <strong>Editable story pages v45</strong></div>
         </div>
 
         <div class="card compact-card">
@@ -2797,6 +2841,7 @@
     const STORYBOOK_ACTIVE_KEY = "datePlannerActiveStorybookV1";
     let storybookLibraryCache = null;
     let activeStorybookId = localStorage.getItem(STORYBOOK_ACTIVE_KEY) || "vietnam-2025";
+    let editingStorybookPageId = "";
 
     function qs(id) { return document.getElementById(id); }
     function show(id) { qs(id).classList.remove("hidden"); }
@@ -3163,7 +3208,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Year timeline fix v44",
+          version: "Editable story pages v45",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -4191,34 +4236,172 @@
       if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Storybook removed from the shelf.";
     }
 
-    async function addStorybookPage() {
-      const book = activeStorybook();
-      if (!book) return;
-      const title = qs("storybookPageTitle")?.value.trim() || "";
-      const summary = qs("storybookPageSummary")?.value.trim() || "";
-      if (!title && !summary) {
-        alert("Add a page title or story text first.");
-        return;
-      }
-      const imageIndexRaw = qs("storybookPageImageIndex")?.value;
-      const imageIndex = imageIndexRaw ? Math.max(0, Number(imageIndexRaw) - 1) : Math.max(0, (book.chapters || []).length);
-      book.chapters = Array.isArray(book.chapters) ? book.chapters : [];
-      book.chapters.push({
-        id: makeStorybookId(title || "page"),
-        date: qs("storybookPageDate")?.value.trim() || "",
-        title: title || `Memory page ${book.chapters.length + 1}`,
-        summary,
-        quote: qs("storybookPageQuote")?.value.trim() || "",
-        tags: (qs("storybookPageTags")?.value || "").split(",").map(tag => tag.trim()).filter(Boolean),
-        periodId: qs("storybookPagePeriod")?.value || "",
-        imageIndex
-      });
+    function clearStorybookPageForm(keepPeriod = true) {
+      const periodValue = qs("storybookPagePeriod")?.value || "";
       ["storybookPageDate", "storybookPageTitle", "storybookPageSummary", "storybookPageQuote", "storybookPageTags", "storybookPageImageIndex"].forEach(id => {
         if (qs(id)) qs(id).value = "";
       });
+      if (keepPeriod && qs("storybookPagePeriod")) qs("storybookPagePeriod").value = periodValue;
+      editingStorybookPageId = "";
+      updateStorybookPageEditMode();
+    }
+
+    function updateStorybookPageEditMode() {
+      const isEditing = Boolean(editingStorybookPageId);
+      if (qs("storybookPageSaveButton")) qs("storybookPageSaveButton").textContent = isEditing ? "Save page changes" : "Add page to this book";
+      if (qs("storybookPageCancelButton")) qs("storybookPageCancelButton").style.display = isEditing ? "" : "none";
+      if (qs("storybookEditingNote")) qs("storybookEditingNote").classList.toggle("active", isEditing);
+    }
+
+    function storybookPageFormData(existingPage = null) {
+      const imageIndexRaw = qs("storybookPageImageIndex")?.value;
+      const fallbackImageIndex = Number.isFinite(Number(existingPage?.imageIndex)) ? Number(existingPage.imageIndex) : Math.max(0, (activeStorybook()?.chapters || []).length);
+      const imageIndex = imageIndexRaw ? Math.max(0, Number(imageIndexRaw) - 1) : fallbackImageIndex;
+      const title = qs("storybookPageTitle")?.value.trim() || "";
+      const summary = qs("storybookPageSummary")?.value.trim() || "";
+
+      return {
+        periodId: qs("storybookPagePeriod")?.value || "",
+        date: qs("storybookPageDate")?.value.trim() || "",
+        title,
+        summary,
+        quote: qs("storybookPageQuote")?.value.trim() || "",
+        tags: (qs("storybookPageTags")?.value || "").split(",").map(tag => tag.trim()).filter(Boolean),
+        imageIndex
+      };
+    }
+
+    async function saveStorybookPageFromForm() {
+      const book = activeStorybook();
+      if (!book) return;
+      const formData = storybookPageFormData();
+      if (!formData.title && !formData.summary) {
+        alert("Add a page title or story text first.");
+        return;
+      }
+
+      book.chapters = Array.isArray(book.chapters) ? book.chapters : [];
+
+      if (editingStorybookPageId) {
+        const chapter = book.chapters.find(item => item.id === editingStorybookPageId);
+        if (!chapter) {
+          alert("Could not find the page to edit. It may have been removed.");
+          cancelStorybookPageEdit();
+          return;
+        }
+        Object.assign(chapter, {
+          ...formData,
+          title: formData.title || chapter.title || "Memory page"
+        });
+        await saveStorybookLibrary(storybookLibraryCache);
+        clearStorybookPageForm(true);
+        renderStorybook();
+        if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Story page updated 💖";
+        return;
+      }
+
+      book.chapters.push({
+        id: makeStorybookId(formData.title || "page"),
+        ...formData,
+        title: formData.title || `Memory page ${book.chapters.length + 1}`
+      });
       await saveStorybookLibrary(storybookLibraryCache);
+      clearStorybookPageForm(true);
       renderStorybook();
       if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Story page added 💌";
+    }
+
+    async function addStorybookPage() {
+      await saveStorybookPageFromForm();
+    }
+
+    function cancelStorybookPageEdit() {
+      clearStorybookPageForm(true);
+      if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Page edit cancelled.";
+    }
+
+    async function makeGeneratedStorybookPageEditable(pageId) {
+      const book = activeStorybook();
+      if (!book) return null;
+      book.chapters = Array.isArray(book.chapters) ? book.chapters : [];
+      let chapter = book.chapters.find(item => item.id === pageId);
+      if (chapter) return chapter;
+
+      const page = storybookPagesForActiveBook().find(item => item.id === pageId);
+      if (!page) return null;
+
+      chapter = {
+        id: makeStorybookId(page.title || "page"),
+        periodId: page.periodId || "",
+        date: page.date || "",
+        title: page.title || "Memory page",
+        summary: page.summary || "",
+        quote: page.quote || "",
+        tags: Array.isArray(page.tags) ? page.tags : [],
+        imageKey: page.imageKey || "",
+        imageIndex: Number.isFinite(Number(page.imageIndex)) ? Number(page.imageIndex) : 0
+      };
+      book.chapters.push(chapter);
+      await saveStorybookLibrary(storybookLibraryCache);
+      return chapter;
+    }
+
+    async function editStorybookPage(pageId) {
+      const book = activeStorybook();
+      if (!book) return;
+      let chapter = (book.chapters || []).find(item => item.id === pageId);
+      if (!chapter) chapter = await makeGeneratedStorybookPageEditable(pageId);
+      if (!chapter) {
+        alert("Could not find this story page.");
+        return;
+      }
+
+      editingStorybookPageId = chapter.id;
+      renderStorybookBookshelf();
+      if (qs("storybookPagePeriod")) qs("storybookPagePeriod").value = chapter.periodId || "";
+      if (qs("storybookPageDate")) qs("storybookPageDate").value = chapter.date || "";
+      if (qs("storybookPageTitle")) qs("storybookPageTitle").value = chapter.title || "";
+      if (qs("storybookPageSummary")) qs("storybookPageSummary").value = chapter.summary || "";
+      if (qs("storybookPageQuote")) qs("storybookPageQuote").value = chapter.quote || "";
+      if (qs("storybookPageTags")) qs("storybookPageTags").value = (chapter.tags || []).join(", ");
+      if (qs("storybookPageImageIndex")) qs("storybookPageImageIndex").value = Number.isFinite(Number(chapter.imageIndex)) ? Number(chapter.imageIndex) + 1 : "";
+      updateStorybookPageEditMode();
+
+      const form = qs("storybookPageForm");
+      if (form) form.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Editing page. Change the fields, then save page changes.";
+    }
+
+    async function deleteStorybookPage(pageId) {
+      const book = activeStorybook();
+      if (!book) return;
+      book.chapters = Array.isArray(book.chapters) ? book.chapters : [];
+      const chapterIndex = book.chapters.findIndex(item => item.id === pageId);
+
+      if (chapterIndex >= 0) {
+        const page = book.chapters[chapterIndex];
+        if (!confirm(`Delete story page "${page.title || "Memory page"}"? This removes it from the memory book.`)) return;
+        book.chapters.splice(chapterIndex, 1);
+        if (editingStorybookPageId === pageId) clearStorybookPageForm(true);
+        await saveStorybookLibrary(storybookLibraryCache);
+        renderStorybook();
+        if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Story page deleted.";
+        return;
+      }
+
+      const generatedPage = storybookPagesForActiveBook().find(item => item.id === pageId);
+      if (generatedPage && Number.isFinite(Number(generatedPage.imageIndex)) && book.imageUrls?.length) {
+        if (!confirm("This page is from an uploaded image. Remove this image from the storybook shelf? The file in Supabase Storage is not deleted.")) return;
+        const index = Number(generatedPage.imageIndex);
+        if (book.imageUrls) book.imageUrls.splice(index, 1);
+        if (book.imagePaths) book.imagePaths.splice(index, 1);
+        await saveStorybookLibrary(storybookLibraryCache);
+        renderStorybook();
+        if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Uploaded image removed from this storybook view.";
+        return;
+      }
+
+      alert("Could not find this story page.");
     }
 
     function getStorybookStorageLinks() {
@@ -4372,6 +4555,10 @@
                       <div class="storybook-chips">
                         <span class="storybook-chip">${escapeHTML(group.period.title || "General")}</span>
                         ${tags.map(tag => `<span class="storybook-chip">${escapeHTML(tag)}</span>`).join("")}
+                      </div>
+                      <div class="storybook-page-actions">
+                        <button onclick="editStorybookPage('${escapeHTML(item.id)}')">Edit page</button>
+                        <button class="danger" onclick="deleteStorybookPage('${escapeHTML(item.id)}')">Delete page</button>
                       </div>
                     </div>
                     <div class="storybook-photo-frame" onclick="openStorybookLightbox('${escapeHTML(image)}', '${escapeHTML(item.title || book?.title || "Storybook memory")}', '${escapeHTML(item.summary || "")}')">
