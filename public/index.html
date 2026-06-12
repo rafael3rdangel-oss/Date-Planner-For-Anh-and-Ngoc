@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Favorites v21</title>
+  <title>Date Planner for Us 🍓 Phone share v22</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -390,7 +390,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Favorites v21</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Phone share v22</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -442,9 +442,10 @@
             <div class="invite-code-label">Invite code</div>
             <div id="inviteCodeBig" class="invite-code-value">--------</div>
           </div>
-          <div class="row">
+          <div class="actions">
             <button class="button" onclick="copyInviteCode()">Copy invite code</button>
             <button class="button secondary" onclick="copyAppLink()">Copy app link</button>
+            <button class="button secondary" onclick="shareInvite()">Share invite</button>
           </div>
           <p id="inviteCopyMessage" class="copy-message"></p>
         </div>
@@ -524,9 +525,10 @@
               </select>
             </div>
             <textarea id="planNotes" placeholder="Plan notes, e.g. avoid too much walking, soft food, rainy day backup..."></textarea>
-            <div class="row">
+            <div class="actions">
               <button class="button" onclick="savePlanDetails()">Save plan details</button>
               <button class="button secondary" onclick="copyCurrentPlan()">Copy full plan</button>
+              <button class="button secondary" onclick="shareCurrentPlan()">Share full plan</button>
             </div>
             <p id="planCopyMessage" class="plan-copy-message"></p>
           </div>
@@ -1123,6 +1125,26 @@
       copyTextToClipboard(window.location.origin, "App link copied 💌");
     }
 
+    async function shareText(text, copiedMessage) {
+      if (!text) return;
+      try {
+        if (navigator.share) {
+          await navigator.share({ text });
+        } else {
+          await copyTextToClipboard(text, copiedMessage);
+        }
+      } catch (error) {
+        await copyTextToClipboard(text, copiedMessage);
+      }
+    }
+
+    async function shareInvite() {
+      const code = currentCouple?.invite_code || "";
+      const text = `Join our Date Planner 💌\n${window.location.origin}\nInvite code: ${code}`;
+      await shareText(text, "Invite copied 💌");
+      if (qs("inviteCopyMessage")) qs("inviteCopyMessage").textContent = "Invite ready to share 💌";
+    }
+
     function setBackupMessage(message) {
       const messageEl = qs("dataBackupMessage");
       if (messageEl) messageEl.textContent = message;
@@ -1552,39 +1574,56 @@
       }
     }
 
-    async function copyCurrentPlan() {
+    async function buildCurrentPlanText() {
       const date = qs("selectedDate").value;
-      if (!date) return;
+      if (!date) return "";
 
-      try {
-        const plan = await getPlanForDate(date, false);
-        if (!plan) {
-          alert("Nothing planned for this date yet.");
-          return;
-        }
+      const plan = await getPlanForDate(date, false);
+      if (!plan) {
+        alert("Nothing planned for this date yet.");
+        return "";
+      }
 
-        const entries = await getEntriesForPlan(plan.id);
-        const lines = [];
-        lines.push(plan.title ? `💖 ${plan.title}` : `💖 Date plan`);
-        lines.push(`📅 ${formatDate(plan.plan_date)}`);
-        planDetailsText(plan).forEach(line => lines.push(line));
-        lines.push("");
+      const entries = await getEntriesForPlan(plan.id);
+      const lines = [];
+      lines.push(plan.title ? `💖 ${plan.title}` : `💖 Date plan`);
+      lines.push(`📅 ${formatDate(plan.plan_date)}`);
+      planDetailsText(plan).forEach(line => lines.push(line));
+      lines.push("");
 
-        Object.entries(periods).forEach(([period, info]) => {
-          const periodEntries = entries.filter(entry => entry.time_period === period);
-          if (!periodEntries.length) return;
-          lines.push(`${info.emoji} ${period}`);
-          periodEntries.forEach(entry => {
-            const linkedItem = entry.library_items || {};
-            lines.push(`- ${entry.title}${entry.completed ? " ✓" : ""}`);
-            if (linkedItem.link_url) lines.push(`  ${linkedItem.link_url}`);
-          });
-          lines.push("");
+      Object.entries(periods).forEach(([period, info]) => {
+        const periodEntries = entries.filter(entry => entry.time_period === period);
+        if (!periodEntries.length) return;
+        lines.push(`${info.emoji} ${period}`);
+        periodEntries.forEach(entry => {
+          const linkedItem = entry.library_items || {};
+          lines.push(`- ${entry.title}${entry.completed ? " ✓" : ""}`);
+          if (linkedItem.link_url) lines.push(`  ${linkedItem.link_url}`);
         });
+        lines.push("");
+      });
 
-        const text = lines.join("\n").trim();
+      return lines.join("\n").trim();
+    }
+
+    async function copyCurrentPlan() {
+      try {
+        const text = await buildCurrentPlanText();
+        if (!text) return;
         await copyTextToClipboard(text, "Full plan copied 💌");
         if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "Full plan copied 💌";
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function shareCurrentPlan() {
+      try {
+        const text = await buildCurrentPlanText();
+        if (!text) return;
+        await shareText(text, "Full plan copied 💌");
+        if (qs("planCopyMessage")) qs("planCopyMessage").textContent = "Plan ready to share 💌";
       } catch (error) {
         console.error(error);
         alert(error.message);
