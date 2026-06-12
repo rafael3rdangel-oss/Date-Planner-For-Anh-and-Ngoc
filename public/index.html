@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Timeline storybook v42</title>
+  <title>Date Planner for Us 🍓 Period storybook v43</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1405,6 +1405,82 @@
       color: var(--berry-dark);
     }
 
+  
+    .storybook-period-panel {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.72);
+      border: 1px dashed rgba(239,111,159,.22);
+    }
+    .storybook-period-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .storybook-period-header strong { color: var(--berry-dark); }
+    .storybook-period-block {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 24px;
+      background: radial-gradient(circle at 10% 10%, rgba(255, 209, 226, .55), transparent 24%), rgba(255,255,255,.58);
+      border: 1px solid rgba(239,111,159,.14);
+    }
+    .storybook-period-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(239,111,159,.12);
+    }
+    .storybook-period-title h3 {
+      margin: 0;
+      color: var(--berry-dark);
+      font-size: 19px;
+      line-height: 1.25;
+    }
+    .storybook-period-title p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+    .storybook-period-date {
+      width: fit-content;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(239,111,159,.12);
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .story-add-button {
+      margin-top: 10px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(239,111,159,.20);
+      background: rgba(255,255,255,.86);
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .story-add-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(92,66,80,.10);
+    }
+
   </style>
 </head>
 
@@ -1417,7 +1493,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Timeline storybook v42</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Period storybook v43</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -1631,7 +1707,9 @@
                 <li><strong>Create or select a book</strong>, like Vietnam 2025, Next Vietnam, Belgium memories, or Anniversary.</li>
                 <li><strong>Upload a PDF</strong> if you have a full document for that book.</li>
                 <li><strong>Upload cute images or page previews</strong>. Around 7–12 images is enough for a nice storybook.</li>
-                <li><strong>Add custom story pages</strong> if you want date captions, quotes, tags, and little story text.</li>
+                <li><strong>Create periods/chapters</strong>, like Before trip, Day 1, Da Lat, Last day, or Belgium winter.</li>
+                <li><strong>Add custom story pages</strong> into a period if you want date captions, quotes, tags, and little story text.</li>
+                <li><strong>Use the relationship timeline</strong> to send a saved plan or memory into the selected storybook.</li>
                 <li><strong>Use Storybook photo shelf</strong> to quickly open uploaded images larger.</li>
                 <li>The full PDF stays in Supabase, while the app shows a soft readable storybook version.</li>
               </ol>
@@ -1645,6 +1723,9 @@
 
               <div class="storybook-book-row">
                 <select id="storybookBookSelect" onchange="selectStorybookBook()"></select>
+                <select id="storybookPeriodFilter" onchange="renderStorybook()">
+                  <option value="all">All periods</option>
+                </select>
                 <div class="row">
                   <input id="newStorybookTitle" placeholder="New book title, e.g. Next Vietnam">
                   <button class="button secondary" onclick="createStorybookBook()">Create book</button>
@@ -1663,10 +1744,33 @@
                   </div>
                 </div>
               </details>
+              <details>
+                <summary>Manage periods / chapters</summary>
+                <div class="storybook-period-panel">
+                  <div class="storybook-period-header">
+                    <strong>Editable periods for this book</strong>
+                    <span class="storybook-mini-count" id="storybookPeriodCount">0 periods</span>
+                  </div>
+                  <select id="storybookPeriodSelect" onchange="loadSelectedStorybookPeriodIntoForm()"></select>
+                  <div class="form-grid">
+                    <input id="storybookPeriodEmoji" placeholder="Emoji, e.g. ✈️ or 🍓">
+                    <input id="storybookPeriodTitle" placeholder="Period title, e.g. Day 1 — Airport & first food">
+                    <input id="storybookPeriodDateLabel" placeholder="Date/range, e.g. 8 Jul 2025 or Week 1">
+                    <textarea id="storybookPeriodDescription" placeholder="Short description for this period..."></textarea>
+                    <div class="row">
+                      <button class="button secondary" onclick="createStorybookPeriod()">Add period</button>
+                      <button class="button ghost" onclick="saveStorybookPeriod()">Save selected period</button>
+                      <button class="button ghost" onclick="deleteStorybookPeriod()">Delete period</button>
+                    </div>
+                  </div>
+                </div>
+              </details>
+
 
               <details>
                 <summary>Add a custom story page</summary>
                 <div class="storybook-page-form">
+                  <select id="storybookPagePeriod"></select>
                   <input id="storybookPageDate" placeholder="Date, e.g. Day 1 / 12 Aug 2026">
                   <input id="storybookPageTitle" placeholder="Page title, e.g. Airport hug again">
                   <textarea id="storybookPageSummary" placeholder="Story text for this page..."></textarea>
@@ -1797,7 +1901,7 @@
           <div class="section-sparkle">🛠️ Technical</div>
           <h2 class="title">Help, backup & phone setup</h2>
           <p class="subtitle">Instructions and safety tools are grouped here instead of making Home too long.</p>
-          <div class="empty" style="margin-top:10px;">Current app version: <strong>Timeline storybook v42</strong></div>
+          <div class="empty" style="margin-top:10px;">Current app version: <strong>Period storybook v43</strong></div>
         </div>
 
         <div class="card compact-card">
@@ -3040,7 +3144,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Timeline storybook v42",
+          version: "Period storybook v43",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -3634,9 +3738,18 @@
       return `${base}-${Math.random().toString(36).slice(2, 7)}`;
     }
 
+    function defaultVietnamPeriods() {
+      return [
+        { id: "arrival-first-days", emoji: "✈️", title: "Arrival & first days", dateLabel: "8–10 Jul 2025", description: "Airport hug, first date, Playtendo, Unatoto, and becoming lovers." },
+        { id: "mall-food-days", emoji: "🍱", title: "Food dates & mall days", dateLabel: "12–16 Jul 2025", description: "Japanese food, Aeon Mall, BBQ, iSushi, photo booth and cozy game days." },
+        { id: "strawberry-escape-days", emoji: "🍓", title: "Strawberry blanket & escape rooms", dateLabel: "17–24 Jul 2025", description: "The strawberry blanket arc, festival, scary rooms, supermarket dates and soft breakfast memories." }
+      ];
+    }
+
     function defaultVietnamChapters() {
       return STORYBOOK_MEMORIES.map((item, index) => ({
         id: `sample-${index + 1}`,
+        periodId: index <= 2 ? "arrival-first-days" : index <= 3 ? "mall-food-days" : "strawberry-escape-days",
         date: item.date,
         title: item.title,
         summary: item.summary,
@@ -3660,6 +3773,7 @@
             pdfUrl: "",
             imagePaths: [],
             imageUrls: [],
+            periods: defaultVietnamPeriods(),
             chapters: defaultVietnamChapters()
           }
         ]
@@ -3678,8 +3792,16 @@
         pdfUrl: String(book.pdfUrl || ""),
         imagePaths: Array.isArray(book.imagePaths) ? book.imagePaths.map(String).filter(Boolean) : [],
         imageUrls: Array.isArray(book.imageUrls) ? book.imageUrls.map(String).filter(Boolean) : [],
+        periods: Array.isArray(book.periods) ? book.periods.map((period, pIndex) => ({
+          id: String(period.id || makeStorybookId(period.title || `period-${pIndex + 1}`)),
+          emoji: String(period.emoji || "📖"),
+          title: String(period.title || `Period ${pIndex + 1}`),
+          dateLabel: String(period.dateLabel || ""),
+          description: String(period.description || "")
+        })) : [],
         chapters: Array.isArray(book.chapters) ? book.chapters.map((chapter, cIndex) => ({
           id: String(chapter.id || `chapter-${cIndex + 1}`),
+          periodId: String(chapter.periodId || ""),
           date: String(chapter.date || ""),
           title: String(chapter.title || `Memory page ${cIndex + 1}`),
           summary: String(chapter.summary || ""),
@@ -3708,6 +3830,7 @@
           pdfUrl: book.pdfPath ? "" : (book.pdfUrl || ""),
           imagePaths: book.imagePaths || [],
           imageUrls: book.imagePaths?.length ? [] : (book.imageUrls || []),
+          periods: book.periods || [],
           chapters: book.chapters || []
         }))
       };
@@ -3838,7 +3961,10 @@
         select.value = activeStorybookId;
       }
       if (count) count.textContent = `${library.books.length} book${library.books.length === 1 ? "" : "s"}`;
+
       const book = activeStorybook();
+      const periods = Array.isArray(book?.periods) ? book.periods : [];
+
       if (qs("storybookEditTitle")) qs("storybookEditTitle").value = book?.title || "";
       if (qs("storybookEditSubtitle")) qs("storybookEditSubtitle").value = book?.subtitle || "";
       if (qs("storybookEditDateLabel")) qs("storybookEditDateLabel").value = book?.dateLabel || "";
@@ -3846,6 +3972,120 @@
       if (qs("storybookDisplayCopy")) {
         qs("storybookDisplayCopy").textContent = book?.subtitle || "A private scrapbook for this chapter of your relationship.";
       }
+
+      const filter = qs("storybookPeriodFilter");
+      if (filter) {
+        const current = filter.value || "all";
+        filter.innerHTML = `<option value="all">All periods</option><option value="none">No period</option>` + periods.map(period => `
+          <option value="${escapeHTML(period.id)}">${escapeHTML(period.emoji || "📖")} ${escapeHTML(period.title)}</option>
+        `).join("");
+        filter.value = [...periods.map(p => p.id), "all", "none"].includes(current) ? current : "all";
+      }
+
+      const periodSelect = qs("storybookPeriodSelect");
+      if (periodSelect) {
+        const current = periodSelect.value || periods[0]?.id || "";
+        periodSelect.innerHTML = periods.length
+          ? periods.map(period => `<option value="${escapeHTML(period.id)}">${escapeHTML(period.emoji || "📖")} ${escapeHTML(period.title)}</option>`).join("")
+          : `<option value="">No periods yet</option>`;
+        periodSelect.value = periods.some(p => p.id === current) ? current : (periods[0]?.id || "");
+      }
+
+      const pagePeriod = qs("storybookPagePeriod");
+      if (pagePeriod) {
+        const current = pagePeriod.value || periods[0]?.id || "";
+        pagePeriod.innerHTML = `<option value="">No period / general</option>` + periods.map(period => `
+          <option value="${escapeHTML(period.id)}">${escapeHTML(period.emoji || "📖")} ${escapeHTML(period.title)}</option>
+        `).join("");
+        pagePeriod.value = periods.some(p => p.id === current) ? current : "";
+      }
+
+      if (qs("storybookPeriodCount")) qs("storybookPeriodCount").textContent = `${periods.length} period${periods.length === 1 ? "" : "s"}`;
+      loadSelectedStorybookPeriodIntoForm(false);
+    }
+
+
+    function getSelectedStorybookPeriod() {
+      const book = activeStorybook();
+      const id = qs("storybookPeriodSelect")?.value || "";
+      return (book?.periods || []).find(period => period.id === id) || null;
+    }
+
+    function loadSelectedStorybookPeriodIntoForm(clearWhenEmpty = true) {
+      const period = getSelectedStorybookPeriod();
+      if (!period) {
+        if (clearWhenEmpty) {
+          if (qs("storybookPeriodEmoji")) qs("storybookPeriodEmoji").value = "";
+          if (qs("storybookPeriodTitle")) qs("storybookPeriodTitle").value = "";
+          if (qs("storybookPeriodDateLabel")) qs("storybookPeriodDateLabel").value = "";
+          if (qs("storybookPeriodDescription")) qs("storybookPeriodDescription").value = "";
+        }
+        return;
+      }
+      if (qs("storybookPeriodEmoji")) qs("storybookPeriodEmoji").value = period.emoji || "";
+      if (qs("storybookPeriodTitle")) qs("storybookPeriodTitle").value = period.title || "";
+      if (qs("storybookPeriodDateLabel")) qs("storybookPeriodDateLabel").value = period.dateLabel || "";
+      if (qs("storybookPeriodDescription")) qs("storybookPeriodDescription").value = period.description || "";
+    }
+
+    async function createStorybookPeriod() {
+      const book = activeStorybook();
+      if (!book) return;
+      const title = qs("storybookPeriodTitle")?.value.trim() || "";
+      if (!title) {
+        alert("Type a period title first, like Day 1 or Da Lat.");
+        return;
+      }
+      book.periods = Array.isArray(book.periods) ? book.periods : [];
+      const period = {
+        id: makeStorybookId(title),
+        emoji: qs("storybookPeriodEmoji")?.value.trim() || "📖",
+        title,
+        dateLabel: qs("storybookPeriodDateLabel")?.value.trim() || "",
+        description: qs("storybookPeriodDescription")?.value.trim() || ""
+      };
+      book.periods.push(period);
+      await saveStorybookLibrary(storybookLibraryCache);
+      renderStorybookBookshelf();
+      if (qs("storybookPeriodSelect")) qs("storybookPeriodSelect").value = period.id;
+      if (qs("storybookPagePeriod")) qs("storybookPagePeriod").value = period.id;
+      if (qs("storybookPeriodFilter")) qs("storybookPeriodFilter").value = period.id;
+      renderStorybook();
+      if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Period added to this storybook 💌";
+    }
+
+    async function saveStorybookPeriod() {
+      const period = getSelectedStorybookPeriod();
+      if (!period) {
+        alert("Select a period first.");
+        return;
+      }
+      period.emoji = qs("storybookPeriodEmoji")?.value.trim() || "📖";
+      period.title = qs("storybookPeriodTitle")?.value.trim() || period.title;
+      period.dateLabel = qs("storybookPeriodDateLabel")?.value.trim() || "";
+      period.description = qs("storybookPeriodDescription")?.value.trim() || "";
+      await saveStorybookLibrary(storybookLibraryCache);
+      renderStorybookBookshelf();
+      renderStorybook();
+      if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Period saved 💖";
+    }
+
+    async function deleteStorybookPeriod() {
+      const book = activeStorybook();
+      const period = getSelectedStorybookPeriod();
+      if (!book || !period) {
+        alert("Select a period first.");
+        return;
+      }
+      if (!confirm(`Delete period "${period.title}"? Pages in this period will move to No period.`)) return;
+      book.periods = (book.periods || []).filter(item => item.id !== period.id);
+      (book.chapters || []).forEach(chapter => {
+        if (chapter.periodId === period.id) chapter.periodId = "";
+      });
+      await saveStorybookLibrary(storybookLibraryCache);
+      renderStorybookBookshelf();
+      renderStorybook();
+      if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Period deleted. Pages were kept.";
     }
 
     function selectStorybookBook() {
@@ -3853,6 +4093,7 @@
       if (!select?.value) return;
       activeStorybookId = select.value;
       localStorage.setItem(STORYBOOK_ACTIVE_KEY, activeStorybookId);
+      if (qs("storybookPeriodFilter")) qs("storybookPeriodFilter").value = "all";
       renderStorybookBookshelf();
       renderStorybook();
       loadStorybookStorageInputs();
@@ -3877,6 +4118,9 @@
         pdfUrl: "",
         imagePaths: [],
         imageUrls: [],
+        periods: [
+          { id: "first-period", emoji: "📖", title: "First period", dateLabel: "", description: "Start adding pages here, then rename this period." }
+        ],
         chapters: []
       };
       library.books.push(book);
@@ -3947,6 +4191,7 @@
         summary,
         quote: qs("storybookPageQuote")?.value.trim() || "",
         tags: (qs("storybookPageTags")?.value || "").split(",").map(tag => tag.trim()).filter(Boolean),
+        periodId: qs("storybookPagePeriod")?.value || "",
         imageIndex
       });
       ["storybookPageDate", "storybookPageTitle", "storybookPageSummary", "storybookPageQuote", "storybookPageTags", "storybookPageImageIndex"].forEach(id => {
@@ -4026,6 +4271,7 @@
           summary: "A saved photo/page preview from this storybook. Add custom pages if you want captions and dates.",
           quote: "",
           tags: ["uploaded", "storybook"],
+          periodId: "",
           imageIndex: index
         }));
       }
@@ -4049,33 +4295,75 @@
       const album = qs("storybookAlbum");
       const book = activeStorybook();
       const pages = storybookPagesForActiveBook();
+      const periods = Array.isArray(book?.periods) ? book.periods : [];
+      const filter = qs("storybookPeriodFilter")?.value || "all";
+
+      const periodMap = new Map(periods.map(period => [period.id, period]));
+      const filteredPages = pages.filter(page => {
+        if (filter === "all") return true;
+        if (filter === "none") return !page.periodId;
+        return page.periodId === filter;
+      });
 
       if (timeline) {
-        if (!pages.length) {
-          timeline.innerHTML = `<div class="storybook-empty-book">This storybook is empty. Add a custom page or upload images to start building it ✨</div>`;
+        if (!filteredPages.length) {
+          timeline.innerHTML = `<div class="storybook-empty-book">No pages in this period yet. Add a custom story page or upload images ✨</div>`;
         } else {
-          timeline.innerHTML = pages.map((item, index) => {
-            const image = storybookImageFor(index, item);
-            const sticker = index % 3 === 0 ? "[sticker:strawberry-wiggle]" : index % 3 === 1 ? "[sticker:cat-bounce]" : "[sticker:heart-pulse]";
-            const tags = Array.isArray(item.tags) ? item.tags : [];
-            return `
-              <div class="storybook-page">
-                <div class="storybook-text">
-                  <div class="storybook-date">${escapeHTML(item.date || book?.dateLabel || "Memory")}</div>
-                  <h3>${renderRichText(sticker)} ${escapeHTML(item.title || `Memory page ${index + 1}`)}</h3>
-                  <p>${escapeHTML(item.summary || "")}</p>
-                  ${item.quote ? `<div class="storybook-quote">“${escapeHTML(item.quote)}”</div>` : ""}
-                  <div class="storybook-chips">
-                    ${tags.map(tag => `<span class="storybook-chip">${escapeHTML(tag)}</span>`).join("")}
-                  </div>
+          const groups = [];
+          if (filter === "all") {
+            periods.forEach(period => {
+              const groupPages = filteredPages.filter(page => page.periodId === period.id);
+              if (groupPages.length) groups.push({ period, pages: groupPages });
+            });
+            const noPeriodPages = filteredPages.filter(page => !page.periodId || !periodMap.has(page.periodId));
+            if (noPeriodPages.length) {
+              groups.push({
+                period: { id: "none", emoji: "📎", title: "General memories", dateLabel: "", description: "Pages not assigned to a period yet." },
+                pages: noPeriodPages
+              });
+            }
+          } else {
+            const period = filter === "none"
+              ? { id: "none", emoji: "📎", title: "General memories", dateLabel: "", description: "Pages not assigned to a period yet." }
+              : periodMap.get(filter) || { id: filter, emoji: "📖", title: "Selected period", dateLabel: "", description: "" };
+            groups.push({ period, pages: filteredPages });
+          }
+
+          timeline.innerHTML = groups.map(group => `
+            <div class="storybook-period-block">
+              <div class="storybook-period-title">
+                <div>
+                  <h3>${escapeHTML(group.period.emoji || "📖")} ${escapeHTML(group.period.title || "Story period")}</h3>
+                  ${group.period.description ? `<p>${escapeHTML(group.period.description)}</p>` : ""}
                 </div>
-                <div class="storybook-photo-frame" onclick="openStorybookLightbox('${escapeHTML(image)}', '${escapeHTML(item.title || book?.title || "Storybook memory")}', '${escapeHTML(item.summary || "")}')">
-                  <img src="${escapeHTML(image)}" alt="${escapeHTML(item.title || "Storybook memory")}">
-                  <span>${escapeHTML(item.date || book?.dateLabel || "Memory")} · tap to enlarge</span>
-                </div>
+                ${group.period.dateLabel ? `<div class="storybook-period-date">${escapeHTML(group.period.dateLabel)}</div>` : ""}
               </div>
-            `;
-          }).join("");
+              ${group.pages.map((item, index) => {
+                const globalIndex = pages.indexOf(item);
+                const image = storybookImageFor(globalIndex >= 0 ? globalIndex : index, item);
+                const sticker = index % 3 === 0 ? "[sticker:strawberry-wiggle]" : index % 3 === 1 ? "[sticker:cat-bounce]" : "[sticker:heart-pulse]";
+                const tags = Array.isArray(item.tags) ? item.tags : [];
+                return `
+                  <div class="storybook-page">
+                    <div class="storybook-text">
+                      <div class="storybook-date">${escapeHTML(item.date || group.period.dateLabel || book?.dateLabel || "Memory")}</div>
+                      <h3>${renderRichText(sticker)} ${escapeHTML(item.title || `Memory page ${index + 1}`)}</h3>
+                      <p>${escapeHTML(item.summary || "")}</p>
+                      ${item.quote ? `<div class="storybook-quote">“${escapeHTML(item.quote)}”</div>` : ""}
+                      <div class="storybook-chips">
+                        <span class="storybook-chip">${escapeHTML(group.period.title || "General")}</span>
+                        ${tags.map(tag => `<span class="storybook-chip">${escapeHTML(tag)}</span>`).join("")}
+                      </div>
+                    </div>
+                    <div class="storybook-photo-frame" onclick="openStorybookLightbox('${escapeHTML(image)}', '${escapeHTML(item.title || book?.title || "Storybook memory")}', '${escapeHTML(item.summary || "")}')">
+                      <img src="${escapeHTML(image)}" alt="${escapeHTML(item.title || "Storybook memory")}">
+                      <span>${escapeHTML(item.date || group.period.dateLabel || book?.dateLabel || "Memory")} · tap to enlarge</span>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          `).join("");
         }
       }
 
@@ -4083,11 +4371,12 @@
         const imageUrls = book?.imageUrls?.length ? book.imageUrls : pages.map((item, index) => storybookImageFor(index, item));
         album.innerHTML = imageUrls.map((image, index) => {
           const page = pages[index] || { title: `Photo ${index + 1}`, date: book?.dateLabel || "" };
+          const period = page.periodId ? periodMap.get(page.periodId) : null;
           return `
             <div class="storybook-album-card" onclick="openStorybookLightbox('${escapeHTML(image)}', '${escapeHTML(page.title || `Photo ${index + 1}`)}', '${escapeHTML(page.quote || page.summary || book?.title || "")}')">
               <img src="${escapeHTML(image)}" alt="${escapeHTML(page.title || `Photo ${index + 1}`)}">
               <strong>${escapeHTML(page.title || `Photo ${index + 1}`)}</strong>
-              <span>${escapeHTML(page.date || book?.dateLabel || "Storybook photo")}</span>
+              <span>${escapeHTML(period ? `${period.emoji || "📖"} ${period.title}` : (page.date || book?.dateLabel || "Storybook photo"))}</span>
             </div>
           `;
         }).join("");
@@ -4124,8 +4413,9 @@
         "5. The app uploads to paths like:",
         "   {couple_id}/storybook/{storybook_id}/pdf/...",
         "   {couple_id}/storybook/{storybook_id}/images/...",
-        "6. The storybook bookshelf itself is saved as one hidden Journal entry.",
-        "7. Create books such as Vietnam 2025, Next Vietnam, Belgium memories, Food adventures, Anniversary, etc."
+        "6. Each storybook can have editable periods/chapters.",
+        "7. The storybook bookshelf itself is saved as one hidden Journal entry.",
+        "8. Create books such as Vietnam 2025, Next Vietnam, Belgium memories, Food adventures, Anniversary, etc."
       ].join("\\n");
       await copyTextToClipboard(text, "Supabase guide copied 💌");
       if (qs("storybookStorageMessage")) qs("storybookStorageMessage").textContent = "Supabase guide copied 💌";
@@ -4254,6 +4544,56 @@
       return "🍓";
     }
 
+    async function addTimelineItemToStorybook(encodedItem) {
+      try {
+        const item = JSON.parse(decodeURIComponent(encodedItem));
+        await loadStorybookLibrary();
+        const book = activeStorybook();
+        if (!book) {
+          alert("Create or select a storybook first.");
+          return;
+        }
+        book.periods = Array.isArray(book.periods) ? book.periods : [];
+        if (!book.periods.length) {
+          book.periods.push({
+            id: "timeline-memories",
+            emoji: "🍓",
+            title: "Timeline memories",
+            dateLabel: "",
+            description: "Plans and memories added from the relationship timeline."
+          });
+        }
+        const filterValue = qs("storybookPeriodFilter")?.value || "all";
+        const selectedPeriodId = filterValue && !["all", "none"].includes(filterValue)
+          ? filterValue
+          : (book.periods[0]?.id || "");
+        book.chapters = Array.isArray(book.chapters) ? book.chapters : [];
+        book.chapters.push({
+          id: makeStorybookId(item.title || "timeline-memory"),
+          periodId: selectedPeriodId,
+          date: item.date || "",
+          title: item.title || "Timeline memory",
+          summary: item.body || "",
+          quote: item.kind === "upcoming" ? "A future memory waiting to happen." : "",
+          tags: item.tags || [item.kind || "timeline"],
+          imageIndex: Math.max(0, (book.chapters || []).length)
+        });
+        await saveStorybookLibrary(storybookLibraryCache);
+        renderStorybookBookshelf();
+        renderStorybook();
+        if (qs("cuteRelationshipTimeline")) {
+          const msg = document.createElement("div");
+          msg.className = "empty";
+          msg.textContent = `Added to "${book.title}" memory book 💌`;
+          qs("cuteRelationshipTimeline").prepend(msg);
+          setTimeout(() => msg.remove(), 3500);
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Could not add this timeline item to the storybook.");
+      }
+    }
+
     async function loadCuteRelationshipTimeline() {
       const box = qs("cuteRelationshipTimeline");
       if (!box || !currentCouple) return;
@@ -4332,6 +4672,7 @@
               <div class="cute-timeline-tags">
                 ${item.tags.map(tag => `<span class="cute-timeline-tag">${escapeHTML(tag)}</span>`).join("")}
               </div>
+              <button class="story-add-button" onclick="addTimelineItemToStorybook('${encodeURIComponent(JSON.stringify(item))}')">Add to selected memory book</button>
             </div>
           </div>
         `).join("");
