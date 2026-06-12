@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Final comfort v30</title>
+  <title>Date Planner for Us 🍓 Surprise period fix v31</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -693,7 +693,7 @@
     }
 
 
-    /* v30 final comfort polish */
+    /* v31 surprise period fix + final comfort polish */
     .comfort-steps { display: grid; gap: 8px; margin-top: 10px; }
     .comfort-step { padding: 10px 12px; border: 1px solid var(--line); border-radius: 15px; background: #fffafd; font-size: 13px; line-height: 1.38; }
     .comfort-step strong { color: var(--berry-dark); }
@@ -726,7 +726,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Final comfort v30</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Surprise period fix v31</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -801,7 +801,7 @@
 
 
         <div class="card compact-card">
-          <div class="section-sparkle">🍓 v30 comfort</div>
+          <div class="section-sparkle">🍓 v31 comfort</div>
           <h2 class="title">🌷 How to use this app</h2>
           <p class="subtitle">A small guide so the app feels easier for both of you.</p>
           <div class="comfort-steps">
@@ -839,7 +839,7 @@
 
 
         <div class="card compact-card">
-          <div class="section-sparkle">📖 v30 memory book</div>
+          <div class="section-sparkle">📖 v31 memory book</div>
           <h2 class="title">📖 Relationship memory book</h2>
           <p class="subtitle">A soft summary of your couple profile, favorite picks, memories and date history.</p>
           <div id="relationshipMemoryBook" class="memory-book-box">
@@ -1869,7 +1869,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Clean memories v29",
+          version: "Surprise period fix v31",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -4531,8 +4531,10 @@
         const game = pickRandomItem(byType("game"));
 
         const entries = [];
+        // Keep the surprise plan in the correct day order:
+        // Morning → Noon → Afternoon → Evening.
+        if (food) entries.push({ ...food, period: "Morning", title: food.name });
         if (place) entries.push({ ...place, period: "Noon", title: place.name });
-        if (food) entries.push({ ...food, period: "Noon", title: food.name });
         if (activity) entries.push({ ...activity, period: "Afternoon", title: activity.name });
         if (game) entries.push({ ...game, period: "Evening", title: game.name });
 
