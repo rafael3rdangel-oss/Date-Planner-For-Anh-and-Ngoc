@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Surprise period fix v31</title>
+  <title>Date Planner for Us 🍓 Layout tabs + stickers note v32</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,9 +265,9 @@
     .empty { padding: 12px 3px 4px; color: var(--muted); font-size: 13px; }
     .library-grid { display: grid; gap: 10px; }
     .badge { display: inline-block; padding: 4px 8px; border-radius: 999px; background: var(--pink-2); color: var(--berry-dark); font-size: 12px; font-weight: 700; margin-top: 6px; }
-    .bottom-nav { position: fixed; left: 50%; bottom: 10px; z-index: 20; width: calc(100% - 20px); max-width: 748px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; padding: 8px; transform: translateX(-50%); border: 1px solid rgba(239, 111, 159, .16); border-radius: 24px; background: rgba(255, 255, 255, .94); box-shadow: 0 12px 35px rgba(92, 66, 80, .18); backdrop-filter: blur(12px); }
-    .nav-button { padding: 8px 4px; border: none; border-radius: 15px; background: transparent; color: var(--muted); font-size: 11px; }
-    .nav-button span { display: block; margin-bottom: 3px; font-size: 20px; }
+    .bottom-nav { position: fixed; left: 50%; bottom: 10px; z-index: 20; width: calc(100% - 20px); max-width: 820px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 8px; transform: translateX(-50%); border: 1px solid rgba(239, 111, 159, .16); border-radius: 24px; background: rgba(255, 255, 255, .94); box-shadow: 0 12px 35px rgba(92, 66, 80, .18); backdrop-filter: blur(12px); }
+    .nav-button { padding: 7px 2px; border: none; border-radius: 15px; background: transparent; color: var(--muted); font-size: 10px; }
+    .nav-button span { display: block; margin-bottom: 2px; font-size: 18px; }
     .nav-button.active { background: var(--pink); color: var(--berry-dark); font-weight: 700; }
 
     .form-grid { display: grid; gap: 9px; }
@@ -685,8 +685,8 @@
       .actions .button, .row .button, .date-row .button { width: 100%; }
       .library-item-head { gap: 8px; }
       .bottom-nav { width: calc(100% - 10px); bottom: 5px; padding: 6px; border-radius: 22px; }
-      .nav-button { min-height: 54px; font-size: 10px; }
-      .nav-button span { font-size: 20px; }
+      .nav-button { min-height: 52px; font-size: 9px; }
+      .nav-button span { font-size: 17px; }
       .edit-modal { width: calc(100% - 16px); max-height: 88vh; overflow: auto; border-radius: 22px; }
       .couple-profile-line { grid-template-columns: 1fr; gap: 2px; }
       .photo-wall-grid, .favorite-grid, .stats-grid { grid-template-columns: 1fr; }
@@ -700,6 +700,10 @@
     .memory-book-box { display: grid; gap: 9px; margin-top: 10px; }
     .memory-book-row { padding: 10px 12px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(135deg, #fffafd, #f7fcff); font-size: 13px; line-height: 1.42; }
     .memory-book-row strong { display: block; color: var(--berry-dark); margin-bottom: 3px; }
+
+    .home-welcome-card { padding: 14px; }
+    .home-welcome-card .title { margin-bottom: 4px; }
+    .home-welcome-card .subtitle { margin-bottom: 10px; }
     .review-box { padding: 12px; border: 1px dashed #ffb4ce; border-radius: 18px; background: #fff7fb; margin-top: 11px; }
     .review-box ul { margin: 8px 0 0 18px; padding: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
     .journal-reader { display: grid; gap: 10px; }
@@ -726,7 +730,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Surprise period fix v31</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Layout tabs + stickers note v32</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -771,6 +775,17 @@
       </div>
 
       <main id="homePage" class="page active">
+        <div class="card compact-card home-welcome-card">
+          <div class="section-sparkle">🍓 Home</div>
+          <h2 class="title">Welcome back</h2>
+          <p class="subtitle">A smaller home screen: invite, next date, and quick shortcuts only.</p>
+          <div class="actions">
+            <button class="button secondary" onclick="openPage('planPage','planNav')">Open Plan</button>
+            <button class="button secondary" onclick="openPage('overviewPage','overviewNav')">Open Overview</button>
+            <button class="button ghost" onclick="openPage('technicalPage','technicalNav')">Help & backup</button>
+          </div>
+        </div>
+
         <div class="card invite-card">
           <h2 class="title">💌 Invite her</h2>
           <p class="subtitle">Give this invite code to your girlfriend after she creates her own account. She should choose “Join with invite code”, not create a new couple space.</p>
@@ -786,6 +801,7 @@
           <p id="inviteCopyMessage" class="copy-message"></p>
         </div>
 
+
         <div class="card compact-card">
           <h2 class="title">👥 Couple members</h2>
           <p class="subtitle">See who has joined this planner and set your nickname.</p>
@@ -800,22 +816,44 @@
 
 
 
+        
         <div class="card compact-card">
-          <div class="section-sparkle">🍓 v31 comfort</div>
-          <h2 class="title">🌷 How to use this app</h2>
-          <p class="subtitle">A small guide so the app feels easier for both of you.</p>
-          <div class="comfort-steps">
-            <div class="comfort-step"><strong>1. Save ideas:</strong> add food, places, games and activities in Library.</div>
-            <div class="comfort-step"><strong>2. Make a plan:</strong> choose a date in Plan, then add ideas to Morning, Noon, Afternoon or Evening.</div>
-            <div class="comfort-step"><strong>3. After the date:</strong> use the review shortcut to save the memory into Journal.</div>
-            <div class="comfort-step"><strong>4. Keep it safe:</strong> download a backup sometimes from Home.</div>
-          </div>
-          <div class="actions">
-            <button class="button secondary" onclick="quickStartForEm()">Copy join steps for em</button>
-            <button class="button ghost" onclick="openPage('libraryPage','libraryNav')">Open Library</button>
+          <h2 class="title">⏳ Next date countdown</h2>
+          <p class="subtitle">See the next planned date at a glance, then open, copy, or share it.</p>
+          <div id="nextDateCountdown">
+            <div class="empty">Loading next date...</div>
           </div>
         </div>
 
+        
+        <div class="card compact-card">
+          <h2 class="title">🏠 Home</h2>
+          <p class="subtitle">Upcoming plans and past memories in one clean overview.</p>
+          <div class="tabs-mini">
+            <button id="upcomingTab" class="active" onclick="setHomeMode('upcoming')">Upcoming</button>
+            <button id="pastTab" onclick="setHomeMode('past')">Past</button>
+          </div>
+          <div id="homeList" class="summary-list"></div>
+        </div>
+      
+      </main>
+
+      <main id="overviewPage" class="page">
+        <div class="card compact-card">
+          <div class="section-sparkle">📊 Overview</div>
+          <h2 class="title">Overview dashboard</h2>
+          <p class="subtitle">All the relationship overview things live here now, so Home stays light.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h2 class="title">📊 Our dashboard</h2>
+          <p class="subtitle">Quick overview of your saved ideas, plans and memories.</p>
+          <div id="dashboardStats" class="stats-grid">
+            <div class="empty">Loading dashboard...</div>
+          </div>
+        </div>
+
+        
         <div class="card compact-card">
           <div class="section-sparkle">🍓 v27 personal touch</div>
           <h2 class="title">💞 Couple profile</h2>
@@ -838,6 +876,7 @@
 
 
 
+        
         <div class="card compact-card">
           <div class="section-sparkle">📖 v31 memory book</div>
           <h2 class="title">📖 Relationship memory book</h2>
@@ -852,47 +891,25 @@
           <p id="memoryBookMessage" class="plan-copy-message"></p>
         </div>
 
+        
         <div class="card compact-card">
-          <h2 class="title">🛟 Safe backup + restore helper</h2>
-          <p class="subtitle">Download a JSON backup, or preview a backup file before restoring missing items. Restore does not delete your current data.</p>
-          <button class="button secondary" style="width:100%;" onclick="downloadDataBackup()">Download data backup</button>
-          <div class="cute-divider">optional restore helper</div>
-          <input id="backupImportFile" type="file" accept="application/json,.json" onchange="previewBackupFile()">
-          <div class="actions">
-            <button class="button ghost" onclick="previewBackupFile()">Preview backup file</button>
-            <button class="button secondary" onclick="restoreBackupFromPreview()">Restore missing data</button>
-          </div>
-          <div class="soft-warning">Restore is careful: it tries to add missing library items, plans, plan entries and journal entries. It does not delete anything. Still, download a fresh backup first.</div>
-          <div id="backupImportPreview" class="import-preview hidden"></div>
-          <p id="dataBackupMessage" class="subtitle" style="margin-top:10px;"></p>
-        </div>
-
-        <div class="card compact-card">
-          <h2 class="title">📱 Phone app shortcut</h2>
-          <p class="subtitle">You can make this feel like a phone app for free. No app store, no extra Supabase storage, no extra Render cost.</p>
-          <div class="actions">
-            <button class="button" onclick="installPhoneApp()">Install / show phone steps</button>
-            <button class="button secondary" onclick="showPhoneInstallHelp()">How it works</button>
-          </div>
-          <div id="phoneInstallMessage" class="comfort-note hidden"></div>
-        </div>
-
-        <div class="card compact-card">
-          <h2 class="title">📊 Our dashboard</h2>
-          <p class="subtitle">Quick overview of your saved ideas, plans and memories.</p>
-          <div id="dashboardStats" class="stats-grid">
-            <div class="empty">Loading dashboard...</div>
+          <h2 class="title">🖼️ Memory photo wall</h2>
+          <p class="subtitle">A cute preview of direct photo links and saved memory links from Journal. No photo upload needed.</p>
+          <div id="photoWallList" class="photo-wall-grid">
+            <div class="empty">Loading photos...</div>
           </div>
         </div>
 
+        
         <div class="card compact-card">
-          <h2 class="title">⏳ Next date countdown</h2>
-          <p class="subtitle">See the next planned date at a glance, then open, copy, or share it.</p>
-          <div id="nextDateCountdown">
-            <div class="empty">Loading next date...</div>
+          <h2 class="title">💖 Favorite picks</h2>
+          <p class="subtitle">Your favorite food, places, games and activities. Mark items as Favorite in Library and they appear here.</p>
+          <div id="favoritePicksList" class="favorite-grid">
+            <div class="empty">Loading favorites...</div>
           </div>
         </div>
 
+        
         <div class="card compact-card">
           <h2 class="title">📚 Date history</h2>
           <p class="subtitle">Search all your dates, past memories and upcoming plans. This only reads your saved plans.</p>
@@ -929,72 +946,60 @@
           </div>
         </div>
 
+        
+      </main>
+
+      <main id="technicalPage" class="page">
         <div class="card compact-card">
-          <h2 class="title">🖼️ Memory photo wall</h2>
-          <p class="subtitle">A cute preview of direct photo links and saved memory links from Journal. No photo upload needed.</p>
-          <div id="photoWallList" class="photo-wall-grid">
-            <div class="empty">Loading photos...</div>
-          </div>
+          <div class="section-sparkle">🛠️ Technical</div>
+          <h2 class="title">Help, backup & phone setup</h2>
+          <p class="subtitle">Instructions and safety tools are grouped here instead of making Home too long.</p>
         </div>
 
         <div class="card compact-card">
-          <h2 class="title">💖 Favorite picks</h2>
-          <p class="subtitle">Your favorite food, places, games and activities. Mark items as Favorite in Library and they appear here.</p>
-          <div id="favoritePicksList" class="favorite-grid">
-            <div class="empty">Loading favorites...</div>
-          </div>
-        </div>
-
-        <div class="card compact-card">
-          <h2 class="title">🎲 Surprise date picker</h2>
-          <p class="subtitle">Let the app pick a cute date idea from your saved food, places, games and activities. It will not change anything until you click “Add to plan”.</p>
-          <div class="row">
-            <div>
-              <div class="filter-small-label">Date</div>
-              <input id="surpriseDate" type="date">
-            </div>
-            <div>
-              <div class="filter-small-label">Mood</div>
-              <select id="surpriseMood">
-                <option value="Cozy">Cozy</option>
-                <option value="Romantic">Romantic</option>
-                <option value="Fun">Fun</option>
-                <option value="Chill">Chill</option>
-                <option value="Adventure">Adventure</option>
-                <option value="Random">Random</option>
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <select id="surpriseBudget">
-              <option value="">Budget unknown</option>
-              <option value="Free">Free</option>
-              <option value="€">€ cheap</option>
-              <option value="€€">€€ normal</option>
-              <option value="€€€">€€€ special date</option>
-              <option value="Home">Home / already have supplies</option>
-            </select>
-            <button class="button" onclick="generateSurpriseDate()">Generate idea</button>
+          <div class="section-sparkle">🍓 v31 comfort</div>
+          <h2 class="title">🌷 How to use this app</h2>
+          <p class="subtitle">A small guide so the app feels easier for both of you.</p>
+          <div class="comfort-steps">
+            <div class="comfort-step"><strong>1. Save ideas:</strong> add food, places, games and activities in Library.</div>
+            <div class="comfort-step"><strong>2. Make a plan:</strong> choose a date in Plan, then add ideas to Morning, Noon, Afternoon or Evening.</div>
+            <div class="comfort-step"><strong>3. After the date:</strong> use the review shortcut to save the memory into Journal.</div>
+            <div class="comfort-step"><strong>4. Keep it safe:</strong> download a backup sometimes from Home.</div>
           </div>
           <div class="actions">
-            <button class="button secondary" onclick="addSurpriseToPlan()">Add to plan</button>
-            <button class="button ghost" onclick="copySurpriseIdea()">Copy idea</button>
-          </div>
-          <div id="surpriseResult" class="entry">
-            <div class="entry-title">No surprise generated yet.</div>
-            <div class="entry-meta">Click “Generate idea” first ✨</div>
+            <button class="button secondary" onclick="quickStartForEm()">Copy join steps for em</button>
+            <button class="button ghost" onclick="openPage('libraryPage','libraryNav')">Open Library</button>
           </div>
         </div>
 
+        
         <div class="card compact-card">
-          <h2 class="title">🏠 Home</h2>
-          <p class="subtitle">Upcoming plans and past memories in one clean overview.</p>
-          <div class="tabs-mini">
-            <button id="upcomingTab" class="active" onclick="setHomeMode('upcoming')">Upcoming</button>
-            <button id="pastTab" onclick="setHomeMode('past')">Past</button>
+          <h2 class="title">🛟 Safe backup + restore helper</h2>
+          <p class="subtitle">Download a JSON backup, or preview a backup file before restoring missing items. Restore does not delete your current data.</p>
+          <button class="button secondary" style="width:100%;" onclick="downloadDataBackup()">Download data backup</button>
+          <div class="cute-divider">optional restore helper</div>
+          <input id="backupImportFile" type="file" accept="application/json,.json" onchange="previewBackupFile()">
+          <div class="actions">
+            <button class="button ghost" onclick="previewBackupFile()">Preview backup file</button>
+            <button class="button secondary" onclick="restoreBackupFromPreview()">Restore missing data</button>
           </div>
-          <div id="homeList" class="summary-list"></div>
+          <div class="soft-warning">Restore is careful: it tries to add missing library items, plans, plan entries and journal entries. It does not delete anything. Still, download a fresh backup first.</div>
+          <div id="backupImportPreview" class="import-preview hidden"></div>
+          <p id="dataBackupMessage" class="subtitle" style="margin-top:10px;"></p>
         </div>
+
+        
+        <div class="card compact-card">
+          <h2 class="title">📱 Phone app shortcut</h2>
+          <p class="subtitle">You can make this feel like a phone app for free. No app store, no extra Supabase storage, no extra Render cost.</p>
+          <div class="actions">
+            <button class="button" onclick="installPhoneApp()">Install / show phone steps</button>
+            <button class="button secondary" onclick="showPhoneInstallHelp()">How it works</button>
+          </div>
+          <div id="phoneInstallMessage" class="comfort-note hidden"></div>
+        </div>
+
+        
       </main>
 
       <main id="planPage" class="page">
@@ -1078,6 +1083,54 @@
             <button class="button ghost" style="width:100%;" onclick="deleteCurrentPlanIfEmpty()">Delete empty day</button>
           </div>
         </div>
+        <div class="card compact-card">
+          <div class="section-sparkle">🎲 Plan helper</div>
+          <h2 class="title">Quick surprise idea</h2>
+          <p class="subtitle">Use this inside Plan when you want the app to pick something from your Library.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h2 class="title">🎲 Surprise date picker</h2>
+          <p class="subtitle">Let the app pick a cute date idea from your saved food, places, games and activities. It will not change anything until you click “Add to plan”.</p>
+          <div class="row">
+            <div>
+              <div class="filter-small-label">Date</div>
+              <input id="surpriseDate" type="date">
+            </div>
+            <div>
+              <div class="filter-small-label">Mood</div>
+              <select id="surpriseMood">
+                <option value="Cozy">Cozy</option>
+                <option value="Romantic">Romantic</option>
+                <option value="Fun">Fun</option>
+                <option value="Chill">Chill</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Random">Random</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <select id="surpriseBudget">
+              <option value="">Budget unknown</option>
+              <option value="Free">Free</option>
+              <option value="€">€ cheap</option>
+              <option value="€€">€€ normal</option>
+              <option value="€€€">€€€ special date</option>
+              <option value="Home">Home / already have supplies</option>
+            </select>
+            <button class="button" onclick="generateSurpriseDate()">Generate idea</button>
+          </div>
+          <div class="actions">
+            <button class="button secondary" onclick="addSurpriseToPlan()">Add to plan</button>
+            <button class="button ghost" onclick="copySurpriseIdea()">Copy idea</button>
+          </div>
+          <div id="surpriseResult" class="entry">
+            <div class="entry-title">No surprise generated yet.</div>
+            <div class="entry-meta">Click “Generate idea” first ✨</div>
+          </div>
+        </div>
+
+        
         <div id="periodCards"></div>
       </main>
 
@@ -1414,9 +1467,11 @@
 
   <nav id="bottomNav" class="bottom-nav hidden">
     <button id="homeNav" class="nav-button active" onclick="openPage('homePage','homeNav')"><span>🏠</span>Home</button>
+    <button id="overviewNav" class="nav-button" onclick="openPage('overviewPage','overviewNav')"><span>📊</span>Overview</button>
     <button id="planNav" class="nav-button" onclick="openPage('planPage','planNav')"><span>📅</span>Plan</button>
     <button id="libraryNav" class="nav-button" onclick="openPage('libraryPage','libraryNav')"><span>♡</span>Library</button>
     <button id="journalNav" class="nav-button" onclick="openPage('journalPage','journalNav')"><span>📝</span>Journal</button>
+    <button id="technicalNav" class="nav-button" onclick="openPage('technicalPage','technicalNav')"><span>🛠️</span>Tech</button>
   </nav>
 
 
@@ -1869,7 +1924,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Surprise period fix v31",
+          version: "Layout tabs + stickers note v32",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -2428,6 +2483,8 @@
       qs(navId).classList.add("active");
 
       if (pageId === "homePage") loadHome();
+      if (pageId === "overviewPage") loadOverview();
+      if (pageId === "technicalPage") loadTechnical();
       if (pageId === "planPage") loadPlan();
       if (pageId === "libraryPage") {
         syncLibraryQuickAddDate();
@@ -2436,6 +2493,19 @@
       if (pageId === "journalPage") loadJournal();
 
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function loadOverview() {
+      loadDashboardStats();
+      loadCoupleProfile();
+      loadRelationshipMemoryBook();
+      loadPhotoWall();
+      loadFavoritePicks();
+      loadPlanHistory();
+    }
+
+    function loadTechnical() {
+      if (qs("dataBackupMessage")) qs("dataBackupMessage").textContent = "";
     }
 
     function syncLibraryQuickAddDate() {
@@ -5228,13 +5298,7 @@
 
     async function loadHome() {
       loadCoupleMembers();
-      loadCoupleProfile();
-      loadDashboardStats();
-      loadPhotoWall();
-      loadFavoritePicks();
       loadNextDateCountdown();
-      loadPlanHistory();
-      loadRelationshipMemoryBook();
       const container = qs("homeList");
       container.innerHTML = `<div class="empty">Loading...</div>`;
 
