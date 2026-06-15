@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Invite in Tech v48</title>
+  <title>Date Planner for Us 🍓 Storybook cleanup v49</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1584,6 +1584,28 @@
       overflow: auto;
     }
 
+  
+    .storybook-image-picker-preview {
+      display: none;
+      width: min(100%, 240px);
+      border-radius: 18px;
+      border: 1px solid rgba(239,111,159,.16);
+      box-shadow: 0 8px 18px rgba(92,66,80,.10);
+      background: #fff5fa;
+      margin-top: 4px;
+    }
+    .storybook-image-picker-preview.active {
+      display: block;
+    }
+    .storybook-page-actions .order {
+      background: rgba(244, 240, 255, .90);
+      color: #6e5596;
+    }
+    .storybook-page-actions .disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
   </style>
 </head>
 
@@ -1596,7 +1618,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Invite in Tech v48</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Storybook cleanup v49</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -1864,7 +1886,11 @@
                   <textarea id="storybookPageSummary" placeholder="Story text for this page..."></textarea>
                   <input id="storybookPageQuote" placeholder="Cute quote, optional">
                   <input id="storybookPageTags" placeholder="Tags separated by commas, e.g. airport, food, cozy">
-                  <input id="storybookPageImageIndex" type="number" min="1" placeholder="Image number to use, optional. 1 = first uploaded image">
+                  <select id="storybookPageImagePicker" onchange="syncStorybookImagePickerToNumber()">
+                    <option value="">Auto image / no uploaded image</option>
+                  </select>
+                  <img id="storybookImagePickerPreview" class="storybook-image-picker-preview" alt="Selected storybook image preview">
+                  <input id="storybookPageImageIndex" type="number" min="1" placeholder="Image number to use, optional. 1 = first uploaded image" onchange="syncStorybookImageNumberToPicker()">
                   <div class="row">
                     <button id="storybookPageSaveButton" class="button secondary" onclick="saveStorybookPageFromForm()">Add page to this book</button>
                     <button id="storybookPageCancelButton" class="button ghost" onclick="cancelStorybookPageEdit()" style="display:none;">Cancel edit</button>
@@ -1992,7 +2018,7 @@
           <div class="section-sparkle">🛠️ Technical</div>
           <h2 class="title">Help, backup & phone setup</h2>
           <p class="subtitle">Instructions and safety tools are grouped here instead of making Home too long.</p>
-          <div class="empty" style="margin-top:10px;">Current app version: <strong>Invite in Tech v48</strong></div>
+          <div class="empty" style="margin-top:10px;">Current app version: <strong>Storybook cleanup v49</strong></div>
         </div>
 
 
@@ -2078,8 +2104,8 @@
           <h2 class="title">What can still be improved?</h2>
           <p class="subtitle">The app is already useful, but these are the best next upgrades I would consider.</p>
           <div class="comfort-steps">
-            <div class="comfort-step"><strong>1. Storybook page order:</strong> add move up / move down buttons so pages can be rearranged inside a period.</div>
-            <div class="comfort-step"><strong>2. Better image management:</strong> add replace image, remove image, and choose image from uploaded shelf without typing image numbers.</div>
+            <div class="comfort-step"><strong>1. Storybook page order:</strong> done — pages now have move up / move down buttons.</div>
+            <div class="comfort-step"><strong>2. Better image management:</strong> improved — story pages now have an uploaded image picker and preview.</div>
             <div class="comfort-step"><strong>3. PDF page importer:</strong> upload one PDF and let the app make page previews automatically. This would need server-side work, not just index.html.</div>
             <div class="comfort-step"><strong>4. Plan calendar view:</strong> a cute monthly calendar would make wrong dates easier to notice.</div>
             <div class="comfort-step"><strong>5. Plan date merging:</strong> if two plans exist on the same date, add a safe merge option instead of blocking the move.</div>
@@ -2087,7 +2113,7 @@
             <div class="comfort-step"><strong>7. Storybook export:</strong> export a memory book as PDF/HTML for printing or saving offline.</div>
             <div class="comfort-step"><strong>8. Private file check:</strong> add a small Tech status checker for Supabase bucket/policies so private uploads are easier to verify.</div>
           </div>
-          <div class="soft-warning">Best next update from this list: storybook page order + better image picker. That would make memory books much easier to clean up.</div>
+          <div class="soft-warning">v49 finished the biggest cleanup update: page order + better image picker. Best next update after this would be a cute monthly calendar view.</div>
         </div>
 
 
@@ -3363,7 +3389,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Invite in Tech v48",
+          version: "Storybook cleanup v49",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -4220,6 +4246,7 @@
       }
 
       if (qs("storybookPeriodCount")) qs("storybookPeriodCount").textContent = `${periods.length} period${periods.length === 1 ? "" : "s"}`;
+      refreshStorybookImagePicker();
       loadSelectedStorybookPeriodIntoForm(false);
     }
 
@@ -4391,12 +4418,68 @@
       if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = "Storybook removed from the shelf.";
     }
 
+
+    function refreshStorybookImagePicker(selectedIndex = null) {
+      const picker = qs("storybookPageImagePicker");
+      if (!picker) return;
+      const book = activeStorybook();
+      const urls = Array.isArray(book?.imageUrls) ? book.imageUrls : [];
+      const previous = selectedIndex !== null && selectedIndex !== undefined
+        ? String(selectedIndex)
+        : picker.value;
+
+      picker.innerHTML = `<option value="">Auto image / no uploaded image</option>` + urls.map((url, index) => `
+        <option value="${index}">Image ${index + 1}${book?.imagePaths?.[index] ? " · Supabase" : ""}</option>
+      `).join("");
+
+      picker.value = urls.some((_, index) => String(index) === String(previous)) ? String(previous) : "";
+      updateStorybookImagePickerPreview();
+    }
+
+    function updateStorybookImagePickerPreview() {
+      const preview = qs("storybookImagePickerPreview");
+      const picker = qs("storybookPageImagePicker");
+      const book = activeStorybook();
+      if (!preview || !picker || !book) return;
+
+      const index = picker.value === "" ? -1 : Number(picker.value);
+      const url = Array.isArray(book.imageUrls) ? book.imageUrls[index] : "";
+      if (url) {
+        preview.src = url;
+        preview.classList.add("active");
+      } else {
+        preview.removeAttribute("src");
+        preview.classList.remove("active");
+      }
+    }
+
+    function syncStorybookImagePickerToNumber() {
+      const picker = qs("storybookPageImagePicker");
+      const number = qs("storybookPageImageIndex");
+      if (!picker || !number) return;
+
+      number.value = picker.value === "" ? "" : String(Number(picker.value) + 1);
+      updateStorybookImagePickerPreview();
+    }
+
+    function syncStorybookImageNumberToPicker() {
+      const picker = qs("storybookPageImagePicker");
+      const number = qs("storybookPageImageIndex");
+      if (!picker || !number) return;
+
+      const index = number.value ? Math.max(0, Number(number.value) - 1) : "";
+      picker.value = index === "" ? "" : String(index);
+      updateStorybookImagePickerPreview();
+    }
+
     function clearStorybookPageForm(keepPeriod = true) {
       const periodValue = qs("storybookPagePeriod")?.value || "";
       ["storybookPageDate", "storybookPageTitle", "storybookPageSummary", "storybookPageQuote", "storybookPageTags", "storybookPageImageIndex"].forEach(id => {
         if (qs(id)) qs(id).value = "";
       });
       if (keepPeriod && qs("storybookPagePeriod")) qs("storybookPagePeriod").value = periodValue;
+      if (qs("storybookPageImagePicker")) qs("storybookPageImagePicker").value = "";
+      updateStorybookImagePickerPreview();
       editingStorybookPageId = "";
       updateStorybookPageEditMode();
     }
@@ -4520,6 +4603,7 @@
       if (qs("storybookPageQuote")) qs("storybookPageQuote").value = chapter.quote || "";
       if (qs("storybookPageTags")) qs("storybookPageTags").value = (chapter.tags || []).join(", ");
       if (qs("storybookPageImageIndex")) qs("storybookPageImageIndex").value = Number.isFinite(Number(chapter.imageIndex)) ? Number(chapter.imageIndex) + 1 : "";
+      refreshStorybookImagePicker(Number.isFinite(Number(chapter.imageIndex)) ? Number(chapter.imageIndex) : null);
       updateStorybookPageEditMode();
 
       const form = qs("storybookPageForm");
@@ -4646,6 +4730,46 @@
       ];
     }
 
+
+    async function ensureStorybookPageIsChapter(pageId) {
+      const book = activeStorybook();
+      if (!book) return null;
+      book.chapters = Array.isArray(book.chapters) ? book.chapters : [];
+      let chapter = book.chapters.find(item => item.id === pageId);
+      if (chapter) return chapter;
+      if (typeof makeGeneratedStorybookPageEditable === "function") {
+        chapter = await makeGeneratedStorybookPageEditable(pageId);
+        return chapter;
+      }
+      return null;
+    }
+
+    async function moveStorybookPage(pageId, direction) {
+      const book = activeStorybook();
+      if (!book) return;
+      book.chapters = Array.isArray(book.chapters) ? book.chapters : [];
+
+      let index = book.chapters.findIndex(item => item.id === pageId);
+      if (index < 0) {
+        const made = await ensureStorybookPageIsChapter(pageId);
+        if (!made) {
+          alert("This page cannot be moved yet.");
+          return;
+        }
+        index = book.chapters.findIndex(item => item.id === made.id);
+      }
+
+      const target = index + direction;
+      if (target < 0 || target >= book.chapters.length) return;
+
+      const [page] = book.chapters.splice(index, 1);
+      book.chapters.splice(target, 0, page);
+
+      await saveStorybookLibrary(storybookLibraryCache);
+      renderStorybook();
+      if (qs("storybookSyncMessage")) qs("storybookSyncMessage").textContent = direction < 0 ? "Page moved up 💖" : "Page moved down 💖";
+    }
+
     function renderStorybook() {
       renderStorybookBookshelf();
       const timeline = qs("storybookTimeline");
@@ -4713,6 +4837,8 @@
                       </div>
                       <div class="storybook-page-actions">
                         <button onclick="editStorybookPage('${escapeHTML(item.id)}')">Edit page</button>
+                        <button class="order" onclick="moveStorybookPage('${escapeHTML(item.id)}', -1)">Move up</button>
+                        <button class="order" onclick="moveStorybookPage('${escapeHTML(item.id)}', 1)">Move down</button>
                         <button class="danger" onclick="deleteStorybookPage('${escapeHTML(item.id)}')">Delete page</button>
                       </div>
                     </div>
@@ -4887,6 +5013,7 @@
 
         await saveStorybookLibrary(storybookLibraryCache);
         loadStorybookStorageInputs();
+        refreshStorybookImagePicker();
         renderStorybook();
         if (message) message.textContent = `Images uploaded and added to ${book.title} 🍓`;
       } catch (error) {
