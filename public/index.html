@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Editable plan dates v46</title>
+  <title>Date Planner for Us 🍓 Invite in Tech v48</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1547,6 +1547,43 @@
       line-height: 1.5;
     }
 
+  
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .template-card {
+      display: grid;
+      gap: 9px;
+      padding: 12px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(239,111,159,.14);
+      box-shadow: 0 8px 18px rgba(92,66,80,.07);
+    }
+    .template-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 16px;
+      background: #fff5fa;
+      border: 1px solid rgba(239,111,159,.12);
+    }
+    .template-card strong { color: var(--berry-dark); font-size: 14px; line-height: 1.25; }
+    .template-card span { color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .template-codebox {
+      width: 100%;
+      min-height: 130px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.45;
+      white-space: pre;
+      overflow: auto;
+    }
+
   </style>
 </head>
 
@@ -1559,7 +1596,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Editable plan dates v46</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Invite in Tech v48</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -1607,30 +1644,13 @@
         <div class="card compact-card home-welcome-card">
           <div class="section-sparkle">🍓 Home</div>
           <h2 class="title">Welcome back</h2>
-          <p class="subtitle">A smaller home screen: invite, next date, and quick shortcuts only.</p>
+          <p class="subtitle">A cleaner home screen: next date, couple profile, members, and quick shortcuts.</p>
           <div class="actions">
             <button class="button secondary" onclick="openPage('planPage','planNav')">Open Plan</button>
             <button class="button secondary" onclick="openPage('overviewPage','overviewNav')">Open Overview</button>
-            <button class="button ghost" onclick="openPage('technicalPage','technicalNav')">Help & backup</button>
+            <button class="button ghost" onclick="openPage('technicalPage','technicalNav')">Invite / help / backup</button>
           </div>
         </div>
-
-        <div class="card invite-card">
-          <h2 class="title">💌 Invite her</h2>
-          <p class="subtitle">Give this invite code to your girlfriend after she creates her own account. She should choose “Join with invite code”, not create a new couple space.</p>
-          <div class="invite-code-box">
-            <div class="invite-code-label">Invite code</div>
-            <div id="inviteCodeBig" class="invite-code-value">--------</div>
-          </div>
-          <div class="actions">
-            <button class="button" onclick="copyInviteCode()">Copy invite code</button>
-            <button class="button secondary" onclick="copyAppLink()">Copy app link</button>
-            <button class="button secondary" onclick="shareInvite()">Share invite</button>
-          </div>
-          <p id="inviteCopyMessage" class="copy-message"></p>
-        </div>
-
-
         <div class="card compact-card">
           <h2 class="title">👥 Couple members</h2>
           <p class="subtitle">See who has joined this planner and set your nickname.</p>
@@ -1972,8 +1992,33 @@
           <div class="section-sparkle">🛠️ Technical</div>
           <h2 class="title">Help, backup & phone setup</h2>
           <p class="subtitle">Instructions and safety tools are grouped here instead of making Home too long.</p>
-          <div class="empty" style="margin-top:10px;">Current app version: <strong>Editable plan dates v46</strong></div>
+          <div class="empty" style="margin-top:10px;">Current app version: <strong>Invite in Tech v48</strong></div>
         </div>
+
+
+        <div class="card invite-card">
+          <h2 class="title">💌 Invite em / join this planner</h2>
+          <p class="subtitle">Keep this here so Home stays clean. Give this invite code to em after she creates her own account. She should choose “Join with invite code”, not create a new couple space.</p>
+          <div class="invite-code-box">
+            <div class="invite-code-label">Invite code</div>
+            <div id="inviteCodeBig" class="invite-code-value">--------</div>
+          </div>
+          <div class="actions">
+            <button class="button" onclick="copyInviteCode()">Copy invite code</button>
+            <button class="button secondary" onclick="copyAppLink()">Copy app link</button>
+            <button class="button secondary" onclick="shareInvite()">Share invite</button>
+          </div>
+          <div class="comfort-steps" style="margin-top:12px;">
+            <div class="comfort-step"><strong>Step 1:</strong> Send her the app link and invite code.</div>
+            <div class="comfort-step"><strong>Step 2:</strong> She creates her own account.</div>
+            <div class="comfort-step"><strong>Step 3:</strong> She chooses <strong>Join with invite code</strong>.</div>
+            <div class="comfort-step"><strong>Step 4:</strong> She enters the code and joins Anh Tommy & Em Ngoc’s planner.</div>
+          </div>
+          <p id="inviteCopyMessage" class="copy-message"></p>
+        </div>
+
+
+
 
         <div class="card compact-card">
           <div class="section-sparkle">🍓 v31 comfort</div>
@@ -1983,7 +2028,7 @@
             <div class="comfort-step"><strong>1. Save ideas:</strong> add food, places, games and activities in Library.</div>
             <div class="comfort-step"><strong>2. Make a plan:</strong> choose a date in Plan, then add ideas to Morning, Noon, Afternoon or Evening.</div>
             <div class="comfort-step"><strong>3. After the date:</strong> use the review shortcut to save the memory into Journal.</div>
-            <div class="comfort-step"><strong>4. Keep it safe:</strong> download a backup sometimes from Home.</div>
+            <div class="comfort-step"><strong>4. Keep it safe:</strong> download a backup sometimes from Tech.</div>
           </div>
           <div class="actions">
             <button class="button secondary" onclick="quickStartForEm()">Copy join steps for em</button>
@@ -2028,6 +2073,55 @@
         </div>
 
         
+        <div class="card compact-card">
+          <div class="section-sparkle">🔎 app review</div>
+          <h2 class="title">What can still be improved?</h2>
+          <p class="subtitle">The app is already useful, but these are the best next upgrades I would consider.</p>
+          <div class="comfort-steps">
+            <div class="comfort-step"><strong>1. Storybook page order:</strong> add move up / move down buttons so pages can be rearranged inside a period.</div>
+            <div class="comfort-step"><strong>2. Better image management:</strong> add replace image, remove image, and choose image from uploaded shelf without typing image numbers.</div>
+            <div class="comfort-step"><strong>3. PDF page importer:</strong> upload one PDF and let the app make page previews automatically. This would need server-side work, not just index.html.</div>
+            <div class="comfort-step"><strong>4. Plan calendar view:</strong> a cute monthly calendar would make wrong dates easier to notice.</div>
+            <div class="comfort-step"><strong>5. Plan date merging:</strong> if two plans exist on the same date, add a safe merge option instead of blocking the move.</div>
+            <div class="comfort-step"><strong>6. Image compression:</strong> compress photos before uploading to Supabase so storage lasts longer.</div>
+            <div class="comfort-step"><strong>7. Storybook export:</strong> export a memory book as PDF/HTML for printing or saving offline.</div>
+            <div class="comfort-step"><strong>8. Private file check:</strong> add a small Tech status checker for Supabase bucket/policies so private uploads are easier to verify.</div>
+          </div>
+          <div class="soft-warning">Best next update from this list: storybook page order + better image picker. That would make memory books much easier to clean up.</div>
+        </div>
+
+
+
+        <div class="card compact-card">
+          <h2 class="title">🎨 Storybook picture templates</h2>
+          <p class="subtitle">The sample pictures in the memory books are tiny SVG drawings built into the app. They are free placeholders, not Supabase uploads. You can copy a template image link and paste it into a storybook image URL field.</p>
+
+          <div class="helper-card">
+            <strong>How I made them</strong>
+            <p>I wrote small SVG drawings, then turned them into <code>data:image/svg+xml</code> image links. The app can show them like normal images, but they stay inside the code and cost no storage.</p>
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <button class="button secondary" onclick="renderStorybookTemplateGallery()">Refresh templates</button>
+            <button class="button ghost" onclick="copyAllStorybookTemplateLinks()">Copy all template image links</button>
+          </div>
+          <p id="storybookTemplateMessage" class="plan-copy-message"></p>
+
+          <div id="storybookTemplateGallery" class="template-grid">
+            <div class="empty">Loading templates...</div>
+          </div>
+
+          <details style="margin-top:14px;">
+            <summary>Advanced: copy raw SVG template code</summary>
+            <p class="subtitle">This is for making new templates later. Change text, emoji, and colors, then convert it to a data URL.</p>
+            <textarea id="storybookTemplateCode" class="template-codebox" readonly></textarea>
+            <div class="row" style="margin-top:8px;">
+              <button class="button secondary" onclick="copySelectedStorybookTemplateCode()">Copy selected SVG code</button>
+              <button class="button ghost" onclick="copyStorybookTemplateInstructions()">Copy how-to instructions</button>
+            </div>
+          </details>
+        </div>
+
         <div class="card compact-card">
           <h2 class="title">📱 Phone app shortcut</h2>
           <p class="subtitle">You can make this feel like a phone app for free. No app store, no extra Supabase storage, no extra Render cost.</p>
@@ -2788,6 +2882,56 @@
       sashimi: "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="#effcff"/><ellipse cx="400" cy="340" rx="230" ry="95" fill="#fff" stroke="#a9e1ef" stroke-width="12"/><rect x="305" y="275" width="190" height="70" rx="28" fill="#ff8e8e"/><text x="400" y="130" text-anchor="middle" font-size="52" font-family="Arial" fill="#7c4057">sashimi surprise</text><text x="400" y="510" text-anchor="middle" font-size="76" font-family="Arial">🐟💗</text></svg>`)
     };
 
+
+    const STORYBOOK_TEMPLATE_SVGS = {
+      airport: {
+        name: "Airport hug",
+        note: "Arrival days, first meeting, reunion.",
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="#fff2f7"/><circle cx="610" cy="110" r="95" fill="#ffe6a7"/><path d="M140 355c80-80 160-80 240 0s160 80 240 0" fill="none" stroke="#ef6f9f" stroke-width="18" stroke-linecap="round"/><text x="400" y="165" text-anchor="middle" font-size="56" font-family="Arial" fill="#7c4057">airport hug</text><text x="400" y="440" text-anchor="middle" font-size="92" font-family="Arial">✈️💗</text></svg>`
+      },
+      cafe: {
+        name: "Cozy cafe date",
+        note: "Coffee shops, snacks, quiet talking.",
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="#fff8ef"/><circle cx="180" cy="145" r="78" fill="#ffd1e2"/><rect x="225" y="210" width="350" height="210" rx="35" fill="#fff" stroke="#ef6f9f" stroke-width="10"/><path d="M550 270h50c45 0 45 80 0 80h-50" fill="none" stroke="#ef6f9f" stroke-width="18" stroke-linecap="round"/><path d="M310 190c-20-35 20-45 0-80M405 190c-20-35 20-45 0-80" fill="none" stroke="#c28b69" stroke-width="12" stroke-linecap="round"/><text x="400" y="120" text-anchor="middle" font-size="52" font-family="Arial" fill="#7c4057">cozy cafe</text><text x="400" y="510" text-anchor="middle" font-size="76" font-family="Arial">☕🍰</text></svg>`
+      },
+      game: {
+        name: "Game date",
+        note: "Playtendo, arcade days, cozy co-op.",
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="#f4f0ff"/><rect x="160" y="180" width="480" height="250" rx="32" fill="#fff" stroke="#d9c8ff" stroke-width="12"/><circle cx="300" cy="305" r="26" fill="#ef6f9f"/><circle cx="500" cy="305" r="26" fill="#8fd4ff"/><text x="400" y="120" text-anchor="middle" font-size="52" font-family="Arial" fill="#7c4057">game date</text><text x="400" y="520" text-anchor="middle" font-size="76" font-family="Arial">🎮✨</text></svg>`
+      },
+      food: {
+        name: "Food date",
+        note: "Sushi, BBQ, breakfast, dessert.",
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="#fff8e8"/><ellipse cx="400" cy="340" rx="240" ry="95" fill="#fff" stroke="#ef6f9f" stroke-width="10"/><ellipse cx="340" cy="330" rx="70" ry="38" fill="#ff9c9c"/><ellipse cx="460" cy="330" rx="70" ry="38" fill="#ffd36e"/><text x="400" y="135" text-anchor="middle" font-size="54" font-family="Arial" fill="#7c4057">food date</text><text x="400" y="505" text-anchor="middle" font-size="80" font-family="Arial">🍱💌</text></svg>`
+      },
+      mall: {
+        name: "Mall / shopping",
+        note: "Aeon Mall, Popmart, cute gifts.",
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="#eefbff"/><rect x="170" y="160" width="460" height="300" rx="26" fill="#fff" stroke="#9bd8ef" stroke-width="12"/><rect x="235" y="225" width="100" height="150" fill="#ffd1e2"/><rect x="465" y="225" width="100" height="150" fill="#ffe6a7"/><text x="400" y="100" text-anchor="middle" font-size="52" font-family="Arial" fill="#7c4057">mall day</text><text x="400" y="535" text-anchor="middle" font-size="78" font-family="Arial">🛍️📸</text></svg>`
+      },
+      strawberry: {
+        name: "Strawberry arc",
+        note: "Strawberry blanket lore and cute gifts.",
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="#fff2f7"/><path d="M400 155c120 0 190 80 170 185-22 116-170 180-170 180S252 456 230 340c-20-105 50-185 170-185z" fill="#ef6f9f"/><path d="M340 145c30-70 90-70 120 0" fill="none" stroke="#74b87a" stroke-width="28" stroke-linecap="round"/><text x="400" y="95" text-anchor="middle" font-size="52" font-family="Arial" fill="#7c4057">strawberry arc</text><text x="400" y="390" text-anchor="middle" font-size="70" font-family="Arial">🍓</text></svg>`
+      },
+      rain: {
+        name: "Rainy day",
+        note: "Da Lat, rainy rides, cozy shelter days.",
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="#eef7ff"/><path d="M230 245c20-80 110-100 165-45 55-70 180-35 190 55 60 8 95 55 85 105-12 58-65 82-125 82H270c-80 0-130-45-120-105 8-50 38-78 80-92z" fill="#fff" stroke="#9bd8ef" stroke-width="12"/><path d="M270 470l-30 55M390 470l-30 55M510 470l-30 55" stroke="#8fd4ff" stroke-width="16" stroke-linecap="round"/><text x="400" y="120" text-anchor="middle" font-size="52" font-family="Arial" fill="#7c4057">rainy day</text><text x="400" y="560" text-anchor="middle" font-size="60" font-family="Arial">🌧️💙</text></svg>`
+      },
+      future: {
+        name: "Future chapter",
+        note: "Next Vietnam or planned future memories.",
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="#f7fff2"/><path d="M160 420c120-150 250-170 360-45 50-70 120-105 190-105" fill="none" stroke="#74b87a" stroke-width="18" stroke-linecap="round"/><circle cx="600" cy="145" r="75" fill="#ffe6a7"/><text x="400" y="130" text-anchor="middle" font-size="52" font-family="Arial" fill="#7c4057">future chapter</text><text x="400" y="520" text-anchor="middle" font-size="76" font-family="Arial">🧳✨</text></svg>`
+      }
+    };
+
+    function storybookTemplateDataUrl(key) {
+      const item = STORYBOOK_TEMPLATE_SVGS[key];
+      if (!item) return "";
+      return "data:image/svg+xml;utf8," + encodeURIComponent(item.svg);
+    }
+
     const STORYBOOK_MEMORIES = [
       {
         date: "8 Jul 2025",
@@ -3219,7 +3363,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Editable plan dates v46",
+          version: "Invite in Tech v48",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -4994,6 +5138,77 @@
       }
     }
 
+
+    function renderStorybookTemplateGallery() {
+      const box = qs("storybookTemplateGallery");
+      if (!box) return;
+      box.innerHTML = Object.entries(STORYBOOK_TEMPLATE_SVGS).map(([key, item]) => {
+        const url = storybookTemplateDataUrl(key);
+        return `
+          <div class="template-card">
+            <img src="${escapeHTML(url)}" alt="${escapeHTML(item.name)}">
+            <strong>${escapeHTML(item.name)}</strong>
+            <span>${escapeHTML(item.note)}</span>
+            <div class="row">
+              <button class="button small secondary" onclick="copyStorybookTemplateLink('${escapeHTML(key)}')">Copy image link</button>
+              <button class="button small ghost" onclick="showStorybookTemplateCode('${escapeHTML(key)}')">Show SVG</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+      const firstKey = Object.keys(STORYBOOK_TEMPLATE_SVGS)[0];
+      if (firstKey) showStorybookTemplateCode(firstKey, false);
+    }
+
+    async function copyStorybookTemplateLink(key) {
+      const item = STORYBOOK_TEMPLATE_SVGS[key];
+      if (!item) return;
+      await copyTextToClipboard(storybookTemplateDataUrl(key), `${item.name} image link copied 🎨`);
+      if (qs("storybookTemplateMessage")) qs("storybookTemplateMessage").textContent = `${item.name} image link copied 🎨`;
+    }
+
+    async function copyAllStorybookTemplateLinks() {
+      const text = Object.entries(STORYBOOK_TEMPLATE_SVGS)
+        .map(([key, item]) => `${item.name}: ${storybookTemplateDataUrl(key)}`)
+        .join("\n\n");
+      await copyTextToClipboard(text, "All storybook template links copied 🎨");
+      if (qs("storybookTemplateMessage")) qs("storybookTemplateMessage").textContent = "All template image links copied 🎨";
+    }
+
+    function showStorybookTemplateCode(key, announce = true) {
+      const item = STORYBOOK_TEMPLATE_SVGS[key];
+      if (!item) return;
+      if (qs("storybookTemplateCode")) qs("storybookTemplateCode").value = item.svg.trim();
+      if (announce && qs("storybookTemplateMessage")) qs("storybookTemplateMessage").textContent = `${item.name} SVG shown below.`;
+    }
+
+    async function copySelectedStorybookTemplateCode() {
+      const value = qs("storybookTemplateCode")?.value || "";
+      if (!value) return;
+      await copyTextToClipboard(value, "SVG template code copied 🎨");
+      if (qs("storybookTemplateMessage")) qs("storybookTemplateMessage").textContent = "SVG template code copied 🎨";
+    }
+
+    async function copyStorybookTemplateInstructions() {
+      const text = [
+        "How storybook template pictures work:",
+        "",
+        "1. The picture is an SVG drawing.",
+        "2. The app turns it into a data URL:",
+        "   data:image/svg+xml;utf8, + encodeURIComponent(svg)",
+        "3. That data URL behaves like an image link.",
+        "4. You can paste that image link into a storybook image URL field.",
+        "5. You can edit the SVG text, emoji, and colors to make new templates.",
+        "",
+        "Best use:",
+        "- use templates as cute placeholders",
+        "- use real photos/page previews for important memories",
+        "- keep 7–12 images per storybook for a clean look"
+      ].join("\n");
+      await copyTextToClipboard(text, "Template instructions copied 🎨");
+      if (qs("storybookTemplateMessage")) qs("storybookTemplateMessage").textContent = "Template instructions copied 🎨";
+    }
+
     function renderStickerShortcutList() {
       const box = qs("stickerShortcutList");
       if (!box) return;
@@ -5019,7 +5234,9 @@
     function loadTechnical() {
       if (qs("dataBackupMessage")) qs("dataBackupMessage").textContent = "";
       if (qs("stickerShortcutMessage")) qs("stickerShortcutMessage").textContent = "";
+      if (qs("storybookTemplateMessage")) qs("storybookTemplateMessage").textContent = "";
       renderStickerShortcutList();
+      renderStorybookTemplateGallery();
     }
 
     function syncLibraryQuickAddDate() {
