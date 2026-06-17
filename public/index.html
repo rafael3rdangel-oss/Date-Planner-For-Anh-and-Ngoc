@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Storybook cleanup v49</title>
+  <title>Date Planner for Us 🍓 Full Da Lat list v51</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1606,6 +1606,111 @@
       cursor: not-allowed;
     }
 
+  
+    .trip-board-shell {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255, 209, 226, .62), transparent 24%),
+        radial-gradient(circle at 92% 12%, rgba(255, 244, 183, .50), transparent 24%),
+        rgba(255,255,255,.72);
+      border: 1px solid rgba(239,111,159,.16);
+    }
+    .trip-board-top {
+      display: grid;
+      gap: 10px;
+    }
+    .trip-board-counts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .trip-count-pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(239,111,159,.12);
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .trip-idea-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .trip-idea-card {
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(239,111,159,.14);
+      box-shadow: 0 8px 18px rgba(92,66,80,.07);
+    }
+    .trip-idea-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .trip-idea-title {
+      margin: 0;
+      color: var(--berry-dark);
+      font-size: 16px;
+      line-height: 1.25;
+    }
+    .trip-idea-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .trip-idea-status {
+      width: fit-content;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(239,111,159,.10);
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .trip-idea-notes {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .trip-idea-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .trip-idea-actions button {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(239,111,159,.18);
+      background: rgba(255,255,255,.86);
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .trip-idea-actions .like { background: rgba(235, 255, 239, .88); color: #357247; }
+    .trip-idea-actions .maybe { background: rgba(255, 249, 222, .90); color: #7d6422; }
+    .trip-idea-actions .skip { background: rgba(245,245,245,.92); color: #6e6970; }
+    .trip-idea-actions .danger { background: rgba(255,235,240,.90); color: #a33b52; }
+    .trip-board-minihelp {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
   </style>
 </head>
 
@@ -1618,7 +1723,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Storybook cleanup v49</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Full Da Lat list v51</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -2018,7 +2123,7 @@
           <div class="section-sparkle">🛠️ Technical</div>
           <h2 class="title">Help, backup & phone setup</h2>
           <p class="subtitle">Instructions and safety tools are grouped here instead of making Home too long.</p>
-          <div class="empty" style="margin-top:10px;">Current app version: <strong>Storybook cleanup v49</strong></div>
+          <div class="empty" style="margin-top:10px;">Current app version: <strong>Full Da Lat list v51</strong></div>
         </div>
 
 
@@ -2107,7 +2212,8 @@
             <div class="comfort-step"><strong>1. Storybook page order:</strong> done — pages now have move up / move down buttons.</div>
             <div class="comfort-step"><strong>2. Better image management:</strong> improved — story pages now have an uploaded image picker and preview.</div>
             <div class="comfort-step"><strong>3. PDF page importer:</strong> upload one PDF and let the app make page previews automatically. This would need server-side work, not just index.html.</div>
-            <div class="comfort-step"><strong>4. Plan calendar view:</strong> a cute monthly calendar would make wrong dates easier to notice.</div>
+            <div class="comfort-step"><strong>4. Temporary trip library:</strong> done — Plan now has a trip idea board where em can choose ideas before adding them to the real planner.</div>
+            <div class="comfort-step"><strong>5. Plan calendar view:</strong> a cute monthly calendar would make wrong dates easier to notice.</div>
             <div class="comfort-step"><strong>5. Plan date merging:</strong> if two plans exist on the same date, add a safe merge option instead of blocking the move.</div>
             <div class="comfort-step"><strong>6. Image compression:</strong> compress photos before uploading to Supabase so storage lasts longer.</div>
             <div class="comfort-step"><strong>7. Storybook export:</strong> export a memory book as PDF/HTML for printing or saving offline.</div>
@@ -2204,6 +2310,98 @@
               <button class="button ghost" onclick="downloadCurrentPlanCalendar()">Download calendar file</button>
             </div>
             <p id="planCopyMessage" class="plan-copy-message"></p>
+          </div>
+
+          <div class="plan-details">
+            <div class="section-sparkle">🧺 temporary library</div>
+            <h3 class="title">🌿 Trip idea board</h3>
+            <p class="subtitle">A temporary mini library for one trip or moment. Perfect for Da Lat: add many ideas here, let em choose, then add only the chosen ideas to the real planner.</p>
+
+            <div class="trip-board-shell">
+              <div class="trip-board-top">
+                <div class="row">
+                  <select id="tripBoardSelect" onchange="selectTripBoard()"></select>
+                  <button class="button secondary" onclick="createTripBoard()">New board</button>
+                </div>
+                <div class="row">
+                  <input id="tripBoardTitle" placeholder="Board title, e.g. Da Lat Trip">
+                  <input id="tripBoardStart" type="date">
+                  <input id="tripBoardEnd" type="date">
+                </div>
+                <textarea id="tripBoardNotes" placeholder="Board notes, e.g. rainy backup, not too much walking, cute food, ATV maybe..."></textarea>
+                <div class="actions">
+                  <button class="button" onclick="saveTripBoardDetails()">Save board</button>
+                  <button class="button secondary" onclick="seedDalatTripIdeas()">Add full Da Lat idea list</button>
+                  <button class="button ghost" onclick="deleteTripBoard()">Delete board</button>
+                </div>
+                <p class="trip-board-minihelp">Use this as a short-term menu for the trip. It will not add everything to the real planner unless you press “Add to selected plan”.</p>
+                <div id="tripBoardCounts" class="trip-board-counts"></div>
+              </div>
+
+              <details>
+                <summary>Add idea to temporary board</summary>
+                <div class="form-grid" style="margin-top:10px;">
+                  <input id="tripIdeaName" placeholder="Idea name, e.g. ATV, strawberry farm, night market">
+                  <div class="row">
+                    <select id="tripIdeaType">
+                      <option value="activity">Activity</option>
+                      <option value="place">Place</option>
+                      <option value="food">Food</option>
+                      <option value="game">Game</option>
+                    </select>
+                    <select id="tripIdeaStatus">
+                      <option value="idea">Idea</option>
+                      <option value="em_likes">Em likes</option>
+                      <option value="maybe">Maybe</option>
+                      <option value="skip">Skip</option>
+                    </select>
+                  </div>
+                  <input id="tripIdeaCategory" placeholder="Category, e.g. Fun, Food, Cute photos, Rainy backup">
+                  <input id="tripIdeaPrice" placeholder="Price/budget, optional">
+                  <textarea id="tripIdeaNotes" placeholder="Notes, why this is nice, warnings, address/link, etc."></textarea>
+                  <button class="button secondary" onclick="addTripIdeaFromForm()">Add idea</button>
+                </div>
+              </details>
+
+              <div class="row">
+                <div>
+                  <div class="filter-small-label">Add chosen ideas to date</div>
+                  <input id="tripBoardPlanDate" type="date">
+                </div>
+                <div>
+                  <div class="filter-small-label">Time period</div>
+                  <select id="tripBoardPlanPeriod">
+                    <option value="Morning">Morning</option>
+                    <option value="Noon">Noon</option>
+                    <option value="Afternoon">Afternoon</option>
+                    <option value="Evening" selected>Evening</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row">
+                <select id="tripBoardStatusFilter" onchange="renderTripBoard()">
+                  <option value="all">All ideas</option>
+                  <option value="idea">Ideas</option>
+                  <option value="em_likes">Em likes</option>
+                  <option value="maybe">Maybe</option>
+                  <option value="skip">Skip</option>
+                  <option value="added">Added to planner</option>
+                </select>
+                <select id="tripBoardTypeFilter" onchange="renderTripBoard()">
+                  <option value="all">All types</option>
+                  <option value="activity">Activities</option>
+                  <option value="place">Places</option>
+                  <option value="food">Food</option>
+                  <option value="game">Games</option>
+                </select>
+              </div>
+
+              <p id="tripBoardMessage" class="plan-copy-message"></p>
+              <div id="tripIdeaList" class="trip-idea-list">
+                <div class="empty">Loading trip board...</div>
+              </div>
+            </div>
           </div>
 
 
@@ -3020,9 +3218,13 @@
     const STORYBOOK_STORAGE_KEY = "datePlannerStorybookStorageV1";
     const STORYBOOK_LIBRARY_TITLE = "__storybook_library_v1__";
     const STORYBOOK_ACTIVE_KEY = "datePlannerActiveStorybookV1";
+    const TEMP_TRIP_LIBRARY_TITLE = "__temporary_trip_libraries_v1__";
+    const TEMP_TRIP_ACTIVE_KEY = "datePlannerActiveTripBoardV1";
     let storybookLibraryCache = null;
     let activeStorybookId = localStorage.getItem(STORYBOOK_ACTIVE_KEY) || "vietnam-2025";
     let editingStorybookPageId = "";
+    let tempTripLibraryCache = null;
+    let activeTripBoardId = localStorage.getItem(TEMP_TRIP_ACTIVE_KEY) || "dalat-trip";
 
     function qs(id) { return document.getElementById(id); }
     function show(id) { qs(id).classList.remove("hidden"); }
@@ -3389,7 +3591,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Storybook cleanup v49",
+          version: "Full Da Lat list v51",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -5196,7 +5398,7 @@
         const items = [];
 
         (journals || [])
-          .filter(entry => entry.title !== PROFILE_ENTRY_TITLE && entry.title !== STORYBOOK_LIBRARY_TITLE)
+          .filter(entry => entry.title !== PROFILE_ENTRY_TITLE && entry.title !== STORYBOOK_LIBRARY_TITLE && entry.title !== TEMP_TRIP_LIBRARY_TITLE)
           .forEach(entry => {
             const kind = entry.entry_type === "memory" ? "memory" : "journal";
             if (mode === "plans" || mode === "upcoming") return;
@@ -5824,6 +6026,7 @@
       try {
         currentPlan = await getPlanForDate(date, false);
         fillPlanDetails(currentPlan);
+        await loadTemporaryTripLibraries();
 
         Object.entries(periods).forEach(([period, info]) => {
           qs(`${info.className}Count`).textContent = "0";
@@ -5971,6 +6174,680 @@
       }
     }
 
+
+
+    function tripStatusLabel(status) {
+      const labels = {
+        idea: "Idea",
+        em_likes: "Em likes 💖",
+        maybe: "Maybe 🤔",
+        skip: "Skip",
+        added: "Added ✓"
+      };
+      return labels[status] || "Idea";
+    }
+
+    function tripTypeIcon(type) {
+      return type === "food" ? "🍜" : type === "place" ? "📍" : type === "game" ? "🎮" : "✨";
+    }
+
+    function makeTripId(value = "trip") {
+      return String(value || "trip")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 40) + "-" + Math.random().toString(36).slice(2, 7);
+    }
+
+    function defaultTripLibrary() {
+      return {
+        version: 1,
+        boards: [
+          {
+            id: "dalat-trip",
+            title: "Da Lat Trip",
+            startDate: "",
+            endDate: "",
+            notes: "Temporary idea board for Da Lat. Add many options here first, then only add chosen ideas into the real planner.",
+            ideas: []
+          }
+        ]
+      };
+    }
+
+    function normalizeTripLibrary(value) {
+      const fallback = defaultTripLibrary();
+      const boards = Array.isArray(value?.boards) ? value.boards : fallback.boards;
+      return {
+        version: 1,
+        boards: boards.map((board, index) => ({
+          id: String(board.id || makeTripId(board.title || `board-${index + 1}`)),
+          title: String(board.title || `Trip board ${index + 1}`),
+          startDate: String(board.startDate || ""),
+          endDate: String(board.endDate || ""),
+          notes: String(board.notes || ""),
+          ideas: Array.isArray(board.ideas) ? board.ideas.map((idea, ideaIndex) => ({
+            id: String(idea.id || makeTripId(idea.name || `idea-${ideaIndex + 1}`)),
+            name: String(idea.name || `Idea ${ideaIndex + 1}`),
+            type: String(idea.type || "activity"),
+            category: String(idea.category || ""),
+            price: String(idea.price || ""),
+            notes: String(idea.notes || ""),
+            status: String(idea.status || "idea"),
+            createdAt: String(idea.createdAt || new Date().toISOString())
+          })) : []
+        })).filter(board => board.id && board.title)
+      };
+    }
+
+    function activeTripBoard() {
+      const library = tempTripLibraryCache || defaultTripLibrary();
+      let board = library.boards.find(item => item.id === activeTripBoardId);
+      if (!board) {
+        board = library.boards[0];
+        activeTripBoardId = board?.id || "dalat-trip";
+        localStorage.setItem(TEMP_TRIP_ACTIVE_KEY, activeTripBoardId);
+      }
+      return board;
+    }
+
+    async function fetchTripLibraryEntry() {
+      if (!currentCouple) return null;
+      const { data, error } = await supabaseClient
+        .from("journal_entries")
+        .select("*")
+        .eq("couple_id", currentCouple.id)
+        .eq("title", TEMP_TRIP_LIBRARY_TITLE)
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data || null;
+    }
+
+    async function loadTemporaryTripLibraries() {
+      if (!currentCouple) return;
+      try {
+        const entry = await fetchTripLibraryEntry();
+        let library = defaultTripLibrary();
+        if (entry?.body) {
+          try {
+            library = normalizeTripLibrary(JSON.parse(entry.body));
+          } catch (error) {
+            console.warn("Could not parse temporary trip library.", error);
+          }
+        }
+        tempTripLibraryCache = library;
+        if (!tempTripLibraryCache.boards.some(board => board.id === activeTripBoardId)) {
+          activeTripBoardId = tempTripLibraryCache.boards[0]?.id || "dalat-trip";
+          localStorage.setItem(TEMP_TRIP_ACTIVE_KEY, activeTripBoardId);
+        }
+        renderTripBoard();
+      } catch (error) {
+        console.error(error);
+        tempTripLibraryCache = defaultTripLibrary();
+        renderTripBoard();
+      }
+    }
+
+    async function saveTemporaryTripLibraries() {
+      if (!currentCouple || !currentUser) return;
+      const library = normalizeTripLibrary(tempTripLibraryCache || defaultTripLibrary());
+      const body = JSON.stringify(library);
+      const existing = await fetchTripLibraryEntry();
+
+      if (existing?.id) {
+        const { error } = await supabaseClient
+          .from("journal_entries")
+          .update({
+            entry_date: getToday(),
+            entry_type: "note",
+            body,
+            image_url: null
+          })
+          .eq("id", existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabaseClient
+          .from("journal_entries")
+          .insert({
+            couple_id: currentCouple.id,
+            entry_date: getToday(),
+            entry_type: "note",
+            title: TEMP_TRIP_LIBRARY_TITLE,
+            body,
+            image_url: null,
+            created_by: currentUser.id
+          });
+        if (error) throw error;
+      }
+
+      tempTripLibraryCache = library;
+    }
+
+    function renderTripBoard() {
+      const select = qs("tripBoardSelect");
+      const list = qs("tripIdeaList");
+      if (!select || !list) return;
+
+      const library = tempTripLibraryCache || defaultTripLibrary();
+      const board = activeTripBoard();
+
+      select.innerHTML = library.boards.map(item => `
+        <option value="${escapeHTML(item.id)}">${escapeHTML(item.title)}</option>
+      `).join("");
+      select.value = board?.id || "";
+
+      if (qs("tripBoardTitle")) qs("tripBoardTitle").value = board?.title || "";
+      if (qs("tripBoardStart")) qs("tripBoardStart").value = board?.startDate || "";
+      if (qs("tripBoardEnd")) qs("tripBoardEnd").value = board?.endDate || "";
+      if (qs("tripBoardNotes")) qs("tripBoardNotes").value = board?.notes || "";
+      if (qs("tripBoardPlanDate")) qs("tripBoardPlanDate").value = qs("selectedDate")?.value || getToday();
+
+      const ideas = Array.isArray(board?.ideas) ? board.ideas : [];
+      const counts = {
+        all: ideas.length,
+        em_likes: ideas.filter(i => i.status === "em_likes").length,
+        maybe: ideas.filter(i => i.status === "maybe").length,
+        added: ideas.filter(i => i.status === "added").length
+      };
+
+      if (qs("tripBoardCounts")) {
+        qs("tripBoardCounts").innerHTML = `
+          <span class="trip-count-pill">${counts.all} ideas</span>
+          <span class="trip-count-pill">${counts.em_likes} em likes</span>
+          <span class="trip-count-pill">${counts.maybe} maybe</span>
+          <span class="trip-count-pill">${counts.added} added</span>
+        `;
+      }
+
+      const statusFilter = qs("tripBoardStatusFilter")?.value || "all";
+      const typeFilter = qs("tripBoardTypeFilter")?.value || "all";
+      const visible = ideas.filter(idea =>
+        (statusFilter === "all" || idea.status === statusFilter) &&
+        (typeFilter === "all" || idea.type === typeFilter)
+      );
+
+      if (!visible.length) {
+        list.innerHTML = `<div class="empty">No ideas here yet. Add some Da Lat options for em to choose 🌿</div>`;
+        return;
+      }
+
+      list.innerHTML = visible.map(idea => {
+        const encoded = encodeURIComponent(JSON.stringify(idea));
+        return `
+          <div class="trip-idea-card">
+            <div class="trip-idea-head">
+              <div>
+                <h4 class="trip-idea-title">${tripTypeIcon(idea.type)} ${renderRichText(idea.name)}</h4>
+                <div class="trip-idea-meta">
+                  ${escapeHTML(idea.category || "Trip idea")}
+                  ${idea.price ? ` · ${escapeHTML(idea.price)}` : ""}
+                  ${idea.type ? ` · ${escapeHTML(idea.type)}` : ""}
+                </div>
+              </div>
+              <div class="trip-idea-status">${escapeHTML(tripStatusLabel(idea.status))}</div>
+            </div>
+            ${idea.notes ? `<p class="trip-idea-notes">${renderRichText(idea.notes)}</p>` : ""}
+            <div class="trip-idea-actions">
+              <button class="like" onclick="setTripIdeaStatus('${idea.id}', 'em_likes')">Em likes</button>
+              <button class="maybe" onclick="setTripIdeaStatus('${idea.id}', 'maybe')">Maybe</button>
+              <button class="skip" onclick="setTripIdeaStatus('${idea.id}', 'skip')">Skip</button>
+              <button onclick="addTripIdeaToSelectedPlan('${idea.id}')">Add to selected plan</button>
+              <button onclick="editTripIdea('${idea.id}', '${encoded}')">Edit</button>
+              <button class="danger" onclick="deleteTripIdea('${idea.id}')">Remove</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function selectTripBoard() {
+      const select = qs("tripBoardSelect");
+      if (!select?.value) return;
+      activeTripBoardId = select.value;
+      localStorage.setItem(TEMP_TRIP_ACTIVE_KEY, activeTripBoardId);
+      renderTripBoard();
+    }
+
+    async function createTripBoard() {
+      const title = prompt("New temporary board name?", "Da Lat Trip");
+      if (!title) return;
+      const library = tempTripLibraryCache || defaultTripLibrary();
+      const board = {
+        id: makeTripId(title),
+        title,
+        startDate: "",
+        endDate: "",
+        notes: "",
+        ideas: []
+      };
+      library.boards.push(board);
+      tempTripLibraryCache = library;
+      activeTripBoardId = board.id;
+      localStorage.setItem(TEMP_TRIP_ACTIVE_KEY, activeTripBoardId);
+      await saveTemporaryTripLibraries();
+      renderTripBoard();
+      if (qs("tripBoardMessage")) qs("tripBoardMessage").textContent = "Temporary board created 💌";
+    }
+
+    async function saveTripBoardDetails() {
+      const board = activeTripBoard();
+      if (!board) return;
+      board.title = qs("tripBoardTitle")?.value.trim() || board.title;
+      board.startDate = qs("tripBoardStart")?.value || "";
+      board.endDate = qs("tripBoardEnd")?.value || "";
+      board.notes = qs("tripBoardNotes")?.value.trim() || "";
+      await saveTemporaryTripLibraries();
+      renderTripBoard();
+      if (qs("tripBoardMessage")) qs("tripBoardMessage").textContent = "Trip board saved 💖";
+    }
+
+    async function deleteTripBoard() {
+      const library = tempTripLibraryCache || defaultTripLibrary();
+      const board = activeTripBoard();
+      if (!board) return;
+      if (library.boards.length <= 1) {
+        alert("Keep at least one temporary board.");
+        return;
+      }
+      if (!confirm(`Delete temporary board "${board.title}"? This will remove its ideas, but not your real plans.`)) return;
+      library.boards = library.boards.filter(item => item.id !== board.id);
+      activeTripBoardId = library.boards[0]?.id || "dalat-trip";
+      localStorage.setItem(TEMP_TRIP_ACTIVE_KEY, activeTripBoardId);
+      await saveTemporaryTripLibraries();
+      renderTripBoard();
+    }
+
+    async function addTripIdeaFromForm() {
+      const board = activeTripBoard();
+      if (!board) return;
+      const name = qs("tripIdeaName")?.value.trim() || "";
+      if (!name) {
+        alert("Add an idea name first.");
+        return;
+      }
+
+      board.ideas = Array.isArray(board.ideas) ? board.ideas : [];
+      board.ideas.push({
+        id: makeTripId(name),
+        name,
+        type: qs("tripIdeaType")?.value || "activity",
+        category: qs("tripIdeaCategory")?.value.trim() || "",
+        price: qs("tripIdeaPrice")?.value.trim() || "",
+        notes: qs("tripIdeaNotes")?.value.trim() || "",
+        status: qs("tripIdeaStatus")?.value || "idea",
+        createdAt: new Date().toISOString()
+      });
+
+      ["tripIdeaName", "tripIdeaCategory", "tripIdeaPrice", "tripIdeaNotes"].forEach(id => {
+        if (qs(id)) qs(id).value = "";
+      });
+
+      await saveTemporaryTripLibraries();
+      renderTripBoard();
+      if (qs("tripBoardMessage")) qs("tripBoardMessage").textContent = "Idea added to the temporary board 🌿";
+    }
+
+    async function addLibraryItemToTripBoard(encodedItem) {
+      try {
+        await loadTemporaryTripLibraries();
+        const board = activeTripBoard();
+        if (!board) {
+          alert("Create a temporary trip board first.");
+          return;
+        }
+        const item = JSON.parse(decodeURIComponent(encodedItem));
+        board.ideas = Array.isArray(board.ideas) ? board.ideas : [];
+        board.ideas.push({
+          id: makeTripId(item.name || "library-idea"),
+          name: item.name || "Library idea",
+          type: item.type || "activity",
+          category: item.category || "",
+          price: item.price || "",
+          notes: item.notes || "",
+          status: "idea",
+          createdAt: new Date().toISOString()
+        });
+        await saveTemporaryTripLibraries();
+        renderTripBoard();
+        if (qs("libraryAddMessage")) qs("libraryAddMessage").textContent = `Added "${item.name}" to the temporary trip board 🌿`;
+        if (qs("tripBoardMessage")) qs("tripBoardMessage").textContent = `Added "${item.name}" from Library 🌿`;
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Could not add this to the trip board.");
+      }
+    }
+
+    async function setTripIdeaStatus(ideaId, status) {
+      const board = activeTripBoard();
+      const idea = board?.ideas?.find(item => item.id === ideaId);
+      if (!idea) return;
+      idea.status = status;
+      await saveTemporaryTripLibraries();
+      renderTripBoard();
+    }
+
+    async function deleteTripIdea(ideaId) {
+      const board = activeTripBoard();
+      const idea = board?.ideas?.find(item => item.id === ideaId);
+      if (!board || !idea) return;
+      if (!confirm(`Remove "${idea.name}" from this temporary board?`)) return;
+      board.ideas = board.ideas.filter(item => item.id !== ideaId);
+      await saveTemporaryTripLibraries();
+      renderTripBoard();
+    }
+
+    async function editTripIdea(ideaId, encodedIdea) {
+      const board = activeTripBoard();
+      const idea = board?.ideas?.find(item => item.id === ideaId);
+      if (!idea) return;
+
+      const current = JSON.parse(decodeURIComponent(encodedIdea));
+      openEditModal("Edit temporary idea", [
+        { name: "name", label: "Name", value: current.name || "", placeholder: "Idea name" },
+        { name: "type", label: "Type", type: "select", value: current.type || "activity", options: [
+          { value: "activity", label: "Activity" },
+          { value: "place", label: "Place" },
+          { value: "food", label: "Food" },
+          { value: "game", label: "Game" }
+        ] },
+        { name: "status", label: "Status", type: "select", value: current.status || "idea", options: [
+          { value: "idea", label: "Idea" },
+          { value: "em_likes", label: "Em likes" },
+          { value: "maybe", label: "Maybe" },
+          { value: "skip", label: "Skip" },
+          { value: "added", label: "Added" }
+        ] },
+        { name: "category", label: "Category", value: current.category || "", placeholder: "Category" },
+        { name: "price", label: "Price / budget", value: current.price || "", placeholder: "Price" },
+        { name: "notes", label: "Notes", type: "textarea", value: current.notes || "", placeholder: "Notes" }
+      ], async values => {
+        idea.name = values.name.trim() || idea.name;
+        idea.type = values.type || "activity";
+        idea.status = values.status || "idea";
+        idea.category = values.category.trim();
+        idea.price = values.price.trim();
+        idea.notes = values.notes.trim();
+        await saveTemporaryTripLibraries();
+        renderTripBoard();
+      });
+    }
+
+    async function addTripIdeaToSelectedPlan(ideaId) {
+      const board = activeTripBoard();
+      const idea = board?.ideas?.find(item => item.id === ideaId);
+      if (!idea) return;
+
+      const targetDate = qs("tripBoardPlanDate")?.value || qs("selectedDate")?.value;
+      const period = qs("tripBoardPlanPeriod")?.value || "Evening";
+      if (!targetDate) {
+        alert("Choose a date first.");
+        return;
+      }
+
+      try {
+        const originalSelectedDate = qs("selectedDate")?.value;
+        if (qs("selectedDate")) qs("selectedDate").value = targetDate;
+        const plan = await getPlanForDate(targetDate, true);
+        const title = `${tripTypeIcon(idea.type)} ${idea.name}${idea.notes ? ` — ${idea.notes}` : ""}`;
+
+        const { error } = await supabaseClient
+          .from("plan_entries")
+          .insert({
+            plan_id: plan.id,
+            entry_type: idea.type || "custom",
+            time_period: period,
+            title,
+            created_by: currentUser.id
+          });
+
+        if (error) throw error;
+
+        idea.status = "added";
+        await saveTemporaryTripLibraries();
+
+        if (qs("selectedDate")) qs("selectedDate").value = targetDate || originalSelectedDate;
+        await loadPlan();
+        await loadHome();
+        renderTripBoard();
+        if (qs("tripBoardMessage")) qs("tripBoardMessage").textContent = `Added "${idea.name}" to ${targetDate} ${period} 💖`;
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    }
+
+    async function seedDalatTripIdeas() {
+      const board = activeTripBoard();
+      if (!board) return;
+      board.ideas = Array.isArray(board.ideas) ? board.ideas : [];
+
+      const ideas = [
+        {
+          name: "ATV / Quad Bike Tour",
+          type: "activity",
+          category: "Must-do · Fun / Adventure",
+          price: "₫₫",
+          notes: "Off-road riding around Đà Lạt hills/mountain areas. This sounds like the most actually fun activity for anh. Some tours are 1–2 hours, others are longer routes.",
+          status: "idea"
+        },
+        {
+          name: "Datanla Waterfall Alpine Coaster",
+          type: "activity",
+          category: "Must-do · Fun / Adventure",
+          price: "₫₫",
+          notes: "Forest coaster ride down toward the waterfall. Good couple activity because it is fun but not too tiring.",
+          status: "idea"
+        },
+        {
+          name: "Langbiang Mountain Jeep Ride",
+          type: "activity",
+          category: "Maybe-do · Viewpoint",
+          price: "₫₫",
+          notes: "Viewpoint activity. Take a jeep instead of hiking, so it is lazy-friendly.",
+          status: "maybe"
+        },
+        {
+          name: "Crazy House / Hang Nga Guesthouse",
+          type: "place",
+          category: "Maybe-do · Photos",
+          price: "₫",
+          notes: "Weird maze-like architecture. Good for photos and a quick stop.",
+          status: "maybe"
+        },
+        {
+          name: "Tuyen Lam Lake",
+          type: "place",
+          category: "Maybe-do · Chill",
+          price: "Free / ₫",
+          notes: "Chill lake area, good for walking, photos, boat rides, or glamping nearby.",
+          status: "maybe"
+        },
+        {
+          name: "Camping / Glamping",
+          type: "activity",
+          category: "Maybe-do · Romantic evening",
+          price: "₫₫₫",
+          notes: "More romantic evening option. BBQ, cold weather, cozy vibe.",
+          status: "maybe"
+        },
+        {
+          name: "Strawberry Farm",
+          type: "place",
+          category: "Must-do · Cute / Romantic / Photos",
+          price: "₫",
+          notes: "Pick strawberries, take cute photos, eat strawberry snacks. Definitely keep this one.",
+          status: "idea"
+        },
+        {
+          name: "Đà Lạt Flower Garden",
+          type: "place",
+          category: "Must-do · Cute / Romantic / Photos",
+          price: "₫",
+          notes: "Easy walking, colorful, good for couple photos.",
+          status: "idea"
+        },
+        {
+          name: "Hydrangea Garden / Flower Fields",
+          type: "place",
+          category: "Maybe-do · Cute / Romantic / Photos",
+          price: "₫",
+          notes: "Similar to flower garden, but more countryside/photo vibe.",
+          status: "maybe"
+        },
+        {
+          name: "Xuan Huong Lake",
+          type: "place",
+          category: "Maybe-do · Romantic walk",
+          price: "Free",
+          notes: "Easy romantic walk, especially morning or evening. Keep the walking distance short if em gets tired.",
+          status: "idea"
+        },
+        {
+          name: "Dalat Night Market",
+          type: "place",
+          category: "Must-do · Easy evening date",
+          price: "₫",
+          notes: "Walk, snack, shop, eat random things. Very easy date activity.",
+          status: "idea"
+        },
+        {
+          name: "Linh Phuoc Pagoda",
+          type: "place",
+          category: "Maybe-do · Scenic / unique",
+          price: "Free / ₫",
+          notes: "Beautiful mosaic-style pagoda, unique and colorful.",
+          status: "maybe"
+        },
+        {
+          name: "Truc Lam Zen Monastery + Cable Car",
+          type: "activity",
+          category: "Maybe-do · Calm scenic",
+          price: "₫₫",
+          notes: "Calm scenic activity, not too intense. Some tours combine it with Datanla and other stops.",
+          status: "maybe"
+        },
+        {
+          name: "Bánh tráng trộn",
+          type: "food",
+          category: "For her · Night market snack",
+          price: "₫",
+          notes: "Rice paper salad. Anh is not a big fan, but em loves it, so add it as a night market snack.",
+          status: "em_likes"
+        },
+        {
+          name: "Bánh tráng nướng",
+          type: "food",
+          category: "For her / maybe both · Snack",
+          price: "₫",
+          notes: "Crispy grilled rice paper, often called Vietnamese pizza. Anh may like this more than bánh tráng trộn.",
+          status: "idea"
+        },
+        {
+          name: "Strawberries / Strawberry Desserts",
+          type: "food",
+          category: "For her · Dessert",
+          price: "₫",
+          notes: "Good match with the strawberry farm plan. Cute, safe, and on-theme.",
+          status: "em_likes"
+        },
+        {
+          name: "Lẩu gà lá é",
+          type: "food",
+          category: "For anh / optional",
+          price: "₫₫",
+          notes: "Chicken hotpot with é leaves. Anh loves it, but em might hate it, so keep it optional — his choice, not romantic dinner. Tao Ngộ is one known place people mention.",
+          status: "maybe"
+        },
+        {
+          name: "Nem nướng",
+          type: "food",
+          category: "For anh / maybe both",
+          price: "₫",
+          notes: "Grilled pork rolls with rice paper, vegetables, crispy rice paper, and dipping sauce. Nem Nướng Bà Hùng is a known Đà Lạt option.",
+          status: "maybe"
+        },
+        {
+          name: "Bánh căn Nhà Chung",
+          type: "food",
+          category: "For anh / maybe both",
+          price: "₫",
+          notes: "Small savory rice pancakes, usually with egg/meat/seafood, dipped in sauce. Nhà Chung is a known bánh căn area/place in Đà Lạt.",
+          status: "maybe"
+        },
+        {
+          name: "Grilled skewers at Night Market",
+          type: "food",
+          category: "Backup food",
+          price: "₫",
+          notes: "Easy backup food if both cannot agree.",
+          status: "idea"
+        },
+        {
+          name: "Hot soy milk / Sữa đậu nành nóng",
+          type: "food",
+          category: "Cold-weather night drink",
+          price: "₫",
+          notes: "Classic cold-weather Đà Lạt night drink.",
+          status: "idea"
+        },
+        {
+          name: "Avocado ice cream / Kem bơ",
+          type: "food",
+          category: "Dessert",
+          price: "₫",
+          notes: "Easy dessert, not too risky.",
+          status: "idea"
+        },
+        {
+          name: "Bánh mì xíu mại",
+          type: "food",
+          category: "Breakfast / lunch",
+          price: "₫",
+          notes: "Bread with meatball sauce. Good breakfast or lunch option.",
+          status: "idea"
+        },
+        {
+          name: "Still Cafe",
+          type: "place",
+          category: "Optional café · Photo/chill stop",
+          price: "₫₫",
+          notes: "Cute Japanese-style café vibe. Since anh is not a big coffee person, use it as a photo/chill stop, not the main plan.",
+          status: "maybe"
+        },
+        {
+          name: "Mountain-view café",
+          type: "place",
+          category: "Optional café · Route backup",
+          price: "₫₫",
+          notes: "Choose one near the route, not as a main destination.",
+          status: "maybe"
+        },
+        {
+          name: "Me Linh Coffee Garden",
+          type: "place",
+          category: "Optional café · View/farm style",
+          price: "₫₫",
+          notes: "More of a view/farm-style café than just sitting around.",
+          status: "maybe"
+        }
+      ];
+
+      const existingNames = new Set(board.ideas.map(item => item.name.toLowerCase()));
+      ideas.forEach(item => {
+        if (!existingNames.has(item.name.toLowerCase())) {
+          board.ideas.push({
+            id: makeTripId(item.name),
+            createdAt: new Date().toISOString(),
+            ...item
+          });
+        }
+      });
+
+      await saveTemporaryTripLibraries();
+      renderTripBoard();
+      if (qs("tripBoardMessage")) qs("tripBoardMessage").textContent = "Full Da Lat idea list added 🌿";
+    }
 
     const starterFoods = [
       { name: "Steak + fries", category: "Home Cooking", status: "wishlist", price_range: "Home", notes: "Quick home date. Note: she may not love red meat or oily food." },
@@ -6222,6 +7099,7 @@
           ${libraryStarButtons(item)}
           <div class="actions">
             <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'food')">Add to Plan</button>
+            <button class="button small secondary" onclick="addLibraryItemToTripBoard('${encodeURIComponent(JSON.stringify({ name: item.name, type: 'food', category: item.category || '', price: item.price_range || '', notes: item.notes || '' }))}')">Add to Trip Board</button>
             <button class="button small secondary" onclick="editFoodItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}', '${encodeURIComponent(item.image_url || "")}', '${encodeURIComponent(item.link_url || "")}')">Edit</button>
             <button class="button small danger" onclick="deleteFoodItem('${item.id}')">Delete</button>
           </div>
@@ -6253,6 +7131,7 @@
           ${libraryStarButtons(item)}
           <div class="actions">
             <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'place')">Add to Plan</button>
+            <button class="button small secondary" onclick="addLibraryItemToTripBoard('${encodeURIComponent(JSON.stringify({ name: item.name, type: 'place', category: item.category || '', price: item.price_range || '', notes: item.notes || '' }))}')">Add to Trip Board</button>
             <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}', '${encodeURIComponent(item.image_url || "")}', '${encodeURIComponent(item.link_url || "")}')">Edit</button>
             <button class="button small danger" onclick="deleteLibraryItem('${item.id}', 'place')">Delete</button>
           </div>
@@ -6282,6 +7161,7 @@
           ${libraryStarButtons(item)}
           <div class="actions">
             <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'game')">Add to Plan</button>
+            <button class="button small secondary" onclick="addLibraryItemToTripBoard('${encodeURIComponent(JSON.stringify({ name: item.name, type: 'game', category: item.category || '', price: '', notes: item.notes || '' }))}')">Add to Trip Board</button>
             <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}', '${encodeURIComponent(item.image_url || "")}', '${encodeURIComponent(item.link_url || "")}')">Edit</button>
             <button class="button small danger" onclick="deleteLibraryItem('${item.id}', 'game')">Delete</button>
           </div>
@@ -6312,6 +7192,7 @@
           ${libraryStarButtons(item)}
           <div class="actions">
             <button class="button small" onclick="addLibraryItemToPlan('${item.id}', '${encodeURIComponent(item.name)}', 'activity')">Add to Plan</button>
+            <button class="button small secondary" onclick="addLibraryItemToTripBoard('${encodeURIComponent(JSON.stringify({ name: item.name, type: 'activity', category: item.category || '', price: item.price_range || '', notes: item.notes || '' }))}')">Add to Trip Board</button>
             <button class="button small secondary" onclick="editLibraryItem('${item.id}', '${encodeURIComponent(item.name)}', '${encodeURIComponent(item.category || "")}', '${encodeURIComponent(item.status || "wishlist")}', '${encodeURIComponent(item.price_range || "")}', '${encodeURIComponent(item.notes || "")}', '${encodeURIComponent(item.image_url || "")}', '${encodeURIComponent(item.link_url || "")}')">Edit</button>
             <button class="button small danger" onclick="deleteLibraryItem('${item.id}', 'activity')">Delete</button>
           </div>
@@ -7025,7 +7906,7 @@
 
         if (error) throw error;
 
-        const visibleEntries = (entries || []).filter(entry => entry.title !== PROFILE_ENTRY_TITLE && entry.title !== STORYBOOK_LIBRARY_TITLE);
+        const visibleEntries = (entries || []).filter(entry => entry.title !== PROFILE_ENTRY_TITLE && entry.title !== STORYBOOK_LIBRARY_TITLE && entry.title !== TEMP_TRIP_LIBRARY_TITLE);
         const filters = readJournalFilters();
         const filteredEntries = sortJournalEntries(
           visibleEntries.filter(entry => journalEntryMatchesFilters(entry, filters)),
@@ -7322,7 +8203,7 @@
           { label: "Places", value: countType("place"), emoji: "📍" },
           { label: "Games", value: countType("game"), emoji: "🎮" },
           { label: "Activities", value: countType("activity"), emoji: "✨" },
-          { label: "Journal entries", value: (journals || []).filter(entry => entry.title !== PROFILE_ENTRY_TITLE && entry.title !== STORYBOOK_LIBRARY_TITLE).length, emoji: "📝" },
+          { label: "Journal entries", value: (journals || []).filter(entry => entry.title !== PROFILE_ENTRY_TITLE && entry.title !== STORYBOOK_LIBRARY_TITLE && entry.title !== TEMP_TRIP_LIBRARY_TITLE).length, emoji: "📝" },
           { label: "Upcoming dates", value: (plans || []).length, emoji: "📅" },
           { label: "Favorites", value: favorites, emoji: "💖" },
           { label: "Total library", value: items.length, emoji: "♡" }
