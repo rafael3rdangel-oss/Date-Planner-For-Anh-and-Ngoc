@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Date Planner for Us 🍓 Full Da Lat list v51</title>
+  <title>Date Planner for Us 🍓 Cleaner inner tabs v52</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ef6f9f">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1711,6 +1711,100 @@
       line-height: 1.55;
     }
 
+  
+    .workspace-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 10px;
+      margin: 10px 0 14px;
+      scrollbar-width: thin;
+    }
+    .workspace-tabs button {
+      flex: 0 0 auto;
+      min-width: 112px;
+      padding: 10px 13px;
+      border: 1px solid rgba(239,111,159,.14);
+      border-radius: 999px;
+      background: rgba(255,255,255,.86);
+      color: var(--muted);
+      font-weight: 850;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .workspace-tabs button.active {
+      background: linear-gradient(135deg, rgba(255,209,226,.95), rgba(255,244,183,.86));
+      color: var(--berry-dark);
+      box-shadow: 0 8px 18px rgba(92,66,80,.10);
+    }
+    .entity-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 1px 10px;
+      margin: 4px 0 10px;
+      scrollbar-width: thin;
+    }
+    .entity-tabs button {
+      flex: 0 0 auto;
+      padding: 8px 11px;
+      border-radius: 14px;
+      border: 1px solid rgba(239,111,159,.14);
+      background: rgba(255,255,255,.82);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .entity-tabs button.active {
+      background: var(--pink);
+      color: var(--berry-dark);
+      box-shadow: 0 6px 14px rgba(92,66,80,.08);
+    }
+    .workspace-hint {
+      margin: -4px 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .storybook-quick-help {
+      border-radius: 18px;
+      background: rgba(255,255,255,.72);
+      border: 1px dashed rgba(239,111,159,.20);
+      padding: 10px 12px;
+    }
+    .storybook-quick-help summary {
+      color: var(--berry-dark);
+      font-weight: 850;
+      cursor: pointer;
+    }
+    .storybook-quick-help .storybook-howto {
+      margin-top: 10px;
+    }
+    .tutorial-route {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .tutorial-route-line {
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.80);
+      border: 1px solid rgba(239,111,159,.12);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .tutorial-route-line strong {
+      color: var(--berry-dark);
+    }
+    .tutorial-arrow {
+      text-align: center;
+      color: var(--berry);
+      font-weight: 900;
+    }
+
   </style>
 </head>
 
@@ -1723,7 +1817,7 @@
         <div class="mascot side"><div class="ear left"></div><div class="ear right"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div></div>
       </div>
       <h1>Date Planner for Us 🍓</h1>
-      <p>Cozy plans, memories, places and games. <strong>Full Da Lat list v51</strong></p>
+      <p>Cozy plans, memories, places and games. <strong>Cleaner inner tabs v52</strong></p>
     </header>
 
     <section id="authScreen" class="auth-screen">
@@ -1914,7 +2008,20 @@
               </div>
             </div>
 
-            <div class="storybook-howto">
+            <div id="storybookBookTabs" class="entity-tabs" aria-label="Storybooks"></div>
+
+            <div class="workspace-tabs" aria-label="Storybook sections">
+              <button id="storybookWorkspaceBooks" class="active" onclick="setStorybookWorkspace('books', true)">📚 Books</button>
+              <button id="storybookWorkspacePeriods" onclick="setStorybookWorkspace('periods', true)">🗓️ Periods</button>
+              <button id="storybookWorkspacePages" onclick="setStorybookWorkspace('pages', true)">📝 Pages</button>
+              <button id="storybookWorkspaceUploads" onclick="setStorybookWorkspace('uploads', true)">☁️ Uploads</button>
+              <button id="storybookWorkspaceRead" onclick="setStorybookWorkspace('read', true)">💖 Read Book</button>
+            </div>
+            <p id="storybookWorkspaceHint" class="workspace-hint">Choose the book above, then use these tabs to edit one part at a time.</p>
+
+            <details class="storybook-quick-help">
+              <summary>Quick storybook help</summary>
+              <div class="storybook-howto">
               <h3>How to use the storybook</h3>
               <ol>
                 <li><strong>Create or select a book</strong>, like Vietnam 2025, Next Vietnam, Belgium memories, or Anniversary.</li>
@@ -1927,15 +2034,16 @@
                 <li><strong>Use Storybook photo shelf</strong> to quickly open uploaded images larger.</li>
                 <li>The full PDF stays in Supabase, while the app shows a soft readable storybook version.</li>
               </ol>
-            </div>
+              </div>
+            </details>
 
             <div class="storybook-bookshelf">
-              <div class="storybook-bookshelf-title">
+              <div class="storybook-bookshelf-title storybook-subpanel storybook-books-panel">
                 <span>📚 Storybook bookshelf</span>
                 <small id="storybookBookCount">Loading books...</small>
               </div>
 
-              <div class="storybook-book-row">
+              <div class="storybook-book-row storybook-subpanel storybook-books-panel">
                 <select id="storybookBookSelect" onchange="selectStorybookBook()"></select>
                 <select id="storybookPeriodFilter" onchange="renderStorybook()">
                   <option value="all">All periods</option>
@@ -1946,7 +2054,7 @@
                 </div>
               </div>
 
-              <details>
+              <details class="storybook-subpanel storybook-books-panel">
                 <summary>Edit selected book</summary>
                 <div class="form-grid" style="margin-top:10px;">
                   <input id="storybookEditTitle" placeholder="Book title">
@@ -1958,7 +2066,7 @@
                   </div>
                 </div>
               </details>
-              <details>
+              <details class="storybook-subpanel storybook-periods-panel hidden" open>
                 <summary>Manage periods / chapters</summary>
                 <div class="storybook-period-panel">
                   <div class="storybook-period-header">
@@ -1981,8 +2089,8 @@
               </details>
 
 
-              <details>
-                <summary>Add a custom story page</summary>
+              <details class="storybook-subpanel storybook-pages-panel hidden" open>
+                <summary>Add or edit a story page</summary>
                 <div id="storybookPageForm" class="storybook-page-form">
                   <div id="storybookEditingNote" class="storybook-editing-note">Editing a storybook page. Save changes or cancel edit.</div>
                   <select id="storybookPagePeriod"></select>
@@ -2006,7 +2114,7 @@
               <div id="storybookSyncMessage" class="plan-copy-message"></div>
             </div>
 
-            <div class="storybook-settings">
+            <div class="storybook-settings storybook-subpanel storybook-uploads-panel hidden">
               <details>
                 <summary>Supabase Storage setup</summary>
                 <p class="storybook-help">Upload the PDF and page images for the selected storybook. Files go into Supabase Storage under that book's private folder. Book details are saved in your existing Journal table as one hidden sync entry, so both of you can see the same storybook shelf.</p>
@@ -2047,13 +2155,13 @@
               </details>
             </div>
 
-            <div id="storybookTimeline" class="storybook-grid">
+            <div id="storybookTimeline" class="storybook-grid storybook-subpanel storybook-read-panel hidden">
               <div class="empty">Loading storybook...</div>
             </div>
           </div>
         </div>
 
-        <div class="card compact-card">
+        <div id="storybookPhotoShelfCard" class="card compact-card storybook-subpanel storybook-read-panel hidden">
           <h2 class="title">🧸 Selected book photo shelf</h2>
           <p class="subtitle">Photo/page previews for the selected storybook. Upload images above or paste manual links.</p>
           <div id="storybookAlbum" class="storybook-album">
@@ -2123,7 +2231,7 @@
           <div class="section-sparkle">🛠️ Technical</div>
           <h2 class="title">Help, backup & phone setup</h2>
           <p class="subtitle">Instructions and safety tools are grouped here instead of making Home too long.</p>
-          <div class="empty" style="margin-top:10px;">Current app version: <strong>Full Da Lat list v51</strong></div>
+          <div class="empty" style="margin-top:10px;">Current app version: <strong>Cleaner inner tabs v52</strong></div>
         </div>
 
 
@@ -2152,18 +2260,60 @@
 
 
         <div class="card compact-card">
-          <div class="section-sparkle">🍓 v31 comfort</div>
-          <h2 class="title">🌷 How to use this app</h2>
-          <p class="subtitle">A small guide so the app feels easier for both of you.</p>
-          <div class="comfort-steps">
-            <div class="comfort-step"><strong>1. Save ideas:</strong> add food, places, games and activities in Library.</div>
-            <div class="comfort-step"><strong>2. Make a plan:</strong> choose a date in Plan, then add ideas to Morning, Noon, Afternoon or Evening.</div>
-            <div class="comfort-step"><strong>3. After the date:</strong> use the review shortcut to save the memory into Journal.</div>
-            <div class="comfort-step"><strong>4. Keep it safe:</strong> download a backup sometimes from Tech.</div>
-          </div>
+          <div class="section-sparkle">🌷 tutorials</div>
+          <h2 class="title">How to use the cleaner tabs</h2>
+          <p class="subtitle">The large bottom tabs stay the same. Inside Plan and Storybooks, smaller tabs now separate each job.</p>
+
+          <details open>
+            <summary><strong>📅 Plan tab tutorial</strong></summary>
+            <div class="tutorial-route">
+              <div class="tutorial-route-line"><strong>Day Planner:</strong> choose the real date, edit the plan title, and add Morning / Noon / Afternoon / Evening entries.</div>
+              <div class="tutorial-arrow">↓</div>
+              <div class="tutorial-route-line"><strong>Trips & Da Lat:</strong> use this before making the final schedule. Let em mark ideas as Em likes, Maybe, or Skip.</div>
+              <div class="tutorial-arrow">↓</div>
+              <div class="tutorial-route-line"><strong>Tools & Review:</strong> use quick templates, surprise picker, and save an after-date review to Journal.</div>
+            </div>
+          </details>
+
+          <details>
+            <summary><strong>🌿 Da Lat trip-board tutorial</strong></summary>
+            <div class="comfort-steps" style="margin-top:10px;">
+              <div class="comfort-step"><strong>1.</strong> Open Plan → Trips & Da Lat.</div>
+              <div class="comfort-step"><strong>2.</strong> Tap the <strong>Da Lat Trip</strong> tab.</div>
+              <div class="comfort-step"><strong>3.</strong> Press <strong>Add full Da Lat idea list</strong> once.</div>
+              <div class="comfort-step"><strong>4.</strong> Em marks each idea as <strong>Em likes</strong>, <strong>Maybe</strong>, or <strong>Skip</strong>.</div>
+              <div class="comfort-step"><strong>5.</strong> Choose the real date and Morning / Noon / Afternoon / Evening.</div>
+              <div class="comfort-step"><strong>6.</strong> Press <strong>Add to selected plan</strong> only on ideas you actually choose.</div>
+              <div class="comfort-step"><strong>7.</strong> Open Day Planner to see the final schedule.</div>
+            </div>
+          </details>
+
+          <details>
+            <summary><strong>📚 Storybook tutorial</strong></summary>
+            <div class="comfort-steps" style="margin-top:10px;">
+              <div class="comfort-step"><strong>Book tabs:</strong> Vietnam 2025, Next Vietnam, and future books appear as clickable tabs.</div>
+              <div class="comfort-step"><strong>Books:</strong> create, rename, describe, or delete a book.</div>
+              <div class="comfort-step"><strong>Periods:</strong> create chapters like Before trip, Day 1, Da Lat, Last day.</div>
+              <div class="comfort-step"><strong>Pages:</strong> add, edit, delete, move, and assign a page to a period.</div>
+              <div class="comfort-step"><strong>Uploads:</strong> upload the private PDF and photos to Supabase.</div>
+              <div class="comfort-step"><strong>Read Book:</strong> see the grouped story pages and photo shelf.</div>
+            </div>
+          </details>
+
+          <details>
+            <summary><strong>💡 Simple recommended workflow</strong></summary>
+            <div class="tutorial-route">
+              <div class="tutorial-route-line"><strong>Before trip:</strong> Trip board → em chooses ideas → add chosen ones to Day Planner.</div>
+              <div class="tutorial-arrow">↓</div>
+              <div class="tutorial-route-line"><strong>During trip:</strong> edit dates and periods when plans change.</div>
+              <div class="tutorial-arrow">↓</div>
+              <div class="tutorial-route-line"><strong>After trip:</strong> save reviews to Journal → add best memories into the Da Lat storybook.</div>
+            </div>
+          </details>
+
           <div class="actions">
             <button class="button secondary" onclick="quickStartForEm()">Copy join steps for em</button>
-            <button class="button ghost" onclick="openPage('libraryPage','libraryNav')">Open Library</button>
+            <button class="button ghost" onclick="openPage('planPage','planNav'); setPlanWorkspace('trips', true);">Open Da Lat board</button>
           </div>
         </div>
 
@@ -2212,9 +2362,10 @@
             <div class="comfort-step"><strong>1. Storybook page order:</strong> done — pages now have move up / move down buttons.</div>
             <div class="comfort-step"><strong>2. Better image management:</strong> improved — story pages now have an uploaded image picker and preview.</div>
             <div class="comfort-step"><strong>3. PDF page importer:</strong> upload one PDF and let the app make page previews automatically. This would need server-side work, not just index.html.</div>
-            <div class="comfort-step"><strong>4. Temporary trip library:</strong> done — Plan now has a trip idea board where em can choose ideas before adding them to the real planner.</div>
-            <div class="comfort-step"><strong>5. Plan calendar view:</strong> a cute monthly calendar would make wrong dates easier to notice.</div>
-            <div class="comfort-step"><strong>5. Plan date merging:</strong> if two plans exist on the same date, add a safe merge option instead of blocking the move.</div>
+            <div class="comfort-step"><strong>4. Temporary trip library:</strong> done — Plan now has clickable trip tabs and a Da Lat choosing board.</div>
+            <div class="comfort-step"><strong>5. Cleaner inner tabs:</strong> done — Plan and Storybooks are now divided into smaller workspaces.</div>
+            <div class="comfort-step"><strong>6. Plan calendar view:</strong> a cute monthly calendar would make wrong dates easier to notice.</div>
+            <div class="comfort-step"><strong>7. Plan date merging:</strong> if two plans exist on the same date, add a safe merge option instead of blocking the move.</div>
             <div class="comfort-step"><strong>6. Image compression:</strong> compress photos before uploading to Supabase so storage lasts longer.</div>
             <div class="comfort-step"><strong>7. Storybook export:</strong> export a memory book as PDF/HTML for printing or saving offline.</div>
             <div class="comfort-step"><strong>8. Private file check:</strong> add a small Tech status checker for Supabase bucket/policies so private uploads are easier to verify.</div>
@@ -2270,14 +2421,22 @@
       <main id="planPage" class="page">
         <div class="card">
           <h2 class="title">📅 Planning</h2>
-          <p class="subtitle">Choose a day, add a cute title, notes, budget and plans for Morning, Noon, Afternoon and Evening. Tap any title/note box to open mini stickers.</p>
-          <div class="date-row">
+          <p class="subtitle">Choose a day, build a trip board, or use the planning tools. The smaller tabs keep everything separate and cleaner.</p>
+
+          <div class="workspace-tabs" aria-label="Plan sections">
+            <button id="planWorkspaceDaily" class="active" onclick="setPlanWorkspace('daily', true)">📅 Day Planner</button>
+            <button id="planWorkspaceTrips" onclick="setPlanWorkspace('trips', true)">🌿 Trips & Da Lat</button>
+            <button id="planWorkspaceTools" onclick="setPlanWorkspace('tools', true)">✨ Tools & Review</button>
+          </div>
+          <p id="planWorkspaceHint" class="workspace-hint">Use Day Planner for the final schedule. Use Trips & Da Lat as the choosing menu first.</p>
+
+          <div class="date-row plan-subpanel plan-daily-panel">
             <button class="button" onclick="changeDate(-1)">←</button>
             <input id="selectedDate" type="date" onchange="loadPlan()">
             <button class="button" onclick="changeDate(1)">→</button>
           </div>
 
-          <div class="plan-details">
+          <div class="plan-details plan-subpanel plan-daily-panel">
             <label class="field-label" for="planEditDate">Plan date</label>
             <input id="planEditDate" type="date">
             <p class="plan-date-move-note">Change this date and click Save plan details to move the whole plan, including its Morning/Noon/Afternoon/Evening entries.</p>
@@ -2312,16 +2471,17 @@
             <p id="planCopyMessage" class="plan-copy-message"></p>
           </div>
 
-          <div class="plan-details">
+          <div class="plan-details plan-subpanel plan-trip-panel hidden">
             <div class="section-sparkle">🧺 temporary library</div>
             <h3 class="title">🌿 Trip idea board</h3>
             <p class="subtitle">A temporary mini library for one trip or moment. Perfect for Da Lat: add many ideas here, let em choose, then add only the chosen ideas to the real planner.</p>
 
             <div class="trip-board-shell">
               <div class="trip-board-top">
+                <div id="tripBoardTabs" class="entity-tabs" aria-label="Trip boards"></div>
                 <div class="row">
-                  <select id="tripBoardSelect" onchange="selectTripBoard()"></select>
-                  <button class="button secondary" onclick="createTripBoard()">New board</button>
+                  <select id="tripBoardSelect" class="hidden" onchange="selectTripBoard()"></select>
+                  <button class="button secondary" onclick="createTripBoard()">＋ New trip board</button>
                 </div>
                 <div class="row">
                   <input id="tripBoardTitle" placeholder="Board title, e.g. Da Lat Trip">
@@ -2406,7 +2566,7 @@
 
 
 
-          <div class="plan-details">
+          <div class="plan-details plan-subpanel plan-tools-panel hidden">
             <h3 class="title">💌 After-date review</h3>
             <p class="subtitle">After a date, save a cute review into Journal without typing from zero.</p>
             <div class="review-box">
@@ -2425,7 +2585,7 @@
             <p id="dateReviewMessage" class="plan-copy-message"></p>
           </div>
 
-          <div class="plan-details">
+          <div class="plan-details plan-subpanel plan-tools-panel hidden">
             <h3 class="title">✨ Quick templates</h3>
             <p class="subtitle">Pick a ready-made date idea and add it to the selected day. It will add entries without deleting anything already there.</p>
             <div class="row">
@@ -2443,13 +2603,13 @@
             <button class="button ghost" style="width:100%;" onclick="deleteCurrentPlanIfEmpty()">Delete empty day</button>
           </div>
         </div>
-        <div class="card compact-card">
+        <div class="card compact-card plan-subpanel plan-tools-panel hidden">
           <div class="section-sparkle">🎲 Plan helper</div>
           <h2 class="title">Quick surprise idea</h2>
           <p class="subtitle">Use this inside Plan when you want the app to pick something from your Library.</p>
         </div>
 
-        <div class="card compact-card">
+        <div class="card compact-card plan-subpanel plan-tools-panel hidden">
           <h2 class="title">🎲 Surprise date picker</h2>
           <p class="subtitle">Let the app pick a cute date idea from your saved food, places, games and activities. It will not change anything until you click “Add to plan”.</p>
           <div class="row">
@@ -2491,7 +2651,7 @@
         </div>
 
         
-        <div id="periodCards"></div>
+        <div id="periodCards" class="plan-subpanel plan-daily-panel"></div>
       </main>
 
       <main id="libraryPage" class="page">
@@ -3220,6 +3380,10 @@
     const STORYBOOK_ACTIVE_KEY = "datePlannerActiveStorybookV1";
     const TEMP_TRIP_LIBRARY_TITLE = "__temporary_trip_libraries_v1__";
     const TEMP_TRIP_ACTIVE_KEY = "datePlannerActiveTripBoardV1";
+    const PLAN_WORKSPACE_KEY = "datePlannerPlanWorkspaceV1";
+    const STORYBOOK_WORKSPACE_KEY = "datePlannerStorybookWorkspaceV1";
+    let activePlanWorkspace = localStorage.getItem(PLAN_WORKSPACE_KEY) || "daily";
+    let activeStorybookWorkspace = localStorage.getItem(STORYBOOK_WORKSPACE_KEY) || "books";
     let storybookLibraryCache = null;
     let activeStorybookId = localStorage.getItem(STORYBOOK_ACTIVE_KEY) || "vietnam-2025";
     let editingStorybookPageId = "";
@@ -3591,7 +3755,7 @@
 
         const backup = {
           app: "Date Planner for Us",
-          version: "Full Da Lat list v51",
+          version: "Cleaner inner tabs v52",
           exported_at: new Date().toISOString(),
           exported_by: currentUser.email,
           couple: currentCouple,
@@ -4144,6 +4308,76 @@
       });
     }
 
+
+    function setPlanWorkspace(mode, scroll = false) {
+      const safeMode = ["daily", "trips", "tools"].includes(mode) ? mode : "daily";
+      activePlanWorkspace = safeMode;
+      localStorage.setItem(PLAN_WORKSPACE_KEY, safeMode);
+
+      document.querySelectorAll(".plan-subpanel").forEach(panel => panel.classList.add("hidden"));
+      document.querySelectorAll(`.plan-${safeMode}-panel`).forEach(panel => panel.classList.remove("hidden"));
+
+      ["daily", "trips", "tools"].forEach(name => {
+        const id = name === "daily" ? "planWorkspaceDaily" : name === "trips" ? "planWorkspaceTrips" : "planWorkspaceTools";
+        qs(id)?.classList.toggle("active", name === safeMode);
+      });
+
+      const hints = {
+        daily: "This is the real schedule. Add final choices to Morning, Noon, Afternoon and Evening.",
+        trips: "This is the choosing area. Da Lat and future trips each have their own tab.",
+        tools: "Quick templates, surprise ideas, and after-date reviews live here."
+      };
+      if (qs("planWorkspaceHint")) qs("planWorkspaceHint").textContent = hints[safeMode];
+
+      if (safeMode === "trips" && tempTripLibraryCache) renderTripBoard();
+      if (scroll) qs("planPage")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function setStorybookWorkspace(mode, scroll = false) {
+      const safeMode = ["books", "periods", "pages", "uploads", "read"].includes(mode) ? mode : "books";
+      activeStorybookWorkspace = safeMode;
+      localStorage.setItem(STORYBOOK_WORKSPACE_KEY, safeMode);
+
+      document.querySelectorAll(".storybook-subpanel").forEach(panel => panel.classList.add("hidden"));
+      document.querySelectorAll(`.storybook-${safeMode}-panel`).forEach(panel => panel.classList.remove("hidden"));
+
+      ["books", "periods", "pages", "uploads", "read"].forEach(name => {
+        const id = "storybookWorkspace" + name.charAt(0).toUpperCase() + name.slice(1);
+        qs(id)?.classList.toggle("active", name === safeMode);
+      });
+
+      const hints = {
+        books: "Choose, create, rename, or delete a storybook.",
+        periods: "Create chapters inside the selected book.",
+        pages: "Add or edit pages and assign them to a period.",
+        uploads: "Upload the book PDF and private images to Supabase.",
+        read: "Read the selected book and open its photo shelf."
+      };
+      if (qs("storybookWorkspaceHint")) qs("storybookWorkspaceHint").textContent = hints[safeMode];
+
+      if (scroll) qs("storybookBookTabs")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function selectTripBoardById(boardId) {
+      if (!boardId) return;
+      activeTripBoardId = boardId;
+      localStorage.setItem(TEMP_TRIP_ACTIVE_KEY, activeTripBoardId);
+      if (qs("tripBoardSelect")) qs("tripBoardSelect").value = boardId;
+      renderTripBoard();
+    }
+
+    function selectStorybookBookById(bookId) {
+      if (!bookId) return;
+      activeStorybookId = bookId;
+      localStorage.setItem(STORYBOOK_ACTIVE_KEY, activeStorybookId);
+      if (qs("storybookBookSelect")) qs("storybookBookSelect").value = bookId;
+      if (qs("storybookPeriodFilter")) qs("storybookPeriodFilter").value = "all";
+      renderStorybookBookshelf();
+      renderStorybook();
+      loadStorybookStorageInputs();
+      if (qs("storybookStorageMessage")) qs("storybookStorageMessage").textContent = "";
+    }
+
     function openPage(pageId, navId) {
       document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
       document.querySelectorAll(".nav-button").forEach(button => button.classList.remove("active"));
@@ -4152,9 +4386,15 @@
       qs(navId).classList.add("active");
 
       if (pageId === "homePage") loadHome();
-      if (pageId === "overviewPage") loadOverview();
+      if (pageId === "overviewPage") {
+        setStorybookWorkspace(activeStorybookWorkspace);
+        loadOverview();
+      }
       if (pageId === "technicalPage") loadTechnical();
-      if (pageId === "planPage") loadPlan();
+      if (pageId === "planPage") {
+        setPlanWorkspace(activePlanWorkspace);
+        loadPlan();
+      }
       if (pageId === "libraryPage") {
         syncLibraryQuickAddDate();
         loadLibrary();
@@ -4409,6 +4649,14 @@
       }
       if (count) count.textContent = `${library.books.length} book${library.books.length === 1 ? "" : "s"}`;
 
+      if (qs("storybookBookTabs")) {
+        qs("storybookBookTabs").innerHTML = library.books.map(book => `
+          <button class="${book.id === activeStorybookId ? "active" : ""}" onclick="selectStorybookBookById('${escapeHTML(book.id)}')">
+            📖 ${escapeHTML(book.title)}
+          </button>
+        `).join("");
+      }
+
       const book = activeStorybook();
       const periods = Array.isArray(book?.periods) ? book.periods : [];
 
@@ -4576,6 +4824,7 @@
       localStorage.setItem(STORYBOOK_ACTIVE_KEY, activeStorybookId);
       qs("newStorybookTitle").value = "";
       await saveStorybookLibrary(library);
+      setStorybookWorkspace("books");
       renderStorybookBookshelf();
       renderStorybook();
       loadStorybookStorageInputs();
@@ -4797,6 +5046,7 @@
       }
 
       editingStorybookPageId = chapter.id;
+      setStorybookWorkspace("pages");
       renderStorybookBookshelf();
       if (qs("storybookPagePeriod")) qs("storybookPagePeriod").value = chapter.periodId || "";
       if (qs("storybookPageDate")) qs("storybookPageDate").value = chapter.date || "";
@@ -6337,6 +6587,14 @@
       `).join("");
       select.value = board?.id || "";
 
+      if (qs("tripBoardTabs")) {
+        qs("tripBoardTabs").innerHTML = library.boards.map(item => `
+          <button class="${item.id === activeTripBoardId ? "active" : ""}" onclick="selectTripBoardById('${escapeHTML(item.id)}')">
+            🌿 ${escapeHTML(item.title)}
+          </button>
+        `).join("");
+      }
+
       if (qs("tripBoardTitle")) qs("tripBoardTitle").value = board?.title || "";
       if (qs("tripBoardStart")) qs("tripBoardStart").value = board?.startDate || "";
       if (qs("tripBoardEnd")) qs("tripBoardEnd").value = board?.endDate || "";
@@ -6426,6 +6684,7 @@
       activeTripBoardId = board.id;
       localStorage.setItem(TEMP_TRIP_ACTIVE_KEY, activeTripBoardId);
       await saveTemporaryTripLibraries();
+      setPlanWorkspace("trips");
       renderTripBoard();
       if (qs("tripBoardMessage")) qs("tripBoardMessage").textContent = "Temporary board created 💌";
     }
@@ -9231,6 +9490,8 @@
       if (qs("inviteCopyMessage")) qs("inviteCopyMessage").textContent = "";
 
       renderPeriodCards();
+      setPlanWorkspace(activePlanWorkspace);
+      setStorybookWorkspace(activeStorybookWorkspace);
       enhanceStickerFields(document);
       qs("selectedDate").value = getToday();
       if (qs("journalDate")) qs("journalDate").value = getToday();
